@@ -427,3 +427,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# OverARC frontend and browser test outputs
+.npm-cache/
+dist/
+src/OverARC.Api/wwwroot/*
+!src/OverARC.Api/wwwroot/.gitkeep
+playwright-report/
+test-results/

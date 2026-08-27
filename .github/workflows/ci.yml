@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: OverARC
+      - uses: actions/checkout@v4
+        with:
+          repository: BioFSharp/BioFSharp.INSDC
+          ref: 8e0928e6ad031a559dbbf52c8cdb55051e2f4b48
+          path: BioFSharp.INSDC
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: OverARC/package-lock.json
+      - name: Build and test
+        working-directory: OverARC
+        env:
+          BIOFSHARP_INSDC_ROOT: ${{ github.workspace }}/BioFSharp.INSDC
+        run: |
+          npx playwright install --with-deps chromium firefox
+          ./build.sh Test
+      - name: Publish single-server application
+        working-directory: OverARC
+        env:
+          BIOFSHARP_INSDC_ROOT: ${{ github.workspace }}/BioFSharp.INSDC
+        run: ./build.sh Publish

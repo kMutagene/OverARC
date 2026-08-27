@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <BioFSharpInsdcRoot Condition="'$(BIOFSHARP_INSDC_ROOT)' != ''">$(BIOFSHARP_INSDC_ROOT)</BioFSharpInsdcRoot>
+    <BioFSharpInsdcRoot Condition="'$(BioFSharpInsdcRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\BioFSharp\BioFSharp.INSDC'))</BioFSharpInsdcRoot>
+  </PropertyGroup>
+</Project>

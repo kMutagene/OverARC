@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>OverARC.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(MSBuildProjectDirectory)\..\..\dist\**\*"
+             Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="$(MSBuildProjectDirectory)\..\..\examples\viewer-workspace\**\*"
+             Link="examples\viewer-workspace\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="ValidateBioFSharpRoot" BeforeTargets="ResolveProjectReferences">
+    <Error
+      Condition="!Exists('$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj')"
+      Text="BioFSharp.ArcIR was not found under '$(BioFSharpInsdcRoot)'. Set BIOFSHARP_INSDC_ROOT to the BioFSharp.INSDC checkout." />
+  </Target>
+
+  <Target Name="IncludeFrontendAndExampleWorkspace" BeforeTargets="ComputeFilesToPublish">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\..\..\dist\index.html')"
+           Text="The frontend has not been built. Run 'npm run build' before publishing." />
+  </Target>
+</Project>

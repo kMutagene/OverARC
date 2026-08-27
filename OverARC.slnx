@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OverARC.Api/OverARC.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OverARC.Api.Tests/OverARC.Api.Tests.csproj" />
+  </Folder>
+  <Project Path="build/Build.fsproj" />
+</Solution>

@@ -1,0 +1,8 @@
+dist
+src/OverARC.Api/wwwroot
+playwright-report
+test-results
+README.md
+pm
+.devcontainer/devcontainer-lock.json
+examples/viewer-workspace/arcir/states

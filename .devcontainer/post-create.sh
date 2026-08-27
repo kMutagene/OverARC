@@ -6,11 +6,9 @@ set -euo pipefail
 # echo "==> Restoring .NET tools (fable, fsdocs)"
 # dotnet tool restore
 
-# echo "==> Restoring .NET dependencies"
-# dotnet restore
-
-# echo "==> Installing npm dependencies"
-# npm install
+echo "==> Restoring OverARC dependencies"
+dotnet restore OverARC.slnx
+npm ci
 
 # echo "==> Rebuilding Python venv (drop any host-platform .venv)"
 # rm -rf .venv

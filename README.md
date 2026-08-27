@@ -1,4 +1,9 @@
 # OverARC — full session summary (May 12, 2026)
+
+> **Historical context:** the current application architecture and delivery plan
+> are maintained in [`plans/implementation.md`](plans/implementation.md). Where
+> this session summary conflicts with that plan or the current BioFSharp.INSDC
+> roadmap, the newer plans are authoritative.
  
 ## Project identity & venue
  

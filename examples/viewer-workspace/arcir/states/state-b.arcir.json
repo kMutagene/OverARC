@@ -1,0 +1,71 @@
+{
+  "formatVersion": "1.0",
+  "graph": {
+    "terms": {
+      "urn:overarc:term:archive-accession": {
+        "name": "Project archive accession",
+        "source": "OverARC example"
+      },
+      "urn:overarc:term:contains": { "name": "contains", "source": "OverARC example" },
+      "urn:overarc:term:project": { "name": "BioProject", "source": "OverARC example" },
+      "urn:overarc:term:sample": { "name": "BioSample", "source": "OverARC example" },
+      "urn:overarc:term:title": { "name": "Title", "source": "OverARC example" }
+    },
+    "objects": {
+      "urn:biofsharp:insdc:object:PRJTEST001": {
+        "kind": "collection",
+        "types": {
+          "urn:overarc:assertion:project-type": { "term": "urn:overarc:term:project" }
+        },
+        "properties": {
+          "urn:overarc:assertion:project-accession": {
+            "predicate": "urn:overarc:term:archive-accession",
+            "value": { "type": "string", "value": "PRJTEST001" },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:project-title": {
+            "predicate": "urn:overarc:term:title",
+            "value": {
+              "type": "string",
+              "value": "Curated fictional Arabidopsis temperature study"
+            },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      },
+      "urn:biofsharp:insdc:object:SAMTEST001": {
+        "kind": "observable",
+        "types": {
+          "urn:overarc:assertion:sample-type": { "term": "urn:overarc:term:sample" }
+        },
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:biofsharp:insdc:object:SAMTEST002": {
+        "kind": "observable",
+        "types": {
+          "urn:overarc:assertion:sample-type-2": { "term": "urn:overarc:term:sample" }
+        },
+        "properties": {},
+        "annotations": {}
+      }
+    },
+    "relations": {
+      "urn:overarc:relation:contains-1": {
+        "subject": "urn:biofsharp:insdc:object:PRJTEST001",
+        "predicate": "urn:overarc:term:contains",
+        "object": "urn:biofsharp:insdc:object:SAMTEST001",
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:overarc:relation:contains-3": {
+        "subject": "urn:biofsharp:insdc:object:PRJTEST001",
+        "predicate": "urn:overarc:term:contains",
+        "object": "urn:biofsharp:insdc:object:SAMTEST002",
+        "properties": {},
+        "annotations": {}
+      }
+    }
+  }
+}
