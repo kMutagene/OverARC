@@ -14,6 +14,14 @@ test('loads states, filters with context, and inspects complete details', async 
   await expect(page.getByRole('heading', { name: 'SAMTEST001' })).toBeVisible();
   await expect(page.getByText('Growth temperature')).toBeVisible();
   await expect(page.getByText('22 degree Celsius')).toBeVisible();
+  const propertiesHeading = page
+    .getByLabel('Element inspector')
+    .getByRole('heading', { name: /Properties/ });
+  const propertiesDisclosure = propertiesHeading.locator('xpath=../..');
+  await propertiesHeading.click();
+  await expect(propertiesDisclosure).not.toHaveAttribute('open', '');
+  await propertiesHeading.click();
+  await expect(propertiesDisclosure).toHaveAttribute('open', '');
   await expect(
     page
       .getByLabel('Element inspector')
@@ -40,7 +48,7 @@ test('loads states, filters with context, and inspects complete details', async 
     .getByRole('button', { name: 'urn:biofsharp:insdc:object:SAM-MISSING', exact: true })
     .click();
   await expect(page.getByText(/contains no ArcIR object/)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Introduced by relations' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Introduced by relations/ })).toBeVisible();
   await expect(page.getByText('Unable to load')).not.toBeVisible();
 });
 
@@ -75,4 +83,52 @@ test('switches state, refreshes, controls layout, and exports', async ({ page })
   const csv = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV pair' }).click();
   expect((await csv).suggestedFilename()).toMatch(/state-b-(nodes|relations)\.csv/);
+});
+
+test('resizes, collapses, and restores both side panes', async ({ page }) => {
+  await page.goto('/?state=state-a');
+  const leftPane = page.getByLabel('Workspace and filters');
+  const leftResizer = page.getByRole('separator', { name: 'Resize left pane' });
+  const rightResizer = page.getByRole('separator', { name: 'Resize right pane' });
+
+  const leftHandle = await leftResizer.boundingBox();
+  if (!leftHandle) throw new Error('Left resize handle is not visible.');
+  await page.mouse.move(leftHandle.x + leftHandle.width / 2, leftHandle.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(80, leftHandle.y + 100);
+  await page.mouse.up();
+  await expect(leftPane).toHaveClass(/pane-collapsed/);
+  await expect(leftResizer).toHaveAttribute('aria-valuetext', 'Collapsed');
+
+  await leftResizer.dblclick();
+  await expect(leftPane).not.toHaveClass(/pane-collapsed/);
+
+  await rightResizer.focus();
+  await rightResizer.press('Home');
+  await expect(rightResizer).toHaveAttribute('aria-valuetext', 'Collapsed');
+  await rightResizer.press('Enter');
+  await expect(rightResizer).not.toHaveAttribute('aria-valuetext', 'Collapsed');
+});
+
+test('toggles and persists the color theme', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/?state=state-a');
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-theme', 'light');
+
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await expect(root).toHaveAttribute('data-theme', 'dark');
+  await expect(page.getByRole('button', { name: 'Switch to light mode' })).toBeVisible();
+  expect(
+    await root.evaluate((element) =>
+      getComputedStyle(element).getPropertyValue('--overarc-graph-center').trim(),
+    ),
+  ).toBe('#151e1d');
+  await expect(page.locator('.react-sigma')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect
+    .poll(() => page.evaluate(() => window.localStorage.getItem('overarc.theme')))
+    .toBe('dark');
+
+  await page.reload();
+  await expect(root).toHaveAttribute('data-theme', 'dark');
 });

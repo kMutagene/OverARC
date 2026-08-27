@@ -129,3 +129,7 @@ export interface VisibleProjection {
   nodeStatus: Map<string, VisibilityStatus>;
   relationStatus: Map<string, VisibilityStatus>;
 }
+
+export type Selection = { kind: 'object' | 'relation'; id: string };
+
+export type Theme = 'light' | 'dark';

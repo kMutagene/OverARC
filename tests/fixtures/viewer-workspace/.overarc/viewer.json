@@ -1,0 +1,18 @@
+{
+  "formatVersion": "1.0",
+  "name": "OverARC example workspace",
+  "states": [
+    {
+      "id": "state-a",
+      "label": "Example state A",
+      "path": "arcir/states/state-a.arcir.json",
+      "sha256": "b720f340bd7d811e9621f275bd4acf767d9c554f6bc0bfcb7d4afc5036426a68"
+    },
+    {
+      "id": "state-b",
+      "label": "Example state B",
+      "path": "arcir/states/state-b.arcir.json",
+      "sha256": "7eece906d4df58636f4b2c5412b25b567f0eb79fb89286b7a82a3f6c9c9b24ad"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Inspector } from './Inspector';
-import type { ElementDetail } from './types';
+import type { ElementDetail } from '../../shared/types';
 
 const detail: ElementDetail = {
   kind: 'object',
@@ -87,7 +87,7 @@ describe('Inspector', () => {
     );
 
     expect(screen.getByText(/contains no ArcIR object/)).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Introduced by relations' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: /Introduced by relations/ })).toBeVisible();
     expect(screen.getByText('urn:relation:contains')).toBeVisible();
   });
 
@@ -118,5 +118,17 @@ describe('Inspector', () => {
     expect(inspector.getByText('urn:object:target')).toBeVisible();
     expect(inspector.getByText('Value selector')).toBeVisible();
     expect(inspector.queryByRole('heading', { name: /Properties/ })).not.toBeInTheDocument();
+  });
+
+  it('lets curators collapse dense inspector sections', () => {
+    const view = render(<Inspector detail={detail} loading={false} />);
+    const inspector = within(view.container);
+    const heading = inspector.getByRole('heading', { name: /Properties 1/ });
+    const disclosure = heading.closest('details');
+    expect(disclosure).toHaveAttribute('open');
+
+    fireEvent.click(heading.closest('summary')!);
+
+    expect(disclosure).not.toHaveAttribute('open');
   });
 });

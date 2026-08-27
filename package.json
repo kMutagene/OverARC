@@ -17,6 +17,7 @@
     "@picocss/pico": "2.1.1",
     "@react-sigma/core": "5.0.6",
     "@react-sigma/layout-forceatlas2": "5.0.6",
+    "@sigma/edge-curve": "3.1.0",
     "graphology": "0.26.0",
     "graphology-layout-forceatlas2": "0.10.1",
     "react": "19.1.0",

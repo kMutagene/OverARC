@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildGraph, objectKindColor, visibleCsv, visibleProjection } from './graph';
-import type { Filters, Projection } from './types';
+import { buildGraph, objectKindColor, visibleCsv, visibleProjection } from './graphModel';
+import type { Filters, Projection } from '../../shared/types';
 
 const projection: Projection = {
   stateId: 'test',
@@ -148,5 +148,50 @@ describe('projection mapping', () => {
     expect(graph.getNodeAttribute('a', 'color')).toBe(objectKindColor('observable'));
     expect(graph.getNodeAttribute('b', 'color')).not.toBe(objectKindColor('collection'));
     expect(objectKindColor('observable')).not.toBe(objectKindColor('collection'));
+  });
+
+  it('assigns deterministic lanes only to parallel non-self edges', () => {
+    const withOverlaps: Projection = {
+      ...projection,
+      relations: [
+        ...projection.relations,
+        { ...projection.relations[0], id: 'ab-2', label: 'supports' },
+        {
+          ...projection.relations[0],
+          id: 'ba',
+          label: 'opposes',
+          subject: 'b',
+          object: 'a',
+        },
+        {
+          ...projection.relations[0],
+          id: 'aa',
+          label: 'self',
+          object: 'a',
+        },
+      ],
+    };
+    const visible = visibleProjection(withOverlaps, filters());
+    const graph = buildGraph(withOverlaps, visible);
+    const reordered = buildGraph(
+      { ...withOverlaps, relations: [...withOverlaps.relations].reverse() },
+      visible,
+    );
+
+    expect(
+      ['ab', 'ab-2', 'ba'].map((edge) => graph.getEdgeAttribute(edge, 'parallelLane')),
+    ).toEqual([-1, 0, 1]);
+    expect(['ab', 'ab-2', 'ba'].map((edge) => graph.getEdgeAttribute(edge, 'type'))).toEqual([
+      'curved',
+      'arrow',
+      'curved',
+    ]);
+    expect(graph.getEdgeAttribute('ab', 'curvature')).toBe(-0.25);
+    expect(graph.getEdgeAttribute('ba', 'curvature')).toBe(-0.25);
+    expect(graph.getEdgeAttribute('bc', 'type')).toBe('arrow');
+    expect(graph.getEdgeAttribute('aa', 'type')).toBe('arrow');
+    expect(reordered.getEdgeAttributes('ab')).toEqual(graph.getEdgeAttributes('ab'));
+    expect(reordered.getEdgeAttributes('ab-2')).toEqual(graph.getEdgeAttributes('ab-2'));
+    expect(reordered.getEdgeAttributes('ba')).toEqual(graph.getEdgeAttributes('ba'));
   });
 });

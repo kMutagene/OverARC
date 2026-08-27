@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
+const apiOrigin = process.env.OVERARC_API_ORIGIN ?? 'http://127.0.0.1:5080';
+
 export default defineConfig({
   plugins: [react()],
   build: { outDir: 'dist', emptyOutDir: true },
@@ -8,11 +10,11 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5173,
     warmup: { clientFiles: ['./src/web/main.tsx'] },
-    proxy: { '/api': 'http://127.0.0.1:5080', '/_health': 'http://127.0.0.1:5080' },
+    proxy: { '/api': apiOrigin, '/_health': apiOrigin },
   },
   test: {
     environment: 'jsdom',
-    include: ['src/web/**/*.test.{ts,tsx}'],
-    setupFiles: './src/web/test/setup.ts',
+    include: ['src/web/**/*.test.{ts,tsx}', 'tests/performance/**/*.test.{ts,tsx}'],
+    setupFiles: './tests/setup/frontend.ts',
   },
 });

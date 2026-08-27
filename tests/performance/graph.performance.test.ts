@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildGraph, visibleProjection } from './graph';
-import type { Filters, Projection } from './types';
+import { buildGraph, visibleProjection } from '../../src/web/features/graph/graphModel';
+import type { Filters, Projection } from '../../src/web/shared/types';
 
 function benchmarkProjection(): Projection {
   const nodes = Array.from({ length: 10_000 }, (_, index) => ({

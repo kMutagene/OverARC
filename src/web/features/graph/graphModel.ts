@@ -6,7 +6,7 @@ import type {
   Projection,
   VisibilityStatus,
   VisibleProjection,
-} from './types';
+} from '../../shared/types';
 
 const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase();
 
@@ -23,18 +23,24 @@ export const ARC_OBJECT_KIND_COLORS: Readonly<Record<string, string>> = {
 };
 
 const unresolvedColor = '#64748b';
+const parallelLaneCurvature = 0.25;
+const darkGraphBackground = '#111817';
 
 export function objectKindColor(kind: string | null): string {
   return (kind && ARC_OBJECT_KIND_COLORS[kind.toLocaleLowerCase()]) || unresolvedColor;
 }
 
-function mixWithPaper(color: string, amount: number): string {
-  const paper = [0xf7, 0xfa, 0xf8];
+function mixWith(color: string, target: readonly number[], amount: number): string {
   const channel = (offset: number) => Number.parseInt(color.slice(offset, offset + 2), 16);
   const mixed = [channel(1), channel(3), channel(5)].map((value, index) =>
-    Math.round(value + (paper[index] - value) * amount),
+    Math.round(value + (target[index] - value) * amount),
   );
   return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function mixWithHex(color: string, target: string, amount: number): string {
+  const channel = (offset: number) => Number.parseInt(target.slice(offset, offset + 2), 16);
+  return mixWith(color, [channel(1), channel(3), channel(5)], amount);
 }
 
 export function visibleProjection(projection: Projection, filters: Filters): VisibleProjection {
@@ -97,17 +103,22 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
     const status = visible.nodeStatus.get(node.id);
     if (!status) continue;
     const kindColor = objectKindColor(node.kind);
+    const darkKindColor = mixWith(kindColor, [0xff, 0xff, 0xff], 0.18);
     graph.addNode(node.id, {
       ...hashPosition(node.id),
       label: node.label,
       size: node.isPlaceholder ? 7 : status === 'match' ? 9 : 5,
-      color: status === 'context' ? mixWithPaper(kindColor, 0.58) : kindColor,
+      color: status === 'context' ? mixWith(kindColor, [0xf4, 0xf5, 0xf6], 0.58) : kindColor,
+      darkColor:
+        status === 'context' ? mixWithHex(darkKindColor, darkGraphBackground, 0.58) : darkKindColor,
       status,
       kind: node.kind,
       isPlaceholder: node.isPlaceholder,
     });
   }
-  for (const relation of projection.relations) {
+  for (const relation of [...projection.relations].sort((left, right) =>
+    left.id < right.id ? -1 : left.id > right.id ? 1 : 0,
+  )) {
     const status = visible.relationStatus.get(relation.id);
     if (!status || !graph.hasNode(relation.subject) || !graph.hasNode(relation.object)) continue;
     graph.addDirectedEdgeWithKey(relation.id, relation.subject, relation.object, {
@@ -121,10 +132,50 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
           : relation.isDerived
             ? '#8b5cf6'
             : '#526a66',
+      darkColor:
+        status === 'context'
+          ? relation.isDerived
+            ? '#514868'
+            : '#40514f'
+          : relation.isDerived
+            ? '#a78bfa'
+            : '#91aaa5',
+      isDerived: relation.isDerived,
       type: 'arrow',
       status,
     });
   }
+
+  const parallelGroups = new Map<string, string[]>();
+  graph.forEachEdge((edge, _attributes, source, target) => {
+    if (source === target) return;
+    const endpoints = source < target ? [source, target] : [target, source];
+    const key = JSON.stringify(endpoints);
+    const edges = parallelGroups.get(key) ?? [];
+    edges.push(edge);
+    parallelGroups.set(key, edges);
+  });
+
+  for (const edges of parallelGroups.values()) {
+    if (edges.length < 2) continue;
+    edges.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
+    const middle = (edges.length - 1) / 2;
+    edges.forEach((edge, index) => {
+      const lane = index - middle;
+      const source = graph.source(edge);
+      const target = graph.target(edge);
+      graph.mergeEdgeAttributes(edge, {
+        parallelLane: lane,
+        type: lane === 0 ? 'arrow' : 'curved',
+        ...(lane === 0
+          ? {}
+          : {
+              curvature: lane * parallelLaneCurvature * (source < target ? 1 : -1),
+            }),
+      });
+    });
+  }
+
   return graph;
 }
 

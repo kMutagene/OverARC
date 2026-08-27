@@ -1,0 +1,85 @@
+:root {
+  --sigma-background-color: transparent;
+  --overarc-ink: #173c3a;
+  --overarc-accent: #087f73;
+  --overarc-accent-contrast: #fff;
+  --overarc-paper: #f7faf8;
+  --overarc-line: #d8e2df;
+  --overarc-surface: #fff;
+  --overarc-surface-muted: #f3f7f5;
+  --overarc-surface-panel: #f4f7f6;
+  --overarc-graph-center: #fafafa;
+  --overarc-graph-edge: #f2f3f4;
+  --overarc-muted: #526461;
+  --overarc-empty: #60726f;
+  --overarc-shadow: #173c3a20;
+  --overarc-error: #8b1e1e;
+  --overarc-error-line: #e6b7b7;
+  --overarc-state-error: #9b2c2c;
+  --overarc-placeholder-ink: #57430b;
+  --overarc-placeholder-surface: #fff8df;
+  --overarc-placeholder-line: #ead58c;
+  --overarc-reference-ink: #4c2c75;
+  --overarc-reference-surface: #f5efff;
+  --overarc-reference-line: #d4c0ed;
+  color-scheme: light;
+  font-size: 93.75%;
+}
+
+html[data-theme='dark'] {
+  --overarc-ink: #dce8e5;
+  --overarc-accent: #43c6b6;
+  --overarc-accent-contrast: #081412;
+  --overarc-paper: #0f1515;
+  --overarc-line: #344542;
+  --overarc-surface: #151d1d;
+  --overarc-surface-muted: #1b2625;
+  --overarc-surface-panel: #1b2524;
+  --overarc-graph-center: #151e1d;
+  --overarc-graph-edge: #0f1515;
+  --overarc-muted: #9badaa;
+  --overarc-empty: #9badaa;
+  --overarc-shadow: #00000066;
+  --overarc-error: #ffb4ab;
+  --overarc-error-line: #7f4542;
+  --overarc-state-error: #ffb4ab;
+  --overarc-placeholder-ink: #ffe19a;
+  --overarc-placeholder-surface: #302817;
+  --overarc-placeholder-line: #6f5c28;
+  --overarc-reference-ink: #dbc5ff;
+  --overarc-reference-surface: #282035;
+  --overarc-reference-line: #5f4d78;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  color: var(--overarc-ink);
+  background: var(--overarc-paper);
+}
+
+button,
+input {
+  font-size: 0.88rem;
+}
+
+.eyebrow {
+  color: var(--overarc-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.compact {
+  width: auto;
+  margin: 0;
+  padding: 0.3rem 0.55rem;
+}

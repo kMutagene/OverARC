@@ -100,21 +100,20 @@ public sealed class ApiTests : IClassFixture<ExampleApiFactory>
 
 public sealed class ExampleApiFactory : WebApplicationFactory<Program>
 {
-    public static string WorkspaceRoot { get; } = FindWorkspace();
-    public static string RepositoryRoot { get; } = Directory.GetParent(Directory.GetParent(WorkspaceRoot)!.FullName)!.FullName;
+    public static string RepositoryRoot { get; } = FindRepositoryRoot();
+    public static string WorkspaceRoot { get; } = Path.Combine(RepositoryRoot, "tests", "fixtures", "viewer-workspace");
 
     protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseSetting("workspace", WorkspaceRoot);
 
-    private static string FindWorkspace()
+    private static string FindRepositoryRoot()
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            var candidate = Path.Combine(current.FullName, "examples", "viewer-workspace", ".overarc", "viewer.json");
-            if (File.Exists(candidate)) return Directory.GetParent(Directory.GetParent(candidate)!.FullName)!.FullName;
+            if (File.Exists(Path.Combine(current.FullName, "OverARC.slnx"))) return current.FullName;
             current = current.Parent;
         }
 
-        throw new DirectoryNotFoundException("Could not locate examples/viewer-workspace.");
+        throw new DirectoryNotFoundException("Could not locate the OverARC repository root.");
     }
 }
