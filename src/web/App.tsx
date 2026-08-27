@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from './api';
-import { buildGraph, filterOptions, visibleCsv, visibleProjection } from './graph';
+import { buildGraph, filterOptions, objectKindColor, visibleCsv, visibleProjection } from './graph';
 import { GraphCanvas } from './GraphCanvas';
 import { Inspector } from './Inspector';
 import type { ElementDetail, Filters, Projection, VisibleProjection, Workspace } from './types';
@@ -232,6 +232,65 @@ export default function App() {
       setDetailLoading(false);
       return;
     }
+    if (selected.kind === 'relation') {
+      const relation = projection?.relations.find((candidate) => candidate.id === selected.id);
+      if (relation?.isDerived) {
+        setError(null);
+        setDetail({
+          kind: 'relation',
+          id: relation.id,
+          label: 'ArcValue.Ref reference',
+          selector: relation.selector ?? '',
+          isDerivedReference: true,
+          subject: relation.subject,
+          predicateId: relation.predicateId,
+          predicateLabel:
+            projection?.terms.find((term) => term.id === relation.predicateId)?.label ??
+            relation.predicateId,
+          object: relation.object,
+          types: [],
+          properties: [],
+          annotations: [],
+        });
+        setDetailLoading(false);
+        return;
+      }
+    }
+    if (selected.kind === 'object') {
+      const node = projection?.nodes.find((candidate) => candidate.id === selected.id);
+      if (node?.isPlaceholder) {
+        setError(null);
+        const placeholderReferences =
+          projection?.relations
+            .filter(
+              (relation) => relation.subject === selected.id || relation.object === selected.id,
+            )
+            .map((relation) => ({
+              relationId: relation.id,
+              relationLabel: relation.label,
+              endpoint:
+                relation.subject === selected.id && relation.object === selected.id
+                  ? ('subject and object' as const)
+                  : relation.subject === selected.id
+                    ? ('subject' as const)
+                    : ('object' as const),
+              otherId: relation.subject === selected.id ? relation.object : relation.subject,
+            })) ?? [];
+        setDetail({
+          kind: 'object',
+          id: node.id,
+          label: node.label,
+          selector: '',
+          isPlaceholder: true,
+          placeholderReferences,
+          types: [],
+          properties: [],
+          annotations: [],
+        });
+        setDetailLoading(false);
+        return;
+      }
+    }
     let cancelled = false;
     setDetailLoading(true);
     void api
@@ -248,7 +307,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [activeState, selected]);
+  }, [activeState, projection, selected]);
 
   const visible = useMemo(
     () =>
@@ -276,16 +335,10 @@ export default function App() {
   };
   const selectGraphElement = useCallback(
     (selection: { kind: 'object' | 'relation'; id: string } | null) => {
-      if (selection?.kind === 'relation') {
-        const relation = projection?.relations.find((candidate) => candidate.id === selection.id);
-        if (relation?.isDerived) {
-          setSelected({ kind: 'object', id: relation.subject });
-          return;
-        }
-      }
+      setError(null);
       setSelected(selection);
     },
-    [projection],
+    [],
   );
   const exportCsv = () => {
     if (!projection) return;
@@ -388,20 +441,23 @@ export default function App() {
             <strong>{visible.nodeStatus.size}</strong> objects ·{' '}
             <strong>{visible.relationStatus.size}</strong> relations
           </p>
-          <div className="legend">
-            <span>
-              <i className="match" /> Match
-            </span>
-            <span>
-              <i className="context" /> Context
-            </span>
-            <span>
-              <i className="placeholder" /> Missing endpoint
-            </span>
-            <span>
-              <i className="derived" /> Derived reference
-            </span>
+          <h3 className="legend-heading">ArcIR object kinds</h3>
+          <div className="legend" aria-label="ArcIR object kind colors">
+            {options.kinds.map((kind) => (
+              <span key={kind}>
+                <i style={{ backgroundColor: objectKindColor(kind) }} /> {kind}
+              </span>
+            ))}
+            {projection?.nodes.some((node) => node.isPlaceholder) && (
+              <span>
+                <i style={{ backgroundColor: objectKindColor(null) }} /> unresolved ID
+              </span>
+            )}
           </div>
+          <p className="legend-note">
+            Dimmed nodes provide one-hop context. Solid arrows are ArcRelations;{' '}
+            <span className="reference-line" /> purple arrows are view-only ArcValue.Ref links.
+          </p>
           <button type="button" className="secondary" disabled={!projection} onClick={exportCsv}>
             Export CSV pair
           </button>
@@ -439,7 +495,7 @@ export default function App() {
           <div className="loading">No valid state is available.</div>
         )}
       </section>
-      <Inspector detail={detail} loading={detailLoading} />
+      <Inspector detail={detail} loading={detailLoading} onClear={() => setSelected(null)} />
     </main>
   );
 }

@@ -22,8 +22,26 @@ test('loads states, filters with context, and inspects complete details', async 
   await expect(
     page.getByText('urn:biofsharp:insdc:object:SAMTEST001', { exact: true }).first(),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Clear selection' }).click();
+  await expect(
+    page.getByText('Select an object or relation to inspect every assertion and annotation.'),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'SAMTEST001', exact: true }).click();
   await page.getByRole('button', { name: 'references', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'PRJTEST001' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'ArcValue.Ref reference' })).toBeVisible();
+  await expect(page.getByText(/It is not an ArcRelation/)).toBeVisible();
+  await expect(
+    page
+      .getByLabel('Element inspector')
+      .getByText('urn:biofsharp:insdc:object:PRJTEST001', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Reset filters' }).click();
+  await page
+    .getByRole('button', { name: 'urn:biofsharp:insdc:object:SAM-MISSING', exact: true })
+    .click();
+  await expect(page.getByText(/contains no ArcIR object/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Introduced by relations' })).toBeVisible();
+  await expect(page.getByText('Unable to load')).not.toBeVisible();
 });
 
 test('switches state, refreshes, controls layout, and exports', async ({ page }) => {

@@ -69,7 +69,15 @@ function AnnotationList({ annotations }: { annotations: Annotation[] }) {
   );
 }
 
-export function Inspector({ detail, loading }: { detail: ElementDetail | null; loading: boolean }) {
+export function Inspector({
+  detail,
+  loading,
+  onClear,
+}: {
+  detail: ElementDetail | null;
+  loading: boolean;
+  onClear?: () => void;
+}) {
   if (loading)
     return (
       <aside className="inspector" aria-busy="true">
@@ -84,19 +92,54 @@ export function Inspector({ detail, loading }: { detail: ElementDetail | null; l
     );
   return (
     <aside className="inspector" aria-label="Element inspector">
-      <header>
-        <span className="eyebrow">{detail.kind}</span>
-        <h2>{detail.label}</h2>
+      <header className="inspector-header">
+        <div>
+          <span className="eyebrow">
+            {detail.isPlaceholder
+              ? 'Unresolved endpoint'
+              : detail.isDerivedReference
+                ? 'Derived reference edge'
+                : detail.kind}
+          </span>
+          <h2>{detail.label}</h2>
+        </div>
+        {onClear && (
+          <button
+            type="button"
+            className="outline compact"
+            onClick={onClear}
+            aria-label="Clear selection"
+          >
+            ×
+          </button>
+        )}
       </header>
+      {detail.isPlaceholder && (
+        <p className="placeholder-notice">
+          This ID is used as a relation endpoint, but this state contains no ArcIR object with that
+          ID. OverARC added this projection-only node so the incomplete relation remains visible.
+        </p>
+      )}
+      {detail.isDerivedReference && (
+        <p className="derived-reference-notice">
+          This view-only edge comes from an ArcValue.Ref in the source object’s{' '}
+          <strong>{detail.predicateLabel}</strong> property. It is not an ArcRelation and carries no
+          relation assertions of its own.
+        </p>
+      )}
       <dl>
         <dt>Exact IRI</dt>
         <dd>
           <Iri value={detail.id} />
         </dd>
-        <dt>Selector</dt>
-        <dd>
-          <code>{detail.selector}</code>
-        </dd>
+        {detail.selector && (
+          <>
+            <dt>{detail.isDerivedReference ? 'Value selector' : 'Selector'}</dt>
+            <dd>
+              <code>{detail.selector}</code>
+            </dd>
+          </>
+        )}
         {detail.objectKind && (
           <>
             <dt>Kind</dt>
@@ -130,6 +173,28 @@ export function Inspector({ detail, loading }: { detail: ElementDetail | null; l
           </>
         )}
       </dl>
+      {detail.isPlaceholder && detail.placeholderReferences && (
+        <section>
+          <h3>Introduced by relations</h3>
+          {detail.placeholderReferences.map((reference) => (
+            <article key={reference.relationId}>
+              <strong>{reference.relationLabel}</strong>
+              <dl>
+                <dt>Endpoint</dt>
+                <dd>{reference.endpoint}</dd>
+                <dt>Relation</dt>
+                <dd>
+                  <Iri value={reference.relationId} />
+                </dd>
+                <dt>Other endpoint</dt>
+                <dd>
+                  <Iri value={reference.otherId} />
+                </dd>
+              </dl>
+            </article>
+          ))}
+        </section>
+      )}
       {detail.types.length > 0 && (
         <section>
           <h3>Type assertions</h3>
@@ -144,49 +209,53 @@ export function Inspector({ detail, loading }: { detail: ElementDetail | null; l
           ))}
         </section>
       )}
-      <section>
-        <h3>
-          Properties <small>{detail.properties.length}</small>
-        </h3>
-        {detail.properties.length === 0 && <p>None</p>}
-        {detail.properties.map((property) => (
-          <article key={property.id}>
-            <strong>{property.predicateLabel}</strong>
-            <p>
-              <Value value={property.value} />
-            </p>
-            <details>
-              <summary>Assertion identifiers</summary>
-              <dl>
-                <dt>ID</dt>
-                <dd>
-                  <Iri value={property.id} />
-                </dd>
-                <dt>Predicate</dt>
-                <dd>
-                  <Iri value={property.predicateId} />
-                </dd>
-                <dt>Selector</dt>
-                <dd>
-                  <code>{property.selector}</code>
-                </dd>
-                <dt>Value selector</dt>
-                <dd>
-                  <code>{property.valueSelector}</code>
-                </dd>
-              </dl>
-            </details>
-            <AnnotationList annotations={property.annotations} />
-          </article>
-        ))}
-      </section>
-      <section>
-        <h3>
-          Annotations <small>{detail.annotations.length}</small>
-        </h3>
-        <AnnotationList annotations={detail.annotations} />
-        {detail.annotations.length === 0 && <p>None</p>}
-      </section>
+      {!detail.isPlaceholder && !detail.isDerivedReference && (
+        <>
+          <section>
+            <h3>
+              Properties <small>{detail.properties.length}</small>
+            </h3>
+            {detail.properties.length === 0 && <p>None</p>}
+            {detail.properties.map((property) => (
+              <article key={property.id}>
+                <strong>{property.predicateLabel}</strong>
+                <p>
+                  <Value value={property.value} />
+                </p>
+                <details>
+                  <summary>Assertion identifiers</summary>
+                  <dl>
+                    <dt>ID</dt>
+                    <dd>
+                      <Iri value={property.id} />
+                    </dd>
+                    <dt>Predicate</dt>
+                    <dd>
+                      <Iri value={property.predicateId} />
+                    </dd>
+                    <dt>Selector</dt>
+                    <dd>
+                      <code>{property.selector}</code>
+                    </dd>
+                    <dt>Value selector</dt>
+                    <dd>
+                      <code>{property.valueSelector}</code>
+                    </dd>
+                  </dl>
+                </details>
+                <AnnotationList annotations={property.annotations} />
+              </article>
+            ))}
+          </section>
+          <section>
+            <h3>
+              Annotations <small>{detail.annotations.length}</small>
+            </h3>
+            <AnnotationList annotations={detail.annotations} />
+            {detail.annotations.length === 0 && <p>None</p>}
+          </section>
+        </>
+      )}
     </aside>
   );
 }

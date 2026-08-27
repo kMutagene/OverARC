@@ -10,6 +10,33 @@ import type {
 
 const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase();
 
+export const ARC_OBJECT_KIND_COLORS: Readonly<Record<string, string>> = {
+  observable: '#2563eb',
+  instrument: '#0891b2',
+  resource: '#d97706',
+  activity: '#7c3aed',
+  agent: '#db2777',
+  role: '#b45309',
+  recipe: '#16a34a',
+  collection: '#4f46e5',
+  selector: '#0d9488',
+};
+
+const unresolvedColor = '#64748b';
+
+export function objectKindColor(kind: string | null): string {
+  return (kind && ARC_OBJECT_KIND_COLORS[kind.toLocaleLowerCase()]) || unresolvedColor;
+}
+
+function mixWithPaper(color: string, amount: number): string {
+  const paper = [0xf7, 0xfa, 0xf8];
+  const channel = (offset: number) => Number.parseInt(color.slice(offset, offset + 2), 16);
+  const mixed = [channel(1), channel(3), channel(5)].map((value, index) =>
+    Math.round(value + (paper[index] - value) * amount),
+  );
+  return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
 export function visibleProjection(projection: Projection, filters: Filters): VisibleProjection {
   const query = normalize(filters.query.trim());
   const strictMatches = new Set(
@@ -69,11 +96,12 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
   for (const node of projection.nodes) {
     const status = visible.nodeStatus.get(node.id);
     if (!status) continue;
+    const kindColor = objectKindColor(node.kind);
     graph.addNode(node.id, {
       ...hashPosition(node.id),
       label: node.label,
       size: node.isPlaceholder ? 7 : status === 'match' ? 9 : 5,
-      color: node.isPlaceholder ? '#d97706' : status === 'match' ? '#087f73' : '#a9bbb8',
+      color: status === 'context' ? mixWithPaper(kindColor, 0.58) : kindColor,
       status,
       kind: node.kind,
       isPlaceholder: node.isPlaceholder,
@@ -85,7 +113,14 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
     graph.addDirectedEdgeWithKey(relation.id, relation.subject, relation.object, {
       label: relation.label,
       size: status === 'match' ? 2 : 1,
-      color: relation.isDerived ? '#8b5cf6' : status === 'match' ? '#416b67' : '#c7d1cf',
+      color:
+        status === 'context'
+          ? relation.isDerived
+            ? '#d8c9ef'
+            : '#cbd5d1'
+          : relation.isDerived
+            ? '#8b5cf6'
+            : '#526a66',
       type: 'arrow',
       status,
     });

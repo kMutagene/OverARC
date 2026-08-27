@@ -48,6 +48,8 @@ function GraphRuntime({ graph, resetToken, selected, onSelect }: GraphCanvasProp
   layoutRef.current = layout;
   cameraRef.current = camera;
   const [layoutRunning, setLayoutRunning] = useState(false);
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [hoveredEdge, setHoveredEdge] = useState<string | null>(null);
   const dragged = useRef<string | null>(null);
 
   useEffect(() => {
@@ -55,14 +57,43 @@ function GraphRuntime({ graph, resetToken, selected, onSelect }: GraphCanvasProp
     loadGraph(graph, true);
     cameraRef.current.reset({ duration: 0 });
     setLayoutRunning(false);
+    setHoveredNode(null);
+    setHoveredEdge(null);
     return () => layoutRef.current.stop();
   }, [graph, loadGraph, resetToken]);
 
   useEffect(() => {
+    const endDrag = () => {
+      dragged.current = null;
+      sigma.getCamera().enable();
+    };
+
     registerEvents({
-      clickNode: ({ node }) => onSelect({ kind: 'object', id: node }),
-      clickEdge: ({ edge }) => onSelect({ kind: 'relation', id: edge }),
-      clickStage: () => onSelect(null),
+      clickNode: ({ node }) =>
+        onSelect(
+          selected?.kind === 'object' && selected.id === node ? null : { kind: 'object', id: node },
+        ),
+      enterNode: ({ node }) => setHoveredNode(node),
+      leaveNode: () => setHoveredNode(null),
+      clickEdge: ({ edge }) =>
+        onSelect(
+          selected?.kind === 'relation' && selected.id === edge
+            ? null
+            : { kind: 'relation', id: edge },
+        ),
+      enterEdge: ({ edge }) => {
+        setHoveredEdge(edge);
+        sigma.getContainer().style.cursor = 'pointer';
+      },
+      leaveEdge: () => {
+        setHoveredEdge(null);
+        sigma.getContainer().style.cursor = '';
+      },
+      clickStage: () => {
+        setHoveredNode(null);
+        setHoveredEdge(null);
+        onSelect(null);
+      },
       downNode: ({ node, event }) => {
         dragged.current = node;
         sigma.getCamera().disable();
@@ -74,26 +105,48 @@ function GraphRuntime({ graph, resetToken, selected, onSelect }: GraphCanvasProp
         sigma.getGraph().mergeNodeAttributes(dragged.current, position);
         event.preventSigmaDefault();
       },
-      upStage: () => {
-        dragged.current = null;
-        sigma.getCamera().enable();
-      },
+      upNode: endDrag,
+      upEdge: endDrag,
+      upStage: endDrag,
+      leaveStage: endDrag,
+      mouseup: endDrag,
+      mouseleave: endDrag,
     });
-  }, [onSelect, registerEvents, sigma]);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('blur', endDrag);
+    return () => {
+      window.removeEventListener('mouseup', endDrag);
+      window.removeEventListener('blur', endDrag);
+      sigma.getContainer().style.cursor = '';
+      endDrag();
+    };
+  }, [onSelect, registerEvents, selected, sigma]);
 
   useEffect(() => {
-    sigma.setSetting('nodeReducer', (node, data) => ({
-      ...data,
-      highlighted: selected?.kind === 'object' && selected.id === node,
-      forceLabel: selected?.kind === 'object' && selected.id === node,
-    }));
-    sigma.setSetting('edgeReducer', (edge, data) => ({
-      ...data,
-      color: selected?.kind === 'relation' && selected.id === edge ? '#d14d2f' : data.color,
-      size: selected?.kind === 'relation' && selected.id === edge ? 4 : data.size,
-    }));
+    sigma.setSetting('nodeReducer', (node, data) => {
+      const isSelected = selected?.kind === 'object' && selected.id === node;
+      const isHovered = hoveredNode === node;
+      return {
+        ...data,
+        label: data.isPlaceholder && !isSelected && !isHovered ? null : data.label,
+        highlighted: isSelected,
+        forceLabel: isSelected,
+      };
+    });
+    sigma.setSetting('edgeReducer', (edge, data) => {
+      const isSelected = selected?.kind === 'relation' && selected.id === edge;
+      const isHovered = hoveredEdge === edge;
+      return {
+        ...data,
+        label: isSelected || isHovered ? data.label : null,
+        color: isSelected ? '#d14d2f' : isHovered ? '#087f73' : data.color,
+        size: isSelected ? 4 : isHovered ? Math.max(data.size ?? 1, 3) : data.size,
+        forceLabel: isSelected || isHovered,
+        zIndex: isSelected || isHovered ? 1 : 0,
+      };
+    });
     sigma.refresh();
-  }, [selected, sigma]);
+  }, [hoveredEdge, hoveredNode, selected, sigma]);
 
   const resetLayout = () => {
     layout.stop();
@@ -154,11 +207,16 @@ export function GraphCanvas(props: GraphCanvasProps) {
         defaultEdgeType: 'arrow',
         edgeProgramClasses: { arrow: EdgeArrowProgram },
         enableEdgeEvents: true,
+        edgeLabelColor: { color: '#173c3a' },
+        edgeLabelSize: 12,
+        edgeLabelWeight: '600',
         labelDensity: 0.35,
         labelRenderedSizeThreshold: 10,
-        renderEdgeLabels: false,
+        minEdgeThickness: 2.5,
+        renderEdgeLabels: true,
         hideEdgesOnMove: true,
         hideLabelsOnMove: true,
+        zIndex: true,
       }}
     >
       <GraphRuntime {...props} />

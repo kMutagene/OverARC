@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildGraph, visibleCsv, visibleProjection } from './graph';
+import { buildGraph, objectKindColor, visibleCsv, visibleProjection } from './graph';
 import type { Filters, Projection } from './types';
 
 const projection: Projection = {
@@ -132,5 +132,21 @@ describe('projection mapping', () => {
     expect(first.type).toBe('directed');
     expect(first.size).toBe(3);
     expect(first.getNodeAttributes('a')).toMatchObject(second.getNodeAttributes('a'));
+  });
+
+  it('colors nodes by ArcIR object kind while context only dims the kind color', () => {
+    const kindProjection: Projection = {
+      ...projection,
+      nodes: projection.nodes.map((node, index) => ({
+        ...node,
+        kind: index === 0 ? 'observable' : 'collection',
+      })),
+    };
+    const visible = visibleProjection(kindProjection, filters({ query: 'Alpha' }));
+    const graph = buildGraph(kindProjection, visible);
+
+    expect(graph.getNodeAttribute('a', 'color')).toBe(objectKindColor('observable'));
+    expect(graph.getNodeAttribute('b', 'color')).not.toBe(objectKindColor('collection'));
+    expect(objectKindColor('observable')).not.toBe(objectKindColor('collection'));
   });
 });

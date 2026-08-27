@@ -97,6 +97,14 @@ export interface ElementDetail {
   id: string;
   label: string;
   selector: string;
+  isPlaceholder?: boolean;
+  isDerivedReference?: boolean;
+  placeholderReferences?: Array<{
+    relationId: string;
+    relationLabel: string;
+    endpoint: 'subject' | 'object' | 'subject and object';
+    otherId: string;
+  }>;
   objectKind?: string;
   subject?: string;
   predicateId?: string;
