@@ -14,6 +14,8 @@ describe('identifier presentation', () => {
           name: 'Assay',
           source: null,
           selector: '#/term',
+          usageCount: 1,
+          usageRoles: ['objectType'],
         },
       ],
       nodes: [

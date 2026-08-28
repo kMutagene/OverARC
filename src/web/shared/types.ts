@@ -27,6 +27,33 @@ export interface Term {
   name: string | null;
   source: string | null;
   selector: string;
+  usageCount: number;
+  usageRoles: TermUsageRole[];
+}
+
+/** Stable semantic roles through which an ArcIR term can be referenced. */
+export type TermUsageRole =
+  | 'objectType'
+  | 'objectPropertyPredicate'
+  | 'relationPredicate'
+  | 'relationPropertyPredicate'
+  | 'annotationProperty'
+  | 'termValue'
+  | 'unit';
+
+/** One exact term occurrence and its nearest core-generated ArcIR selector. */
+export interface TermUsage {
+  role: TermUsageRole;
+  ownerKind: 'object' | 'relation';
+  ownerId: string;
+  ownerLabel: string;
+  occurrenceId: string;
+  selector: string;
+}
+
+/** Complete on-demand definition and usage details for one registered ArcIR term. */
+export interface TermDetail extends Term {
+  usages: TermUsage[];
 }
 
 /** An ArcIR object or projection-only missing-endpoint placeholder in the graph response. */
@@ -144,8 +171,8 @@ export interface VisibleProjection {
   relationStatus: Map<string, VisibilityStatus>;
 }
 
-/** Exact graph element identity shared by Sigma, table selection, and the details API. */
-export type Selection = { kind: 'object' | 'relation'; id: string };
+/** Exact state-bound identity shared by center views and the inspector. */
+export type Selection = { kind: 'object' | 'relation' | 'term'; id: string };
 
 /** Supported DOM and Sigma color schemes. */
 export type Theme = 'light' | 'dark';

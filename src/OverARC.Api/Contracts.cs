@@ -20,8 +20,15 @@ public sealed record StateSummaryDto(
     int? RelationCount,
     IReadOnlyList<string> Errors);
 
-/// <summary>Provides enough term metadata to label graph types and predicates without adding term nodes.</summary>
-public sealed record TermDto(string Id, string Label, string? Name, string? Source, string Selector);
+/// <summary>Provides term metadata and bounded usage summaries without adding term nodes or occurrence lists.</summary>
+public sealed record TermDto(
+    string Id,
+    string Label,
+    string? Name,
+    string? Source,
+    string Selector,
+    int UsageCount,
+    IReadOnlyList<string> UsageRoles);
 
 /// <summary>Represents an ArcIR object or a projection-only placeholder in the compact graph response.</summary>
 public sealed record NodeDto(
@@ -54,6 +61,29 @@ public sealed record GraphProjectionDto(
 
 /// <summary>Selects an object or relation by its exact IRI for the details endpoint.</summary>
 public sealed record DetailRequest(string Kind, string Id);
+
+/// <summary>Selects one exact term IRI for on-demand definition and occurrence details.</summary>
+public sealed record TermDetailRequest(string Id);
+
+/// <summary>Identifies one term occurrence by role, owner, addressable assertion, and canonical selector.</summary>
+public sealed record TermUsageDto(
+    string Role,
+    string OwnerKind,
+    string OwnerId,
+    string OwnerLabel,
+    string OccurrenceId,
+    string Selector);
+
+/// <summary>Contains one term definition and every exact usage occurrence in the active immutable state.</summary>
+public sealed record TermDetailDto(
+    string Id,
+    string Label,
+    string? Name,
+    string? Source,
+    string Selector,
+    int UsageCount,
+    IReadOnlyList<string> UsageRoles,
+    IReadOnlyList<TermUsageDto> Usages);
 
 /// <summary>Describes one object type assertion with its exact IDs and canonical selector.</summary>
 public sealed record TypeAssertionDto(string Id, string TermId, string TermLabel, string Selector);

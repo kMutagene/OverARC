@@ -1,0 +1,13 @@
+# Keep repository text deterministic across Windows, macOS, and Linux checkouts.
+* text=auto eol=lf
+
+# Windows launchers retain their native line endings.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Canonical ArcIR states are immutable byte artifacts; Git must never rewrite them.
+*.arcir.json -text
+
+# Binary assets must not undergo text conversion.
+*.xlsx binary

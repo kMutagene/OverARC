@@ -58,6 +58,45 @@ public sealed class ApiTests : IClassFixture<ExampleApiFactory>
     }
 
     [Fact]
+    public async Task Projection_reports_bounded_term_usage_summaries()
+    {
+        var projection = await client.GetFromJsonAsync<GraphProjectionDto>("/api/v1/states/state-a/projection");
+        Assert.NotNull(projection);
+
+        var relationPredicate = Assert.Single(projection.Terms, term => term.Id == "urn:overarc:term:contains");
+        Assert.True(relationPredicate.UsageCount > 0);
+        Assert.Contains("relationPredicate", relationPredicate.UsageRoles);
+
+        var unit = Assert.Single(projection.Terms, term => term.Id == "urn:overarc:term:unit-celsius");
+        Assert.Equal(1, unit.UsageCount);
+        Assert.Equal(["unit"], unit.UsageRoles);
+    }
+
+    [Fact]
+    public async Task Term_details_match_projection_summaries_and_unknown_terms_use_problem_responses()
+    {
+        var projection = await client.GetFromJsonAsync<GraphProjectionDto>("/api/v1/states/state-a/projection");
+        Assert.NotNull(projection);
+        var summary = Assert.Single(projection.Terms, term => term.Id == "urn:overarc:term:measurement");
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/states/state-a/term-details",
+            new TermDetailRequest(summary.Id));
+        response.EnsureSuccessStatusCode();
+        var detail = await response.Content.ReadFromJsonAsync<TermDetailDto>();
+        Assert.NotNull(detail);
+        Assert.Equal(summary.UsageCount, detail.Usages.Count);
+        Assert.Equal(summary.UsageRoles, detail.UsageRoles);
+        Assert.All(detail.Usages, usage => Assert.StartsWith("#/graph/", usage.Selector, StringComparison.Ordinal));
+
+        var unknown = await client.PostAsJsonAsync(
+            "/api/v1/states/state-a/term-details",
+            new TermDetailRequest("urn:missing"));
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        Assert.Equal("application/problem+json", unknown.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
     public async Task Detail_keeps_unsafe_integer_exact_and_selectors_escape_ids()
     {
         var response = await client.PostAsJsonAsync("/api/v1/states/state-a/details",

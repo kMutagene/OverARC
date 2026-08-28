@@ -8,6 +8,14 @@ namespace OverARC.Api;
 /// <summary>Projects validated ArcIR JSON into frontend-specific graph and inspector DTOs without redefining ArcIR.</summary>
 public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
 {
+    private const string ObjectTypeRole = "objectType";
+    private const string ObjectPropertyPredicateRole = "objectPropertyPredicate";
+    private const string RelationPredicateRole = "relationPredicate";
+    private const string RelationPropertyPredicateRole = "relationPropertyPredicate";
+    private const string AnnotationPropertyRole = "annotationProperty";
+    private const string TermValueRole = "termValue";
+    private const string UnitRole = "unit";
+
     /// <summary>Builds the full domain graph, term summaries, placeholders, and derived reference edges for a state.</summary>
     public GraphProjectionDto Projection(StateArtifact state)
     {
@@ -70,10 +78,11 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
                 nodes[relation.Object] = objectNode with { SearchText = objectNode.SearchText + " " + relation.SearchText };
         }
 
+        var termUsages = ReadTermUsages(graph, terms);
         return new GraphProjectionDto(
             state.Id,
             state.Sha256,
-            terms.Values.OrderBy(term => term.Id, StringComparer.Ordinal).ToArray(),
+            SummarizeTerms(terms, termUsages),
             nodes.Values.OrderBy(node => node.Id, StringComparer.Ordinal).ToArray(),
             relations.OrderBy(relation => relation.Id, StringComparer.Ordinal).ToArray());
     }
@@ -97,6 +106,29 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         }
 
         return null;
+    }
+
+    /// <summary>Returns one exact term definition and every usage occurrence, or <see langword="null"/> when absent.</summary>
+    public TermDetailDto? TermDetails(StateArtifact state, TermDetailRequest request)
+    {
+        var graph = state.Root.GetProperty("graph");
+        var terms = ReadTerms(graph.GetProperty("terms"));
+        if (!terms.TryGetValue(request.Id, out var term)) return null;
+
+        var usagesByTerm = ReadTermUsages(graph, terms);
+        var usages = usagesByTerm.TryGetValue(term.Id, out var matches)
+            ? OrderUsages(matches)
+            : [];
+        var roles = usages.Select(usage => usage.Role).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        return new TermDetailDto(
+            term.Id,
+            term.Label,
+            term.Name,
+            term.Source,
+            term.Selector,
+            usages.Count,
+            roles,
+            usages);
     }
 
     /// <summary>Projects one ArcIR object into the complete inspector transport shape.</summary>
@@ -211,10 +243,215 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         {
             var name = NullableString(item.Value.GetProperty("name"));
             var source = NullableString(item.Value.GetProperty("source"));
-            terms[item.Name] = new TermDto(item.Name, name ?? LocalName(item.Name), name, source, interop.TermSelector(item.Name));
+            terms[item.Name] = new TermDto(item.Name, name ?? LocalName(item.Name), name, source, interop.TermSelector(item.Name), 0, []);
         }
         return terms;
     }
+
+    /// <summary>Attaches bounded usage counts and roles while keeping complete occurrence lists out of the projection.</summary>
+    private static IReadOnlyList<TermDto> SummarizeTerms(
+        IReadOnlyDictionary<string, TermDto> terms,
+        IReadOnlyDictionary<string, List<TermUsageDto>> usages) =>
+        terms.Values
+            .Select(term =>
+            {
+                var matches = usages.TryGetValue(term.Id, out var values) ? values : [];
+                return term with
+                {
+                    UsageCount = matches.Count,
+                    UsageRoles = matches.Select(usage => usage.Role)
+                        .Distinct(StringComparer.Ordinal)
+                        .Order(StringComparer.Ordinal)
+                        .ToArray()
+                };
+            })
+            .OrderBy(term => term.Id, StringComparer.Ordinal)
+            .ToArray();
+
+    /// <summary>Scans canonical objects and relations into exact, role-classified term occurrences.</summary>
+    private Dictionary<string, List<TermUsageDto>> ReadTermUsages(
+        JsonElement graph,
+        IReadOnlyDictionary<string, TermDto> terms)
+    {
+        var usages = new Dictionary<string, List<TermUsageDto>>(StringComparer.Ordinal);
+
+        foreach (var item in graph.GetProperty("objects").EnumerateObject())
+        {
+            var ownerId = item.Name;
+            var ownerLabel = ObjectLabel(ownerId, item.Value, terms);
+            foreach (var assertion in item.Value.GetProperty("types").EnumerateObject())
+            {
+                AddTermUsage(
+                    usages,
+                    terms,
+                    assertion.Value.GetProperty("term").GetString()!,
+                    new TermUsageDto(ObjectTypeRole, "object", ownerId, ownerLabel, assertion.Name, interop.TypeSelector(ownerId, assertion.Name)));
+            }
+
+            ReadPropertyUsages(usages, terms, ownerId, ownerLabel, false, item.Value.GetProperty("properties"));
+            ReadAnnotationUsages(usages, terms, ownerId, ownerLabel, null, false, item.Value.GetProperty("annotations"));
+        }
+
+        foreach (var item in graph.GetProperty("relations").EnumerateObject())
+        {
+            var ownerId = item.Name;
+            var predicate = item.Value.GetProperty("predicate").GetString()!;
+            var ownerLabel = TermLabel(predicate, terms);
+            AddTermUsage(
+                usages,
+                terms,
+                predicate,
+                new TermUsageDto(RelationPredicateRole, "relation", ownerId, ownerLabel, ownerId, interop.RelationSelector(ownerId)));
+            ReadPropertyUsages(usages, terms, ownerId, ownerLabel, true, item.Value.GetProperty("properties"));
+            ReadAnnotationUsages(usages, terms, ownerId, ownerLabel, null, true, item.Value.GetProperty("annotations"));
+        }
+
+        return usages;
+    }
+
+    /// <summary>Collects predicate, value, and nested annotation term occurrences for one property map.</summary>
+    private void ReadPropertyUsages(
+        Dictionary<string, List<TermUsageDto>> usages,
+        IReadOnlyDictionary<string, TermDto> terms,
+        string ownerId,
+        string ownerLabel,
+        bool relationOwner,
+        JsonElement properties)
+    {
+        foreach (var property in properties.EnumerateObject())
+        {
+            var ownerKind = relationOwner ? "relation" : "object";
+            var selector = relationOwner
+                ? interop.RelationPropertySelector(ownerId, property.Name)
+                : interop.PropertySelector(ownerId, property.Name);
+            var valueSelector = relationOwner
+                ? interop.RelationPropertyValueSelector(ownerId, property.Name)
+                : interop.PropertyValueSelector(ownerId, property.Name);
+            AddTermUsage(
+                usages,
+                terms,
+                property.Value.GetProperty("predicate").GetString()!,
+                new TermUsageDto(
+                    relationOwner ? RelationPropertyPredicateRole : ObjectPropertyPredicateRole,
+                    ownerKind,
+                    ownerId,
+                    ownerLabel,
+                    property.Name,
+                    selector));
+            ReadArcValueUsages(
+                property.Value.GetProperty("value"),
+                termId => AddTermUsage(
+                    usages,
+                    terms,
+                    termId,
+                    new TermUsageDto(TermValueRole, ownerKind, ownerId, ownerLabel, property.Name, valueSelector)));
+            ReadAnnotationUsages(
+                usages,
+                terms,
+                ownerId,
+                ownerLabel,
+                property.Name,
+                relationOwner,
+                property.Value.GetProperty("annotations"));
+        }
+    }
+
+    /// <summary>Collects property, term-value, and unit occurrences from one annotation map.</summary>
+    private void ReadAnnotationUsages(
+        Dictionary<string, List<TermUsageDto>> usages,
+        IReadOnlyDictionary<string, TermDto> terms,
+        string ownerId,
+        string ownerLabel,
+        string? propertyId,
+        bool relationOwner,
+        JsonElement annotations)
+    {
+        foreach (var annotation in annotations.EnumerateObject())
+        {
+            var ownerKind = relationOwner ? "relation" : "object";
+            var selector = AnnotationSelector(ownerId, propertyId, annotation.Name, relationOwner);
+            var valueSelector = AnnotationValueSelector(ownerId, propertyId, annotation.Name, relationOwner);
+            AddTermUsage(
+                usages,
+                terms,
+                annotation.Value.GetProperty("property").GetString()!,
+                new TermUsageDto(AnnotationPropertyRole, ownerKind, ownerId, ownerLabel, annotation.Name, selector));
+            ReadAnnotationValueUsages(
+                annotation.Value.GetProperty("value"),
+                termId => AddTermUsage(
+                    usages,
+                    terms,
+                    termId,
+                    new TermUsageDto(TermValueRole, ownerKind, ownerId, ownerLabel, annotation.Name, valueSelector)),
+                termId => AddTermUsage(
+                    usages,
+                    terms,
+                    termId,
+                    new TermUsageDto(UnitRole, ownerKind, ownerId, ownerLabel, annotation.Name, valueSelector)));
+        }
+    }
+
+    /// <summary>Enumerates term-like IRI values recursively while preserving ArcValue.List as one selected value.</summary>
+    private static void ReadArcValueUsages(JsonElement value, Action<string> addTerm)
+    {
+        var type = value.GetProperty("type").GetString();
+        if (type == "iri") addTerm(value.GetProperty("value").GetString()!);
+        if (type != "list") return;
+        foreach (var item in value.GetProperty("value").EnumerateArray()) ReadArcValueUsages(item, addTerm);
+    }
+
+    /// <summary>Enumerates term values, literal IRI values, and optional units from one annotation union value.</summary>
+    private static void ReadAnnotationValueUsages(JsonElement value, Action<string> addTerm, Action<string> addUnit)
+    {
+        var type = value.GetProperty("type").GetString();
+        if (type is "term" or "termWithUnit") addTerm(value.GetProperty("value").GetString()!);
+        if (type is "literal" or "literalWithUnit") ReadArcValueUsages(value.GetProperty("value"), addTerm);
+        if (type is "literalWithUnit" or "termWithUnit") addUnit(value.GetProperty("unit").GetString()!);
+    }
+
+    /// <summary>Adds a usage only for a definition registered in the state's term dictionary.</summary>
+    private static void AddTermUsage(
+        Dictionary<string, List<TermUsageDto>> usages,
+        IReadOnlyDictionary<string, TermDto> terms,
+        string termId,
+        TermUsageDto usage)
+    {
+        if (!terms.ContainsKey(termId)) return;
+        if (!usages.TryGetValue(termId, out var matches))
+        {
+            matches = [];
+            usages.Add(termId, matches);
+        }
+        matches.Add(usage);
+    }
+
+    /// <summary>Orders occurrence details deterministically for stable inspector grouping and tests.</summary>
+    private static IReadOnlyList<TermUsageDto> OrderUsages(IEnumerable<TermUsageDto> usages) =>
+        usages.OrderBy(usage => usage.Role, StringComparer.Ordinal)
+            .ThenBy(usage => usage.OwnerId, StringComparer.Ordinal)
+            .ThenBy(usage => usage.OccurrenceId, StringComparer.Ordinal)
+            .ThenBy(usage => usage.Selector, StringComparer.Ordinal)
+            .ToArray();
+
+    /// <summary>Selects the nearest addressable annotation entity through the canonical interop adapter.</summary>
+    private string AnnotationSelector(string ownerId, string? propertyId, string annotationId, bool relationOwner) =>
+        relationOwner
+            ? propertyId is null
+                ? interop.RelationAnnotationSelector(ownerId, annotationId)
+                : interop.RelationPropertyAnnotationSelector(ownerId, propertyId, annotationId)
+            : propertyId is null
+                ? interop.ObjectAnnotationSelector(ownerId, annotationId)
+                : interop.PropertyAnnotationSelector(ownerId, propertyId, annotationId);
+
+    /// <summary>Selects the complete annotation value through the canonical interop adapter.</summary>
+    private string AnnotationValueSelector(string ownerId, string? propertyId, string annotationId, bool relationOwner) =>
+        relationOwner
+            ? propertyId is null
+                ? interop.RelationAnnotationValueSelector(ownerId, annotationId)
+                : interop.RelationPropertyAnnotationValueSelector(ownerId, propertyId, annotationId)
+            : propertyId is null
+                ? interop.ObjectAnnotationValueSelector(ownerId, annotationId)
+                : interop.PropertyAnnotationValueSelector(ownerId, propertyId, annotationId);
 
     /// <summary>Selects a curator-facing object label using the documented accession, ID, title, and name precedence.</summary>
     private static string ObjectLabel(string id, JsonElement value, IReadOnlyDictionary<string, TermDto> terms)

@@ -46,11 +46,11 @@ interface FilterPanelProps {
   onChange: (filters: Filters) => void;
 }
 
-/** Renders free-text, context, kind, type, and predicate filters plus a complete reset action. */
+/** Renders graph-specific free-text, context, kind, type, and predicate filters plus a reset action. */
 export function FilterPanel({ filters, options, termLabels, onChange }: FilterPanelProps) {
   return (
     <section>
-      <h2>Find and filter</h2>
+      <h2>Graph search and filters</h2>
       <label>
         Search
         <input

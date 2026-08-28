@@ -2,9 +2,10 @@ import type { MultiDirectedGraph } from 'graphology';
 import type { Projection, Selection, Theme, VisibleProjection } from '../../shared/types';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphTableView } from './GraphTableView';
+import { TermsView } from '../terms/TermsView';
 
 /** Mutually exclusive first-class representations available in the center pane. */
-export type CenterView = 'graph' | 'table';
+export type CenterView = 'graph' | 'table' | 'terms';
 
 /** Shared state and commands needed by the center graph/table workspace. */
 interface GraphPaneProps {
@@ -21,7 +22,7 @@ interface GraphPaneProps {
   onSelect: (selection: Selection | null) => void;
 }
 
-/** Hosts persistent graph and table layers and switches which one is visible and interactive. */
+/** Hosts persistent graph, table, and term layers and switches the active accessible workspace. */
 export function GraphPane({
   graph,
   projection,
@@ -36,7 +37,7 @@ export function GraphPane({
   onSelect,
 }: GraphPaneProps) {
   return (
-    <section className="graph-pane" aria-label="Graph and table views">
+    <section className="graph-pane" aria-label="Graph, table, and term views">
       <nav className="center-view-switch" aria-label="Center view">
         <button
           type="button"
@@ -53,6 +54,14 @@ export function GraphPane({
           onClick={() => onViewChange('table')}
         >
           Table
+        </button>
+        <button
+          type="button"
+          className={activeView === 'terms' ? 'active' : 'secondary'}
+          aria-pressed={activeView === 'terms'}
+          onClick={() => onViewChange('terms')}
+        >
+          Terms
         </button>
       </nav>
       {error && (
@@ -90,6 +99,7 @@ export function GraphPane({
             active={activeView === 'table'}
             onSelect={onSelect}
           />
+          <TermsView projection={projection} active={activeView === 'terms'} onSelect={onSelect} />
         </>
       )}
       {!loading && !graph && !error && <div className="loading">No valid state is available.</div>}

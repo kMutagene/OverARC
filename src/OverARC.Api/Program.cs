@@ -50,6 +50,12 @@ app.MapPost("/api/v1/states/{stateId}/details", async (string stateId, DetailReq
     return result;
 });
 
+app.MapPost("/api/v1/states/{stateId}/term-details", async (string stateId, TermDetailRequest request, WorkspaceService service, CancellationToken cancellationToken) =>
+{
+    var result = await Execute(() => service.GetTermDetailsAsync(stateId, request, cancellationToken));
+    return result;
+});
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 if (File.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty, "index.html")))

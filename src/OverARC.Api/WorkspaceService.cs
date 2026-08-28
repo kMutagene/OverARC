@@ -140,6 +140,13 @@ public sealed class WorkspaceService : IDisposable
         return projectionBuilder.Details(state, request);
     }
 
+    /// <summary>Builds complete definition and occurrence details for one exact term in a valid state.</summary>
+    public async Task<TermDetailDto?> GetTermDetailsAsync(string stateId, TermDetailRequest request, CancellationToken cancellationToken)
+    {
+        var state = await GetStateAsync(stateId, cancellationToken);
+        return projectionBuilder.TermDetails(state, request);
+    }
+
     /// <summary>Resolves a listed state or distinguishes unknown state IDs from known invalid entries.</summary>
     private async Task<StateArtifact> GetStateAsync(string stateId, CancellationToken cancellationToken)
     {

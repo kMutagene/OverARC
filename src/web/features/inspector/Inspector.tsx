@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { identifierLabels } from '../../shared/identifierModel';
-import type { ElementDetail, Projection } from '../../shared/types';
+import type { ElementDetail, Projection, TermDetail } from '../../shared/types';
+import { TermInspector } from '../terms/TermInspector';
 import {
   AssertionSections,
   InspectorMetadata,
@@ -11,6 +12,7 @@ import {
 /** Data and pane state required by the selected-element inspector. */
 interface InspectorProps {
   detail: ElementDetail | null;
+  termDetail?: TermDetail | null;
   loading: boolean;
   projection?: Projection | null;
   hiddenByFilters?: boolean;
@@ -18,9 +20,10 @@ interface InspectorProps {
   onClear?: () => void;
 }
 
-/** Renders complete object/relation details with progressive disclosure for technical identity data. */
+/** Dispatches the right pane between complete graph-element and term inspection. */
 export function Inspector({
   detail,
+  termDetail = null,
   loading,
   projection = null,
   hiddenByFilters = false,
@@ -35,10 +38,11 @@ export function Inspector({
         <p>Loading details…</p>
       </aside>
     );
+  if (termDetail) return <TermInspector detail={termDetail} onClear={onClear} />;
   if (!detail)
     return (
-      <aside className="inspector empty">
-        <p>Select an object or relation to inspect every assertion and annotation.</p>
+      <aside className="inspector empty" aria-label="Element inspector">
+        <p>Select an object, relation, or term to inspect its complete details.</p>
       </aside>
     );
 

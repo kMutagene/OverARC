@@ -1,9 +1,17 @@
 # ArcIR term workbench
 
-> **Status: active plan (2026-08-28).** The layout and interaction direction is
-> approved. Implementation starts after the plan-only commit; every completed
-> slice and its verification must be reflected here in the same commit as the
-> implementation.
+> **Status: implemented (2026-08-28).** All six steps and their acceptance gates
+> are complete. The repository-wide FAKE `Test` path passes formatting, linting,
+> build, backend, frontend, performance, Chromium, and Firefox verification.
+
+| Step                         | Status   | Evidence                                                                                                                                      |
+| ---------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Center view and selection | Complete | Persistent Graph/Table/Terms layers, exact term selection, state-bound clearing, and graph lifecycle browser coverage                         |
+| 2. Term discovery            | Complete | Independent Unicode search, source/role filters, three-state sorting, exact copy/inspect actions, empty results, and 100-row pagination       |
+| 3. Usage projection/details  | Complete | Seven stable roles, bounded projection summaries, on-demand complete occurrences, canonical selectors, and count-agreement API tests          |
+| 4. Term inspector            | Complete | Definition metadata, collapsed technical identity, grouped/paginated occurrences, unused-term handling, and state reset coverage              |
+| 5. Future editing seam       | Complete | Exact definition/occurrence identities remain transport data; no edit controls, writes, JSON patches, Git operations, or F# transport leakage |
+| 6. Integration/regression    | Complete | FAKE `Test` passes 16 backend tests, 32 frontend/performance tests, and all 12 bounded-worker Chromium/Firefox flows                          |
 
 ## Summary
 

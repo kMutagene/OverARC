@@ -1,6 +1,6 @@
-# OverARC read-only graph workbench
+# OverARC read-only graph and term workbench
 
-> **Status: implemented milestone (2026-08-27).** This viewer-first roadmap
+> **Status: implemented milestone (2026-08-28).** This viewer-first roadmap
 > supersedes the earlier F# server, generated API client, and early editor plan.
 > The sibling BioFSharp.INSDC roadmap remains authoritative for ArcIR, mapping,
 > curation transactions, provenance, and native ARC processes.
@@ -49,6 +49,8 @@ The first milestone is a curator-oriented, read-only desktop workbench:
 - a repository-maintained fictional INSDC-like example workspace;
 - listing and opening multiple immutable states, without comparison;
 - object/relation graph projection with complete assertion and annotation detail;
+- a first-class registered-term dictionary with compact usage summaries and
+  complete on-demand occurrence details;
 - semantic client-side search and filters with optional one-hop context;
 - deterministic initial positions and worker-based ForceAtlas2 refinement;
 - visible-canvas PNG and separate visible-node/visible-relation CSV exports; and
@@ -132,15 +134,17 @@ The hand-written client uses:
 - `POST /api/v1/workspace/refresh`
 - `GET /api/v1/states/{stateId}/projection`
 - `POST /api/v1/states/{stateId}/details`
+- `POST /api/v1/states/{stateId}/term-details`
 
 OpenAPI remains available at `/openapi/v1.json`. Errors use RFC 7807 problem
 responses: unknown states/elements are `404`, listed invalid states are `422`, and
 workspace configuration failures are `422`.
 
-The projection returns exact IDs/selectors, compact term summaries, nodes, directed
-relations, filter metadata, and projection-only placeholder nodes for missing
-endpoints. `ArcValue.Ref` becomes a visually distinct derived reference edge but
-never an `ArcRelation`.
+The projection returns exact IDs/selectors, compact term usage summaries, nodes,
+directed relations, filter metadata, and projection-only placeholder nodes for
+missing endpoints. Complete term occurrence lists are loaded only through the
+term-details endpoint. `ArcValue.Ref` becomes a visually distinct derived
+reference edge but never an `ArcRelation`.
 
 Detail responses return every type assertion, property, nested annotation,
 relation property, evidence/source reference, and selector. Integers and canonical
@@ -149,9 +153,11 @@ by canonical path and digest; a digest change invalidates the decoded state.
 
 ## Viewer semantics
 
-The desktop layout has workspace/filter controls on the left, Sigma in the center,
-and the structured inspector on the right. An accessible table exposes the visible
-objects and relations and provides an alternative selection path.
+The desktop layout has workspace/filter controls on the left, mutually exclusive
+Graph, Table, and Terms center views, and the structured inspector on the right.
+The accessible graph table exposes visible objects and relations. The independent
+term table exposes every registered definition with source, usage counts, roles,
+and complete on-demand occurrences without adding term nodes to Graphology.
 
 Objects are graph nodes and ArcRelations are directed multiedges keyed by exact
 relation IRI. Missing endpoints are amber placeholders. Derived reference edges
@@ -172,14 +178,17 @@ Search is Unicode-normalized and case-insensitive across backend-composed IDs,
 labels, term/predicate labels, and rendered property/annotation values. Object
 kind, object type, and relation predicate are independent filter categories. The
 categories combine with AND; selected values within one category combine with OR.
+Term search and source/usage-role filters use the same normalization and category
+semantics but never alter graph visibility or graph exports.
 
 Strict matching nodes remain prominent. One-hop context is on by default and is
 dimmed. Context edges must touch a strict match; unrelated context-to-context edges
 are hidden. With context off, only strict nodes and relations whose endpoints both
 match remain. Predicate filters determine which relations are traversable.
 
-Only the active state ID is stored in the URL. Filters survive state changes;
-selection, camera, node positions, and worker layout state do not.
+Only the active state ID is stored in the URL. Filters and the active center view
+survive state changes; selection, camera, node positions, and worker layout state
+do not. Center-view changes alone preserve the selected object, relation, or term.
 
 Coordinates are deterministically seeded from exact node IDs. ForceAtlas2 runs in
 a worker and has start, stop, and reset controls. Dragging changes only in-memory
@@ -199,10 +208,12 @@ Automated coverage includes:
   placeholders, multiedges, self-loops, exact 64-bit values, nested detail, RFC
   7807 responses, and every endpoint;
 - projection mapping, deterministic seeds, Unicode search normalization, AND/OR
-  filter semantics, predicate traversal, one-hop context, inspector rendering,
-  and CSV escaping; and
+  filter semantics, predicate traversal, one-hop context, term role/count
+  projection, bounded term discovery, complete term occurrence inspection,
+  inspector rendering, and CSV escaping; and
 - live Chromium and Firefox flows for state loading/switching, filtering,
-  selection and full inspection, refresh, layout controls, and PNG/CSV downloads.
+  graph and term selection/full inspection, center-view preservation, refresh,
+  layout controls, and PNG/CSV downloads.
 
 Generated performance tests create 10,000 objects and 25,000 relations. They gate
 backend projection plus frontend graph construction at five seconds, client filter

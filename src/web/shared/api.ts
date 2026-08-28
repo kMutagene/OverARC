@@ -1,4 +1,4 @@
-import type { ElementDetail, Projection, Workspace } from './types';
+import type { ElementDetail, Projection, TermDetail, Workspace } from './types';
 
 /** Error raised for non-success API responses after decoding their RFC 7807 payload. */
 export class ApiProblem extends Error {
@@ -44,5 +44,12 @@ export const api = {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ kind, id }),
+    }),
+  /** Loads one exact term definition and every usage occurrence in the selected state. */
+  termDetails: (stateId: string, id: string) =>
+    request<TermDetail>(`/api/v1/states/${encodeURIComponent(stateId)}/term-details`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id }),
     }),
 };

@@ -9,8 +9,9 @@ handling.
 OverARC is the production curation workbench built on the ARC intermediate
 representation (ArcIR). The current milestone is a curator-oriented, read-only
 graph viewer for immutable ArcIR 1.0 states. It lists locally configured states,
-projects objects and relations into a Sigma graph, exposes complete assertion and
-annotation details, filters the visible graph, and exports PNG/CSV views.
+projects objects and relations into a Sigma graph, exposes registered terms and
+their usage occurrences, provides complete assertion and annotation details,
+filters the visible graph, and exports PNG/CSV views.
 
 Editing, Git writes, provenance/history views, diagnostics, SSSOM, DataHub access,
 and external-workspace setup are future phases. Do not invent a JSON patch or
@@ -75,8 +76,9 @@ application embeds the Vite build into the loopback-bound ASP.NET server.
 │       ├── app/                   root composition and application orchestration
 │       ├── features/
 │       │   ├── graph/             projection model, Sigma rendering, controls
-│       │   ├── inspector/         object/relation detail presentation
+│       │   ├── inspector/         graph-element and term detail dispatch
 │       │   ├── layout/            resizable/collapsible workbench panes
+│       │   ├── terms/             term discovery, filtering, and usage inspection
 │       │   ├── theme/             persisted light/dark theme
 │       │   └── workspace/         states, filters, counts, legend, exports
 │       ├── shared/                HTTP client and transport/domain TypeScript types
@@ -96,6 +98,13 @@ using `*.test.ts` or `*.test.tsx`. Browser, cross-feature performance, contract,
 and shared setup files belong under top-level `tests/`. Vite only bundles modules
 reachable from `main.tsx`; colocated test files are never imported by production
 code.
+
+## Planning and commits
+
+Before making a commit, update every affected plan so its status accurately
+reflects the work and verification included in that commit. Commit the plan
+status updates together with the implementation; do not leave completed work
+described as pending or unimplemented.
 
 ## Build and test commands
 

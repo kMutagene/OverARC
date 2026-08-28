@@ -8,6 +8,7 @@ const testWorkspace = resolve('tests/fixtures/viewer-workspace');
 export default defineConfig({
   testDir: './tests/browser',
   fullyParallel: true,
+  workers: 6,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',

@@ -7,7 +7,7 @@ test('loads states, filters with context, and inspects complete details', async 
   const visibleGraph = page.getByRole('heading', { name: 'Visible graph' }).locator('..');
   await expect(visibleGraph.getByText('5 objects · 5 relations', { exact: true })).toBeVisible();
 
-  await page.getByLabel('Search').fill('SAMTEST001');
+  await page.getByLabel('Search', { exact: true }).fill('SAMTEST001');
   await expect(visibleGraph.getByText('3 objects · 4 relations', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Table', exact: true }).click();
   await page.getByRole('button', { name: 'Inspect object SAMTEST001' }).click();
@@ -29,7 +29,7 @@ test('loads states, filters with context, and inspects complete details', async 
   ).toBeVisible();
   await page.getByRole('button', { name: 'Clear selection' }).click();
   await expect(
-    page.getByText('Select an object or relation to inspect every assertion and annotation.'),
+    page.getByText('Select an object, relation, or term to inspect its complete details.'),
   ).toBeVisible();
 
   await page.getByRole('tab', { name: /Relations/ }).click();
@@ -55,16 +55,16 @@ test('switches state, refreshes, controls layout, and exports', async ({ page })
   await page.getByRole('button', { name: 'Table', exact: true }).click();
   await page.getByRole('button', { name: 'Inspect object PRJTEST001' }).click();
   await expect(page.getByRole('heading', { name: 'PRJTEST001' })).toBeVisible();
-  await page.getByLabel('Search').fill('PRJTEST001');
+  await page.getByLabel('Search', { exact: true }).fill('PRJTEST001');
   await page.getByRole('button', { name: /Example state B/ }).click();
   await expect(page).toHaveURL(/state=state-b/);
-  await expect(page.getByLabel('Search')).toHaveValue('PRJTEST001');
+  await expect(page.getByLabel('Search', { exact: true })).toHaveValue('PRJTEST001');
   await expect(page.getByRole('button', { name: 'Table', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
   await expect(
-    page.getByText('Select an object or relation to inspect every assertion and annotation.'),
+    page.getByText('Select an object, relation, or term to inspect its complete details.'),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Reset filters' }).click();
   const visibleGraph = page.getByRole('heading', { name: 'Visible graph' }).locator('..');
@@ -139,6 +139,42 @@ test('uses the full table pane with selectable text, sorting, and reachable pagi
   await expect(sigma).toBeVisible();
   await page.getByRole('button', { name: 'Table', exact: true }).click();
   await expect(tableView).toBeVisible();
+});
+
+test('discovers terms and inspects every registered usage without disturbing graph state', async ({
+  page,
+}) => {
+  await page.goto('/?state=state-a');
+  const sigma = page.locator('.react-sigma');
+  await expect(sigma).toBeVisible();
+
+  await page.getByRole('button', { name: 'Terms', exact: true }).click();
+  const termsView = page.getByRole('region', { name: 'ArcIR terms' });
+  await expect(termsView).toBeVisible();
+  await expect(sigma).not.toBeVisible();
+  await expect(termsView.getByText('14 of 14 terms', { exact: true })).toBeVisible();
+
+  await termsView.getByLabel('Search terms').fill('measurement');
+  await expect(termsView.getByText('1 of 14 terms', { exact: true })).toBeVisible();
+  await termsView.getByRole('button', { name: 'Inspect term Measurement' }).click();
+
+  const inspector = page.getByLabel('Term inspector');
+  await expect(inspector.getByRole('heading', { name: 'Measurement' })).toBeVisible();
+  await expect(inspector.getByText('3', { exact: true }).first()).toBeVisible();
+  await expect(inspector.getByRole('heading', { name: 'Object property predicate' })).toBeVisible();
+  await expect(inspector.getByRole('heading', { name: 'Annotation property' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Graph', exact: true }).click();
+  await expect(sigma).toBeVisible();
+  await expect(inspector.getByRole('heading', { name: 'Measurement' })).toBeVisible();
+  await page.getByRole('button', { name: 'Terms', exact: true }).click();
+  await expect(termsView.getByLabel('Search terms')).toHaveValue('measurement');
+
+  await page.getByRole('button', { name: /Example state B/ }).click();
+  await expect(page).toHaveURL(/state=state-b/);
+  await expect(page.getByLabel('Element inspector')).toContainText(
+    'Select an object, relation, or term to inspect its complete details.',
+  );
 });
 
 test('resizes, collapses, and restores both side panes', async ({ page }) => {

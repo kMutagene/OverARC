@@ -50,6 +50,7 @@ export default function App() {
   );
   const selectionHidden = Boolean(
     selection.selected &&
+    selection.selected.kind !== 'term' &&
     (selection.selected.kind === 'object'
       ? !visible.nodeStatus.has(selection.selected.id)
       : !visible.relationStatus.has(selection.selected.id)),
@@ -107,6 +108,7 @@ export default function App() {
       <PaneResizer side="right" {...panes.right} />
       <Inspector
         detail={selection.detail}
+        termDetail={selection.termDetail}
         loading={selection.loading}
         projection={workspace.projection}
         hiddenByFilters={selectionHidden}

@@ -12,6 +12,8 @@ const projection: Projection = {
       name: 'references',
       source: null,
       selector: '#/terms/reference',
+      usageCount: 1,
+      usageRoles: ['relationPredicate'],
     },
   ],
   nodes: [

@@ -1,0 +1,116 @@
+.terms-view {
+  display: grid;
+  box-sizing: border-box;
+  grid-template-rows: auto minmax(0, 1fr) 3rem;
+  color: var(--overarc-ink);
+  background: var(--overarc-surface);
+}
+
+.terms-toolbar {
+  z-index: 3;
+  display: flex;
+  min-height: 3.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 15rem 0.55rem 0.725rem;
+}
+
+.terms-toolbar > label {
+  min-width: min(18rem, 40vw);
+  margin: 0;
+}
+
+.terms-toolbar input[type='search'] {
+  height: 2.15rem;
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.term-filter {
+  position: relative;
+  margin: 0;
+}
+
+.term-filter > summary {
+  min-width: 6rem;
+  padding: 0.35rem 0.55rem;
+  color: var(--overarc-ink);
+  background: var(--overarc-surface-panel);
+  border: 1px solid var(--overarc-line);
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.term-filter > summary span {
+  margin-left: 0.3rem;
+  color: var(--overarc-accent);
+}
+
+.term-filter fieldset {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  width: max-content;
+  min-width: 14rem;
+  max-width: min(30rem, 70vw);
+  max-height: 20rem;
+  margin: 0;
+  padding: 0.55rem;
+  overflow: auto;
+  background: var(--overarc-surface);
+  border: 1px solid var(--overarc-line);
+  border-radius: 0.25rem;
+  box-shadow: 0 5px 20px var(--overarc-shadow);
+}
+
+.term-filter label {
+  margin: 0;
+  padding: 0.2rem;
+  font-size: 0.78rem;
+}
+
+.terms-toolbar > button {
+  width: auto;
+  margin: 0;
+}
+
+.terms-count {
+  color: var(--overarc-muted);
+  font-size: 0.78rem;
+}
+
+.terms-content table {
+  min-width: 60rem;
+}
+
+.term-usage-kind {
+  margin: 0.15rem 0;
+  color: var(--overarc-muted);
+  font-size: 0.76rem;
+  text-transform: capitalize;
+}
+
+.term-usage-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+}
+
+.term-usage-pagination button {
+  width: auto;
+  margin: 0;
+}
+
+@media (max-width: 1050px) {
+  .terms-toolbar {
+    padding-right: 0.725rem;
+    padding-top: 3.6rem;
+  }
+}

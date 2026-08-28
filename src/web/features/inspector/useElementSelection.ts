@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../shared/api';
-import type { ElementDetail, Projection, Selection } from '../../shared/types';
+import type { ElementDetail, Projection, Selection, TermDetail } from '../../shared/types';
 import { projectedDetail } from './detailModel';
 
-/** Owns exact element selection and resolves local projected details before calling the details API. */
+/** Owns exact state-bound selection and resolves graph or term details through the appropriate path. */
 export function useElementSelection(activeState: string | null, projection: Projection | null) {
   const [selected, setSelected] = useState<Selection | null>(null);
   const [detail, setDetail] = useState<ElementDetail | null>(null);
+  const [termDetail, setTermDetail] = useState<TermDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,15 +15,39 @@ export function useElementSelection(activeState: string | null, projection: Proj
   useEffect(() => {
     setSelected(null);
     setDetail(null);
+    setTermDetail(null);
     setError(null);
   }, [activeState]);
 
-  // Projection-only elements resolve synchronously; canonical elements use the detail API.
+  // Projection-only graph elements resolve synchronously; canonical graph and term details use separate APIs.
   useEffect(() => {
     if (!activeState || !selected) {
       setDetail(null);
+      setTermDetail(null);
       setLoading(false);
       return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    setDetail(null);
+    setTermDetail(null);
+
+    if (selected.kind === 'term') {
+      void api
+        .termDetails(activeState, selected.id)
+        .then((next) => {
+          if (!cancelled) setTermDetail(next);
+        })
+        .catch((reason) => {
+          if (!cancelled) setError(reason instanceof Error ? reason.message : String(reason));
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+      return () => {
+        cancelled = true;
+      };
     }
 
     const local = projectedDetail(projection, selected);
@@ -33,8 +58,6 @@ export function useElementSelection(activeState: string | null, projection: Proj
       return;
     }
 
-    let cancelled = false;
-    setLoading(true);
     void api
       .details(activeState, selected.kind, selected.id)
       .then((next) => {
@@ -60,10 +83,11 @@ export function useElementSelection(activeState: string | null, projection: Proj
   return {
     selected,
     detail,
+    termDetail,
     loading,
     error,
     select,
-    /** Clears either element kind through the same error-resetting selection path. */
+    /** Clears graph or term selection through the same error-resetting path. */
     clear: () => select(null),
   };
 }
