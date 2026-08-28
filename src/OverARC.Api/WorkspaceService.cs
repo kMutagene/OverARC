@@ -5,17 +5,27 @@ using System.Text.RegularExpressions;
 
 namespace OverARC.Api;
 
+/// <summary>Signals invalid viewer configuration that prevents the workspace itself from loading.</summary>
 public sealed class WorkspaceException(string message) : Exception(message);
+
+/// <summary>Signals that a listed state exists but failed digest, codec, or structural validation.</summary>
 public sealed class InvalidStateException(string stateId, IReadOnlyList<string> errors)
     : Exception($"State '{stateId}' is invalid: {string.Join("; ", errors)}")
 {
+    /// <summary>Gets the manifest state ID that failed validation.</summary>
     public string StateId { get; } = stateId;
+
+    /// <summary>Gets every validation error retained for the state.</summary>
     public IReadOnlyList<string> Errors { get; } = errors;
 }
 
+/// <summary>Models the application-owned viewer manifest after strict JSON deserialization.</summary>
 internal sealed record ViewerManifest(string FormatVersion, string Name, IReadOnlyList<ManifestState> States);
+
+/// <summary>Models one immutable ArcIR file binding from the viewer manifest.</summary>
 internal sealed record ManifestState(string Id, string Label, string Path, string Sha256);
 
+/// <summary>Owns one validated ArcIR JSON document and the manifest metadata used to project it.</summary>
 public sealed class StateArtifact(
     string id,
     string label,
@@ -25,26 +35,45 @@ public sealed class StateArtifact(
     DateTimeOffset lastWriteUtc,
     JsonDocument document)
 {
+    /// <summary>Gets the URL-safe state ID assigned by the viewer manifest.</summary>
     public string Id { get; } = id;
+
+    /// <summary>Gets the curator-facing state label assigned by the viewer manifest.</summary>
     public string Label { get; } = label;
+
+    /// <summary>Gets the manifest path relative to the workspace root.</summary>
     public string RelativePath { get; } = relativePath;
+
+    /// <summary>Gets the fully resolved, workspace-contained state path.</summary>
     public string FullPath { get; } = fullPath;
+
+    /// <summary>Gets the lowercase SHA-256 digest that binds the state to immutable bytes.</summary>
     public string Sha256 { get; } = sha256;
+
+    /// <summary>Gets the filesystem timestamp used only for the initial-view convenience choice.</summary>
     public DateTimeOffset LastWriteUtc { get; } = lastWriteUtc;
+
+    /// <summary>Gets the root of the validated ArcIR JSON document.</summary>
     public JsonElement Root => Document.RootElement;
+
+    /// <summary>Gets the owned JSON document; its lifetime is controlled by the workspace snapshot.</summary>
     public JsonDocument Document { get; } = document;
 }
 
+/// <summary>Groups one workspace response with the validated artifacts addressable through it.</summary>
 internal sealed record WorkspaceSnapshot(WorkspaceDto Dto, IReadOnlyDictionary<string, StateArtifact> ValidStates) : IDisposable
 {
+    /// <summary>Releases all JSON documents owned by this immutable snapshot.</summary>
     public void Dispose()
     {
         foreach (var state in ValidStates.Values) state.Document.Dispose();
     }
 }
 
+/// <summary>Caches immutable bytes and their ArcIR validation result by resolved path and digest.</summary>
 internal sealed record StateCacheEntry(byte[] Bytes, IReadOnlyList<string> ValidationErrors);
 
+/// <summary>Loads, validates, caches, and serves the read-only viewer workspace.</summary>
 public sealed class WorkspaceService : IDisposable
 {
     private const string ManifestRelativePath = ".overarc/viewer.json";
@@ -65,6 +94,7 @@ public sealed class WorkspaceService : IDisposable
     private readonly List<WorkspaceSnapshot> retiredSnapshots = [];
     private WorkspaceSnapshot? snapshot;
 
+    /// <summary>Creates a workspace service rooted at an explicitly configured local directory.</summary>
     public WorkspaceService(string workspaceRoot, ArcIrInteropAdapter interop, GraphProjectionBuilder projectionBuilder)
     {
         this.workspaceRoot = Path.GetFullPath(workspaceRoot);
@@ -72,9 +102,11 @@ public sealed class WorkspaceService : IDisposable
         this.projectionBuilder = projectionBuilder;
     }
 
+    /// <summary>Returns the current workspace metadata, loading the first immutable snapshot lazily.</summary>
     public async Task<WorkspaceDto> GetWorkspaceAsync(CancellationToken cancellationToken) =>
         (await EnsureSnapshotAsync(cancellationToken)).Dto;
 
+    /// <summary>Re-reads and revalidates the workspace without writing its manifest or state files.</summary>
     public async Task<WorkspaceDto> RefreshAsync(CancellationToken cancellationToken)
     {
         await gate.WaitAsync(cancellationToken);
@@ -94,18 +126,21 @@ public sealed class WorkspaceService : IDisposable
         }
     }
 
+    /// <summary>Builds the compact graph projection for one valid state selected by exact state ID.</summary>
     public async Task<GraphProjectionDto> GetProjectionAsync(string stateId, CancellationToken cancellationToken)
     {
         var state = await GetStateAsync(stateId, cancellationToken);
         return projectionBuilder.Projection(state);
     }
 
+    /// <summary>Builds complete inspector details for one exact object or relation in a valid state.</summary>
     public async Task<ElementDetailDto?> GetDetailsAsync(string stateId, DetailRequest request, CancellationToken cancellationToken)
     {
         var state = await GetStateAsync(stateId, cancellationToken);
         return projectionBuilder.Details(state, request);
     }
 
+    /// <summary>Resolves a listed state or distinguishes unknown state IDs from known invalid entries.</summary>
     private async Task<StateArtifact> GetStateAsync(string stateId, CancellationToken cancellationToken)
     {
         var current = await EnsureSnapshotAsync(cancellationToken);
@@ -116,6 +151,7 @@ public sealed class WorkspaceService : IDisposable
         throw new InvalidStateException(stateId, summary.Errors);
     }
 
+    /// <summary>Returns the current snapshot, serializing only its lazy first load through the gate.</summary>
     private async Task<WorkspaceSnapshot> EnsureSnapshotAsync(CancellationToken cancellationToken)
     {
         if (snapshot is not null) return snapshot;
@@ -131,6 +167,7 @@ public sealed class WorkspaceService : IDisposable
         }
     }
 
+    /// <summary>Strictly loads the manifest and validates each state independently into a replacement snapshot.</summary>
     private async Task<WorkspaceSnapshot> LoadAsync(CancellationToken cancellationToken)
     {
         var manifestPath = Path.Combine(workspaceRoot, ".overarc", "viewer.json");
@@ -170,6 +207,7 @@ public sealed class WorkspaceService : IDisposable
             validStates);
     }
 
+    /// <summary>Validates one state path, digest, ArcIR document, and graph counts without affecting sibling entries.</summary>
     private async Task<(StateSummaryDto Summary, StateArtifact? Artifact)> LoadStateAsync(ManifestState entry, CancellationToken cancellationToken)
     {
         string fullPath;
@@ -213,6 +251,7 @@ public sealed class WorkspaceService : IDisposable
         return (Summary(entry, "valid", lastWrite, formatVersion, objectCount, relationCount, []), artifact);
     }
 
+    /// <summary>Resolves a relative state path while rejecting root escape and symbolic-link traversal.</summary>
     private string ResolveSafeStatePath(string relativePath)
     {
         if (string.IsNullOrWhiteSpace(relativePath) || Path.IsPathRooted(relativePath))
@@ -235,6 +274,7 @@ public sealed class WorkspaceService : IDisposable
         return candidate;
     }
 
+    /// <summary>Creates the common state-summary transport shape for valid and invalid entries.</summary>
     private static StateSummaryDto Summary(
         ManifestState state,
         string status,
@@ -245,6 +285,7 @@ public sealed class WorkspaceService : IDisposable
         IReadOnlyList<string> errors) =>
         new(state.Id, state.Label, state.Path, state.Sha256, status, lastWrite, formatVersion, objects, relations, errors);
 
+    /// <summary>Enforces the supported manifest version, URL-safe unique IDs, labels, paths, and lowercase digests.</summary>
     private static void ValidateManifest(ViewerManifest manifest)
     {
         if (manifest.FormatVersion != "1.0") throw new WorkspaceException($"Unsupported viewer manifest version '{manifest.FormatVersion}'.");
@@ -265,6 +306,7 @@ public sealed class WorkspaceService : IDisposable
         }
     }
 
+    /// <summary>Releases active and retired immutable snapshots plus the synchronization gate.</summary>
     public void Dispose()
     {
         snapshot?.Dispose();

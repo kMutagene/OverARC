@@ -1,5 +1,6 @@
 import type { ElementDetail, Projection, Selection } from '../../shared/types';
 
+/** Builds inspector details locally for projection-only placeholders and ArcValue.Ref edges. */
 export function projectedDetail(
   projection: Projection | null,
   selection: Selection,

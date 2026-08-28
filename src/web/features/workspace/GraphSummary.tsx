@@ -1,6 +1,7 @@
 import type { Projection, VisibleProjection } from '../../shared/types';
 import { objectKindColor } from '../graph/graphModel';
 
+/** Visible counts, legend inputs, and CSV action displayed in the workspace sidebar. */
 interface GraphSummaryProps {
   projection: Projection | null;
   visible: VisibleProjection;
@@ -8,6 +9,7 @@ interface GraphSummaryProps {
   onExportCsv: () => void;
 }
 
+/** Summarizes the filtered graph and explains object-kind and relation/reference visual encodings. */
 export function GraphSummary({ projection, visible, kinds, onExportCsv }: GraphSummaryProps) {
   return (
     <section>

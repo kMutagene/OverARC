@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+// Keep transport JSON camel-cased and omit unavailable union fields instead of emitting null noise.
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -14,6 +15,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<ArcIrInteropAdapter>();
 builder.Services.AddSingleton<GraphProjectionBuilder>();
+
+// Resolve an explicit workspace first, then choose the packaged or repository example by host layout.
 builder.Services.AddSingleton(provider =>
 {
     var configured = builder.Configuration["workspace"] ?? Environment.GetEnvironmentVariable("OVERARC_WORKSPACE");
@@ -27,14 +30,17 @@ var app = builder.Build();
 
 app.MapOpenApi();
 
+// Lightweight liveness endpoint used by development orchestration and browser tests.
 app.MapGet("/_health", () => Results.Ok(new { status = "ok" }));
 
+// Workspace endpoints expose application configuration and perform read-only refreshes.
 app.MapGet("/api/v1/workspace", async (WorkspaceService service, CancellationToken cancellationToken) =>
     await Execute(() => service.GetWorkspaceAsync(cancellationToken)));
 
 app.MapPost("/api/v1/workspace/refresh", async (WorkspaceService service, CancellationToken cancellationToken) =>
     await Execute(() => service.RefreshAsync(cancellationToken)));
 
+// State endpoints expose a compact graph first and fetch complete details on demand.
 app.MapGet("/api/v1/states/{stateId}/projection", async (string stateId, WorkspaceService service, CancellationToken cancellationToken) =>
     await Execute(() => service.GetProjectionAsync(stateId, cancellationToken)));
 
@@ -51,6 +57,7 @@ if (File.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty, "index
 
 app.Run();
 
+// Maps service results and domain exceptions into consistent JSON or RFC 7807 HTTP results.
 static async Task<IResult> Execute<T>(Func<Task<T>> action)
 {
     try
@@ -75,4 +82,5 @@ static async Task<IResult> Execute<T>(Func<Task<T>> action)
     }
 }
 
+/// <summary>Marker for WebApplicationFactory-based integration tests of the top-level API.</summary>
 public partial class Program;

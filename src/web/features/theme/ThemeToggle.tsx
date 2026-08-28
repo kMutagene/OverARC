@@ -1,5 +1,6 @@
 import type { Theme } from '../../shared/types';
 
+/** Renders the accessible light/dark mode action for the current theme. */
 export function ThemeToggle({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
   const nextTheme = theme === 'light' ? 'dark' : 'light';
   return (

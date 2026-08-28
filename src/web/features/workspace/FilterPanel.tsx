@@ -1,6 +1,7 @@
 import type { Filters } from '../../shared/types';
 import { emptyFilters } from './filterModel';
 
+/** Renders one OR-within-category checkbox group and returns immutable Set updates. */
 function ToggleGroup({
   title,
   values,
@@ -37,6 +38,7 @@ function ToggleGroup({
   );
 }
 
+/** Filter values, label lookup, and immutable update callback for the workspace controls. */
 interface FilterPanelProps {
   filters: Filters;
   options: { kinds: string[]; types: string[]; predicates: string[] };
@@ -44,6 +46,7 @@ interface FilterPanelProps {
   onChange: (filters: Filters) => void;
 }
 
+/** Renders free-text, context, kind, type, and predicate filters plus a complete reset action. */
 export function FilterPanel({ filters, options, termLabels, onChange }: FilterPanelProps) {
   return (
     <section>

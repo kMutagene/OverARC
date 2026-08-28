@@ -2,14 +2,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../shared/api';
 import type { Projection, Workspace } from '../../shared/types';
 
+/** Replaces the URL query with the exact active state ID and no transient view state. */
 function updateUrl(stateId: string) {
   window.history.replaceState(null, '', `?state=${encodeURIComponent(stateId)}`);
 }
 
+/** Normalizes arbitrary rejected values into a user-facing error string. */
 function errorMessage(reason: unknown): string {
   return reason instanceof Error ? reason.message : String(reason);
 }
 
+/** Loads workspace metadata and projections while enforcing state-selection and refresh reset rules. */
 export function useWorkspace() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [activeState, setActiveState] = useState<string | null>(null);
@@ -18,6 +21,7 @@ export function useWorkspace() {
   const [loading, setLoading] = useState(true);
   const [resetToken, setResetToken] = useState(0);
 
+  /** Loads or refreshes manifest metadata and chooses the best still-valid active state. */
   const loadWorkspace = useCallback(async (refresh = false) => {
     setError(null);
     try {
@@ -42,10 +46,12 @@ export function useWorkspace() {
     }
   }, []);
 
+  // Load the manifest once; manual refreshes call the same function with refresh=true.
   useEffect(() => {
     void loadWorkspace();
   }, [loadWorkspace]);
 
+  // State changes alone load a projection and increment the explicit graph-reset token.
   useEffect(() => {
     if (!activeState) {
       setProjection(null);
@@ -86,10 +92,12 @@ export function useWorkspace() {
     error,
     loading,
     resetToken,
+    /** Selects an already validated state and mirrors only its ID into the URL. */
     chooseState: (id: string) => {
       setActiveState(id);
       updateUrl(id);
     },
+    /** Requests a read-only revalidation while preserving a still-valid selection. */
     refresh: () => loadWorkspace(true),
   };
 }

@@ -11,21 +11,32 @@ import type {
 
 const PAGE_SIZE = 100;
 const SORT_COLLATOR = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+/** Active object/relation dataset shown by the center table. */
 type TableTab = 'objects' | 'relations';
+
+/** Sort states exposed through the table header's aria-sort attribute. */
 type SortDirection = 'ascending' | 'descending';
+
+/** Sortable object-table columns; the Action column intentionally remains unsorted. */
 type ObjectSortColumn = 'object' | 'kind' | 'types' | 'status' | 'flags';
+
+/** Sortable relation-table columns; the Action column intentionally remains unsorted. */
 type RelationSortColumn = 'relation' | 'subject' | 'predicate' | 'object' | 'status' | 'flags';
 
+/** Column and direction selected for one table tab. */
 interface SortConfiguration<TColumn extends string> {
   column: TColumn;
   direction: SortDirection;
 }
 
+/** Independent sort configuration retained while switching between object and relation tabs. */
 interface TableSorts {
   objects: SortConfiguration<ObjectSortColumn> | null;
   relations: SortConfiguration<RelationSortColumn> | null;
 }
 
+/** Projection, visibility, activation, and selection inputs for the center table. */
 interface GraphTableViewProps {
   projection: Projection;
   visible: VisibleProjection;
@@ -33,6 +44,7 @@ interface GraphTableViewProps {
   onSelect: (selection: Selection) => void;
 }
 
+/** Renders fixed-height page navigation so only one bounded row window enters the DOM. */
 function Pagination({
   page,
   count,
@@ -68,6 +80,7 @@ function Pagination({
   );
 }
 
+/** Renders a full-cell sort button and announces the next action in the three-state cycle. */
 function SortableHeader<TColumn extends string>({
   column,
   label,
@@ -101,6 +114,7 @@ function SortableHeader<TColumn extends string>({
   );
 }
 
+/** Compares display values in the requested direction and resolves ties by exact ID. */
 function compareRows<T extends { id: string }>(
   left: T,
   right: T,
@@ -112,6 +126,7 @@ function compareRows<T extends { id: string }>(
   return left.id < right.id ? -1 : left.id > right.id ? 1 : 0;
 }
 
+/** Provides full-pane, paginated object and relation tables over the currently visible graph. */
 export function GraphTableView({ projection, visible, active, onSelect }: GraphTableViewProps) {
   const [tab, setTab] = useState<TableTab>('objects');
   const [pages, setPages] = useState<Record<TableTab, number>>({ objects: 0, relations: 0 });
@@ -128,6 +143,7 @@ export function GraphTableView({ projection, visible, active, onSelect }: GraphT
   const sortedNodes = useMemo(() => {
     const sort = sorts.objects;
     if (!sort) return nodes;
+    // Resolve each sortable column to the exact text presented to curators.
     const value = (node: GraphNode) => {
       switch (sort.column) {
         case 'object':
@@ -147,6 +163,7 @@ export function GraphTableView({ projection, visible, active, onSelect }: GraphT
   const sortedRelations = useMemo(() => {
     const sort = sorts.relations;
     if (!sort) return relations;
+    // Endpoint and predicate sorting use projection labels with exact-ID fallbacks.
     const value = (relation: GraphRelation) => {
       switch (sort.column) {
         case 'relation':
@@ -177,7 +194,10 @@ export function GraphTableView({ projection, visible, active, onSelect }: GraphT
   }, [nodes.length, relations.length]);
 
   const page = pages[tab];
+  /** Changes only the active tab's page while retaining the other tab's position. */
   const setPage = (next: number) => setPages((current) => ({ ...current, [tab]: next }));
+
+  /** Advances an object column through ascending, descending, and source-order states. */
   const sortObjects = (column: ObjectSortColumn) => {
     setSorts((current) => {
       const previous = current.objects?.column === column ? current.objects : null;
@@ -191,6 +211,8 @@ export function GraphTableView({ projection, visible, active, onSelect }: GraphT
     });
     setPages((current) => ({ ...current, objects: 0 }));
   };
+
+  /** Advances a relation column through ascending, descending, and source-order states. */
   const sortRelations = (column: RelationSortColumn) => {
     setSorts((current) => {
       const previous = current.relations?.column === column ? current.relations : null;

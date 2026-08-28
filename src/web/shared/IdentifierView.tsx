@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { identifierPresentation, type IdentifierLabels } from './identifierModel';
 
+/** Inputs for a label-first identifier display with optional exact technical rendering. */
 interface IdentifierViewProps {
   value: string;
   labels?: IdentifierLabels;
@@ -8,6 +9,7 @@ interface IdentifierViewProps {
   exact?: boolean;
 }
 
+/** Copies an exact identifier through the Clipboard API with a legacy DOM fallback. */
 async function copyExact(value: string) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value);
@@ -23,6 +25,7 @@ async function copyExact(value: string) {
   input.remove();
 }
 
+/** Renders compact identifier text while keeping exact copy and HTTP dereference actions available. */
 export function IdentifierView({
   value,
   labels = new Map(),

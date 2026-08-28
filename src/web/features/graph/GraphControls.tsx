@@ -1,3 +1,4 @@
+/** Commands exposed by the floating Sigma control strip. */
 interface GraphControlsProps {
   layoutRunning: boolean;
   onZoomIn: () => void;
@@ -8,6 +9,7 @@ interface GraphControlsProps {
   onExportPng: () => void;
 }
 
+/** Renders camera, layout, reset, and PNG export controls for the graph view. */
 export function GraphControls({
   layoutRunning,
   onZoomIn,

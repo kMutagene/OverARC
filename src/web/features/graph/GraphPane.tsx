@@ -3,8 +3,10 @@ import type { Projection, Selection, Theme, VisibleProjection } from '../../shar
 import { GraphCanvas } from './GraphCanvas';
 import { GraphTableView } from './GraphTableView';
 
+/** Mutually exclusive first-class representations available in the center pane. */
 export type CenterView = 'graph' | 'table';
 
+/** Shared state and commands needed by the center graph/table workspace. */
 interface GraphPaneProps {
   graph: MultiDirectedGraph | null;
   projection: Projection | null;
@@ -19,6 +21,7 @@ interface GraphPaneProps {
   onSelect: (selection: Selection | null) => void;
 }
 
+/** Hosts persistent graph and table layers and switches which one is visible and interactive. */
 export function GraphPane({
   graph,
   projection,

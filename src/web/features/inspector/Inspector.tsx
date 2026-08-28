@@ -8,6 +8,7 @@ import {
   TypeAssertions,
 } from './InspectorSections';
 
+/** Data and pane state required by the selected-element inspector. */
 interface InspectorProps {
   detail: ElementDetail | null;
   loading: boolean;
@@ -17,6 +18,7 @@ interface InspectorProps {
   onClear?: () => void;
 }
 
+/** Renders complete object/relation details with progressive disclosure for technical identity data. */
 export function Inspector({
   detail,
   loading,

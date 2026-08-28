@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 
+/** Geometry and commands for one keyboard- and pointer-operable side-pane separator. */
 interface PaneResizerProps {
   side: 'left' | 'right';
   width: number;
@@ -10,6 +11,7 @@ interface PaneResizerProps {
   onToggle: () => void;
 }
 
+/** Renders a VS Code-style separator that resizes, collapses, and restores one side pane. */
 export function PaneResizer({
   side,
   width,
@@ -22,6 +24,7 @@ export function PaneResizer({
   const dragging = useRef(false);
   const collapsed = width === 0;
 
+  /** Releases pointer capture and global resize styling for every drag termination path. */
   const finishDrag = (target: HTMLDivElement, pointerId: number) => {
     dragging.current = false;
     if (target.hasPointerCapture(pointerId)) target.releasePointerCapture(pointerId);

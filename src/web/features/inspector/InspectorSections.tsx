@@ -3,11 +3,13 @@ import type { IdentifierLabels } from '../../shared/identifierModel';
 import type { ElementDetail } from '../../shared/types';
 import { AnnotationList, ArcValueView } from './DetailValues';
 
+/** Shared exact detail and label lookup used by all inspector sections. */
 interface SectionProps {
   detail: ElementDetail;
   labels: IdentifierLabels;
 }
 
+/** Renders the element summary and collapsed exact IDs/selectors. */
 export function InspectorMetadata({ detail, labels }: SectionProps) {
   return (
     <>
@@ -92,6 +94,7 @@ export function InspectorMetadata({ detail, labels }: SectionProps) {
   );
 }
 
+/** Explains every ArcRelation that caused a projection-only missing endpoint to exist. */
 export function PlaceholderRelations({ detail, labels }: SectionProps) {
   if (!detail.isPlaceholder || !detail.placeholderReferences) return null;
   return (
@@ -122,6 +125,7 @@ export function PlaceholderRelations({ detail, labels }: SectionProps) {
   );
 }
 
+/** Renders object type assertions with compact labels and disclosed exact metadata. */
 export function TypeAssertions({ detail, labels }: SectionProps) {
   if (detail.types.length === 0) return null;
   return (
@@ -157,6 +161,7 @@ export function TypeAssertions({ detail, labels }: SectionProps) {
   );
 }
 
+/** Renders collapsible property and root-annotation sections for canonical ArcIR elements. */
 export function AssertionSections({ detail, labels }: SectionProps) {
   if (detail.isPlaceholder || detail.isDerivedReference) return null;
   return (

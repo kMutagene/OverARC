@@ -9,6 +9,7 @@ import type {
   VisibleProjection,
 } from '../../shared/types';
 
+/** Normalizes search input for Unicode-aware, case-insensitive client-side matching. */
 const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase();
 
 export const ARC_OBJECT_KIND_COLORS: Readonly<Record<string, string>> = {
@@ -27,11 +28,14 @@ const unresolvedColor = '#64748b';
 const parallelLaneCurvature = 0.25;
 const darkGraphBackground = '#111817';
 
+/** Assigns a deterministic color to an ArcIR object kind; null identifies unresolved placeholders. */
 export function objectKindColor(kind: string | null): string {
   return (kind && ARC_OBJECT_KIND_COLORS[kind.toLocaleLowerCase()]) || unresolvedColor;
 }
 
+/** Mixes a hex color toward an RGB target for context dimming and dark-mode adaptation. */
 function mixWith(color: string, target: readonly number[], amount: number): string {
+  // Reads one two-digit channel from the source hex string.
   const channel = (offset: number) => Number.parseInt(color.slice(offset, offset + 2), 16);
   const mixed = [channel(1), channel(3), channel(5)].map((value, index) =>
     Math.round(value + (target[index] - value) * amount),
@@ -39,11 +43,14 @@ function mixWith(color: string, target: readonly number[], amount: number): stri
   return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
 }
 
+/** Mixes one hex color toward another convenience target. */
 function mixWithHex(color: string, target: string, amount: number): string {
+  // Reads one two-digit channel from the target hex string.
   const channel = (offset: number) => Number.parseInt(target.slice(offset, offset + 2), 16);
   return mixWith(color, [channel(1), channel(3), channel(5)], amount);
 }
 
+/** Applies AND-across-category/OR-within-category filters and optional one-hop context. */
 export function visibleProjection(projection: Projection, filters: Filters): VisibleProjection {
   const query = normalize(filters.query.trim());
   const strictMatches = new Set(
@@ -86,6 +93,7 @@ export function visibleProjection(projection: Projection, filters: Filters): Vis
   return { nodeStatus, relationStatus };
 }
 
+/** Generates stable initial coordinates from an exact node ID without storing layout in ArcIR. */
 function hashPosition(id: string): { x: number; y: number } {
   let a = 0x811c9dc5;
   let b = 0x9e3779b9;
@@ -98,6 +106,7 @@ function hashPosition(id: string): { x: number; y: number } {
   return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
 }
 
+/** Computes dynamic Sigma attributes for a node without mutating the state-wide graph. */
 export function nodeViewStyle(
   kind: string | null,
   isPlaceholder: boolean,
@@ -120,6 +129,7 @@ export function nodeViewStyle(
   };
 }
 
+/** Computes dynamic Sigma attributes for an ArcRelation or derived reference edge. */
 export function relationViewStyle(
   isDerived: boolean,
   status: VisibilityStatus | undefined,
@@ -148,6 +158,7 @@ export function relationViewStyle(
   };
 }
 
+/** Builds one complete deterministic MultiDirectedGraph per state, independent of active filters. */
 export function buildGraph(projection: Projection): MultiDirectedGraph {
   const graph = new MultiDirectedGraph();
   for (const node of projection.nodes) {
@@ -210,11 +221,13 @@ export function buildGraph(projection: Projection): MultiDirectedGraph {
   return graph;
 }
 
+/** Axis-aligned graph-coordinate bounds accepted by Sigma's custom bounding-box API. */
 export interface GraphBounds {
   x: [number, number];
   y: [number, number];
 }
 
+/** Calculates bounds from only currently visible nodes while retaining their in-memory coordinates. */
 export function visibleGraphBounds(
   graph: MultiDirectedGraph,
   visible: VisibleProjection,
@@ -246,11 +259,13 @@ export function visibleGraphBounds(
   return { x: [minX - padding, maxX + padding], y: [minY - padding, maxY + padding] };
 }
 
+/** Escapes one value according to RFC 4180-style CSV rules. */
 function csvCell(value: unknown): string {
   const text = String(value ?? '');
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
+/** Serializes visible nodes and relations into separate UTF-8 BOM-prefixed CSV documents. */
 export function visibleCsv(projection: Projection, visible: VisibleProjection) {
   const nodeHeader = ['id', 'label', 'kind', 'typeIds', 'placeholder', 'status'];
   const nodes = projection.nodes
@@ -275,11 +290,13 @@ export function visibleCsv(projection: Projection, visible: VisibleProjection) {
       relation.isDerived,
       visible.relationStatus.get(relation.id),
     ]);
+  // Produces CRLF-separated CSV with a UTF-8 BOM for spreadsheet interoperability.
   const render = (header: unknown[], rows: unknown[][]) =>
     '\ufeff' + [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n') + '\r\n';
   return { nodes: render(nodeHeader, nodes), relations: render(relationHeader, relations) };
 }
 
+/** Derives sorted unique values for kind, type, and predicate filter controls. */
 export function filterOptions(projection: Projection) {
   const kinds = [
     ...new Set(projection.nodes.flatMap((node) => (node.kind ? [node.kind] : []))),
@@ -291,10 +308,12 @@ export function filterOptions(projection: Projection) {
   return { kinds, types, predicates };
 }
 
+/** Finds a projected node by exact IRI. */
 export function nodeById(projection: Projection, id: string): GraphNode | undefined {
   return projection.nodes.find((node) => node.id === id);
 }
 
+/** Finds a projected relation by exact IRI. */
 export function relationById(projection: Projection, id: string): GraphRelation | undefined {
   return projection.relations.find((relation) => relation.id === id);
 }

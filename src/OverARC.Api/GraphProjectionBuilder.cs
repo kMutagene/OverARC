@@ -5,8 +5,10 @@ using System.Text.Json;
 
 namespace OverARC.Api;
 
+/// <summary>Projects validated ArcIR JSON into frontend-specific graph and inspector DTOs without redefining ArcIR.</summary>
 public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
 {
+    /// <summary>Builds the full domain graph, term summaries, placeholders, and derived reference edges for a state.</summary>
     public GraphProjectionDto Projection(StateArtifact state)
     {
         var graph = state.Root.GetProperty("graph");
@@ -76,6 +78,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             relations.OrderBy(relation => relation.Id, StringComparer.Ordinal).ToArray());
     }
 
+    /// <summary>Returns complete details for an exact object or ArcRelation, or <see langword="null"/> when absent.</summary>
     public ElementDetailDto? Details(StateArtifact state, DetailRequest request)
     {
         var graph = state.Root.GetProperty("graph");
@@ -96,6 +99,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         return null;
     }
 
+    /// <summary>Projects one ArcIR object into the complete inspector transport shape.</summary>
     private ElementDetailDto ObjectDetails(string id, JsonElement value, IReadOnlyDictionary<string, TermDto> terms) =>
         new(
             "object",
@@ -111,6 +115,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             ReadProperties(id, false, value.GetProperty("properties"), terms),
             ReadAnnotations(id, null, false, value.GetProperty("annotations"), terms));
 
+    /// <summary>Projects one ArcRelation into the complete inspector transport shape.</summary>
     private ElementDetailDto RelationDetails(string id, JsonElement value, IReadOnlyDictionary<string, TermDto> terms)
     {
         var predicate = value.GetProperty("predicate").GetString()!;
@@ -129,6 +134,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             ReadAnnotations(id, null, true, value.GetProperty("annotations"), terms));
     }
 
+    /// <summary>Projects all type assertions owned by one object with backend-generated selectors.</summary>
     private IReadOnlyList<TypeAssertionDto> ReadTypes(string ownerId, JsonElement values, IReadOnlyDictionary<string, TermDto> terms) =>
         values.EnumerateObject()
             .Select(item =>
@@ -138,6 +144,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             })
             .ToArray();
 
+    /// <summary>Projects object or relation properties while choosing the selector family for the owner kind.</summary>
     private IReadOnlyList<PropertyDto> ReadProperties(
         string ownerId,
         bool relationOwner,
@@ -158,6 +165,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             })
             .ToArray();
 
+    /// <summary>Projects annotations at owner or property scope with exact value selectors.</summary>
     private IReadOnlyList<AnnotationDto> ReadAnnotations(
         string ownerId,
         string? propertyId,
@@ -195,6 +203,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             })
             .ToArray();
 
+    /// <summary>Builds the term lookup used for curator labels, filter metadata, and exact term selectors.</summary>
     private Dictionary<string, TermDto> ReadTerms(JsonElement values)
     {
         var terms = new Dictionary<string, TermDto>(StringComparer.Ordinal);
@@ -207,6 +216,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         return terms;
     }
 
+    /// <summary>Selects a curator-facing object label using the documented accession, ID, title, and name precedence.</summary>
     private static string ObjectLabel(string id, JsonElement value, IReadOnlyDictionary<string, TermDto> terms)
     {
         var candidates = new List<(string Name, string Value)>();
@@ -221,6 +231,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             candidates.Add((TermLabel(property, terms), ReadAnnotationValue(item.Value.GetProperty("value"), terms).Display));
         }
 
+        // Returns the first candidate whose predicate label satisfies one precedence rule.
         string? Pick(Func<string, bool> predicate) =>
             candidates.FirstOrDefault(candidate => predicate(candidate.Name)).Value;
 
@@ -232,6 +243,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
                ?? id;
     }
 
+    /// <summary>Builds normalized client-search input from exact IDs, labels, types, values, and annotations.</summary>
     private static string SearchText(
         string id,
         string label,
@@ -242,6 +254,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
             .Concat(typeIds.Select(type => TermLabel(type, terms)))
             .Append(ValuesText(value, terms)));
 
+    /// <summary>Renders all property and annotation values owned by an object or relation for free-text search.</summary>
     private static string ValuesText(JsonElement owner, IReadOnlyDictionary<string, TermDto> terms)
     {
         var values = new List<string>();
@@ -258,6 +271,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         return string.Join(' ', values);
     }
 
+    /// <summary>Converts every ArcValue kind into an exact, JavaScript-safe transport representation.</summary>
     private static ArcValueDto ReadValue(JsonElement value, IReadOnlyDictionary<string, TermDto> terms)
     {
         var type = value.GetProperty("type").GetString()!;
@@ -273,15 +287,18 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         };
     }
 
+    /// <summary>Recursively projects an ArcValue list and composes its curator-facing display text.</summary>
     private static ArcValueDto ListValue(JsonElement content, IReadOnlyDictionary<string, TermDto> terms)
     {
         var items = content.EnumerateArray().Select(item => ReadValue(item, terms)).ToArray();
         return new ArcValueDto("list", string.Join("; ", items.Select(item => item.Display)), null, null, items);
     }
 
+    /// <summary>Creates a scalar ArcValue DTO while preserving its exact textual representation.</summary>
     private static ArcValueDto TextValue(string type, string text, string display) =>
         new(type, display, text, null, null);
 
+    /// <summary>Converts all supported annotation-value union cases into the neutral HTTP shape.</summary>
     private static AnnotationValueDto ReadAnnotationValue(JsonElement value, IReadOnlyDictionary<string, TermDto> terms)
     {
         var type = value.GetProperty("type").GetString()!;
@@ -295,6 +312,7 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         };
     }
 
+    /// <summary>Creates a literal annotation display, appending a curator-facing unit label when present.</summary>
     private static AnnotationValueDto LiteralAnnotation(
         string type,
         ArcValueDto literal,
@@ -302,9 +320,11 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
         IReadOnlyDictionary<string, TermDto> terms) =>
         new(type, unit is null ? literal.Display : $"{literal.Display} {TermLabel(unit, terms)}", literal, null, unit);
 
+    /// <summary>Creates a term annotation display, appending a curator-facing unit label when present.</summary>
     private static AnnotationValueDto TermAnnotation(string type, string term, string? unit, IReadOnlyDictionary<string, TermDto> terms) =>
         new(type, unit is null ? TermLabel(term, terms) : $"{TermLabel(term, terms)} {TermLabel(unit, terms)}", null, term, unit);
 
+    /// <summary>Recursively enumerates ArcValue.Ref targets so the viewer can add derived reference edges.</summary>
     private static IEnumerable<string> References(JsonElement value)
     {
         var type = value.GetProperty("type").GetString();
@@ -315,22 +335,27 @@ public sealed class GraphProjectionBuilder(ArcIrInteropAdapter interop)
                     yield return reference;
     }
 
+    /// <summary>Resolves a term label and falls back to a deterministic local name for unknown IRIs.</summary>
     private static string TermLabel(string id, IReadOnlyDictionary<string, TermDto> terms) =>
         terms.TryGetValue(id, out var term) ? term.Label : LocalName(id);
 
+    /// <summary>Extracts the fragment or final path segment used as a compact unknown-term fallback.</summary>
     private static string LocalName(string value)
     {
         var cut = Math.Max(value.LastIndexOf('#'), value.LastIndexOf('/'));
         return cut >= 0 && cut + 1 < value.Length ? value[(cut + 1)..] : value;
     }
 
+    /// <summary>Reads a nullable JSON string without conflating JSON null with an empty value.</summary>
     private static string? NullableString(JsonElement value) => value.ValueKind == JsonValueKind.Null ? null : value.GetString();
 
+    /// <summary>Adds a projection-only placeholder for an endpoint absent from the ArcIR object map.</summary>
     private static void EnsurePlaceholder(IDictionary<string, NodeDto> nodes, string id)
     {
         if (!nodes.ContainsKey(id)) nodes.Add(id, new NodeDto(id, id, null, [], id, true, null));
     }
 
+    /// <summary>Produces a deterministic lowercase SHA-256 identity for a view-only derived edge.</summary>
     private static string Sha256(string value) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 }

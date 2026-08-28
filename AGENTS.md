@@ -130,6 +130,15 @@ development server. Build output under `dist/` and
   or React context until multiple distant consumers make them necessary.
 - Extract components at semantic UI boundaries. Avoid both monolithic render
   trees and one-off wrappers that merely rename a single element.
+- Document production-owned components, hooks, exported types, services, and
+  meaningful private helpers at their declaration. Prefer concise JSDoc/XML
+  summaries that explain usage and invariants; do not narrate obvious JSX,
+  assignments, or test callbacks line by line.
+- Do not implement new functionality without documenting its production-owned
+  components, hooks, types, services, and meaningful helpers in the same change.
+  When existing functionality or an invariant changes, update every affected
+  declaration comment and related operational documentation as part of that
+  change; stale documentation is a failed implementation gate.
 - Keep pure graph/filter/export transformations independent of React and cover
   them with fast unit tests.
 - Preserve exact ArcIR IDs in state and API calls. Labels are presentation only.

@@ -2,6 +2,7 @@ import type Sigma from 'sigma';
 import { drawDiscNodeLabel, type NodeHoverDrawingFunction } from 'sigma/rendering';
 import type { Theme } from '../../shared/types';
 
+/** DOM-independent Sigma colors used by reducers, hover rendering, and PNG backgrounds. */
 export const GRAPH_THEME = {
   light: {
     background: '#f4f5f6',
@@ -21,6 +22,7 @@ export const GRAPH_THEME = {
   },
 } as const;
 
+/** Creates a hover renderer that draws a readable label capsule around Sigma disc nodes. */
 function createNodeHoverRenderer(background: string, shadow: string): NodeHoverDrawingFunction {
   return (context, data, settings) => {
     const size = settings.labelSize;
@@ -57,11 +59,13 @@ function createNodeHoverRenderer(background: string, shadow: string): NodeHoverD
   };
 }
 
+/** Theme-specific hover renderers reused rather than recreated during React renders. */
 export const HOVER_RENDERERS = {
   light: createNodeHoverRenderer(GRAPH_THEME.light.hoverSurface, GRAPH_THEME.light.hoverShadow),
   dark: createNodeHoverRenderer(GRAPH_THEME.dark.hoverSurface, GRAPH_THEME.dark.hoverShadow),
 };
 
+/** Composites Sigma's layered canvases onto a themed background and downloads a PNG snapshot. */
 export function downloadGraphPng(sigma: Sigma, theme: Theme) {
   const canvases = Object.values(sigma.getCanvases());
   const source = canvases[0];

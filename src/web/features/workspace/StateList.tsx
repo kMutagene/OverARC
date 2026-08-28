@@ -1,5 +1,6 @@
 import type { Workspace } from '../../shared/types';
 
+/** Workspace state data and read-only state-selection/refresh commands. */
 interface StateListProps {
   workspace: Workspace | null;
   activeState: string | null;
@@ -7,6 +8,7 @@ interface StateListProps {
   onRefresh: () => void;
 }
 
+/** Lists valid and invalid immutable states while disabling entries that cannot be opened. */
 export function StateList({ workspace, activeState, onChooseState, onRefresh }: StateListProps) {
   return (
     <section>

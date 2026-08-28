@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRegisterEvents, useSigma } from '@react-sigma/core';
 import type { Selection } from '../../shared/types';
 
+/** Registers selection, hover, stage-clear, and bounded node-drag behavior against the active Sigma instance. */
 export function useSigmaInteractions(
   selected: Selection | null,
   onSelect: (selection: Selection | null) => void,
@@ -11,12 +12,16 @@ export function useSigmaInteractions(
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [hoveredEdge, setHoveredEdge] = useState<string | null>(null);
   const dragged = useRef<string | null>(null);
+
+  /** Clears reducer-driving hover state for both graph element kinds. */
   const clearHover = useCallback(() => {
     setHoveredNode(null);
     setHoveredEdge(null);
   }, []);
 
+  // Register one complete event map so every drag termination path shares the same cleanup.
   useEffect(() => {
+    /** Ends every drag path and always restores camera controls. */
     const endDrag = () => {
       dragged.current = null;
       sigma.getCamera().enable();

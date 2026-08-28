@@ -10,6 +10,7 @@ import { GraphControls } from './GraphControls';
 import { downloadGraphPng, GRAPH_THEME, HOVER_RENDERERS } from './sigmaTheme';
 import { useSigmaInteractions } from './useSigmaInteractions';
 
+/** Inputs required to render and interact with one state-wide graph. */
 interface GraphCanvasProps {
   graph: MultiDirectedGraph;
   visible: VisibleProjection;
@@ -20,6 +21,7 @@ interface GraphCanvasProps {
   onSelect: (selection: Selection | null) => void;
 }
 
+/** Runs inside Sigma context to synchronize graph data, reducers, layout, camera, and controls. */
 function GraphRuntime({
   graph,
   visible,
@@ -42,6 +44,7 @@ function GraphRuntime({
   const [layoutRunning, setLayoutRunning] = useState(false);
   const { hoveredNode, hoveredEdge, clearHover } = useSigmaInteractions(selected, onSelect);
 
+  // A new state/reset token is the only lifecycle event that reloads coordinates and camera.
   useEffect(() => {
     layoutRef.current.stop();
     loadGraph(graph, true);
@@ -52,6 +55,7 @@ function GraphRuntime({
     return () => layoutRef.current.stop();
   }, [clearHover, graph, loadGraph, resetToken, sigma]);
 
+  // Hidden Sigma stays mounted; stop its worker and resize it when made visible again.
   useEffect(() => {
     if (!active) {
       layoutRef.current.stop();
@@ -65,6 +69,7 @@ function GraphRuntime({
     return () => window.cancelAnimationFrame(frame);
   }, [active, sigma]);
 
+  // Reducers apply theme, filters, hover, and selection without rebuilding graph identity.
   useEffect(() => {
     const palette = GRAPH_THEME[theme];
     sigma.setSetting('labelColor', { color: palette.label });
@@ -115,6 +120,7 @@ function GraphRuntime({
     sigma.refresh();
   }, [hoveredEdge, hoveredNode, selected, sigma, theme, visible]);
 
+  /** Restores deterministic coordinates and the default camera after stopping the worker layout. */
   const resetLayout = () => {
     layout.stop();
     setLayoutRunning(false);
@@ -125,6 +131,7 @@ function GraphRuntime({
     camera.reset();
   };
 
+  /** Frames only nodes admitted by the current semantic filters. */
   const focusVisible = () => {
     const bounds = visibleGraphBounds(sigma.getGraph() as MultiDirectedGraph, visible);
     if (!bounds) return;
@@ -132,6 +139,7 @@ function GraphRuntime({
     camera.reset();
   };
 
+  /** Starts or stops ForceAtlas2 while keeping its coordinates in view-only graph state. */
   const toggleLayout = () => {
     if (layoutRunning) layout.stop();
     else layout.start();
@@ -151,6 +159,7 @@ function GraphRuntime({
   );
 }
 
+/** Provides Sigma and worker-layout contexts around the graph runtime. */
 export function GraphCanvas(props: GraphCanvasProps) {
   const palette = GRAPH_THEME[props.theme];
   return (

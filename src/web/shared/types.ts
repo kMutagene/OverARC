@@ -1,3 +1,4 @@
+/** Application configuration and independently validated state entries returned by the workspace API. */
 export interface Workspace {
   name: string;
   relativeManifestPath: string;
@@ -5,6 +6,7 @@ export interface Workspace {
   states: StateSummary[];
 }
 
+/** Manifest metadata and current validation result for one immutable ArcIR state. */
 export interface StateSummary {
   id: string;
   label: string;
@@ -18,6 +20,7 @@ export interface StateSummary {
   errors: string[];
 }
 
+/** Compact term metadata used for graph labels, filter choices, links, and selectors. */
 export interface Term {
   id: string;
   label: string;
@@ -26,6 +29,7 @@ export interface Term {
   selector: string;
 }
 
+/** An ArcIR object or projection-only missing-endpoint placeholder in the graph response. */
 export interface GraphNode {
   id: string;
   label: string;
@@ -36,6 +40,7 @@ export interface GraphNode {
   selector: string | null;
 }
 
+/** An ArcRelation or view-only ArcValue.Ref edge in the graph response. */
 export interface GraphRelation {
   id: string;
   label: string;
@@ -47,6 +52,7 @@ export interface GraphRelation {
   selector: string | null;
 }
 
+/** Complete client-side graph projection for one immutable state. */
 export interface Projection {
   stateId: string;
   sha256: string;
@@ -55,6 +61,7 @@ export interface Projection {
   relations: GraphRelation[];
 }
 
+/** JavaScript-safe representation of any ArcValue, including recursive lists and exact numeric text. */
 export interface ArcValue {
   type: string;
   display: string;
@@ -63,6 +70,7 @@ export interface ArcValue {
   items?: ArcValue[];
 }
 
+/** Inspector representation of literal, term, and optional unit-bearing annotation values. */
 export interface AnnotationValue {
   type: string;
   display: string;
@@ -71,6 +79,7 @@ export interface AnnotationValue {
   unitId?: string;
 }
 
+/** Complete annotation metadata, provenance references, and canonical JSON selectors. */
 export interface Annotation {
   id: string;
   propertyId: string;
@@ -82,6 +91,7 @@ export interface Annotation {
   valueSelector: string;
 }
 
+/** Object or relation property assertion with its nested annotations and exact selectors. */
 export interface PropertyAssertion {
   id: string;
   predicateId: string;
@@ -92,6 +102,7 @@ export interface PropertyAssertion {
   valueSelector: string;
 }
 
+/** Inspector payload for an ArcIR element or a locally projected placeholder/reference edge. */
 export interface ElementDetail {
   kind: 'object' | 'relation';
   id: string;
@@ -115,6 +126,7 @@ export interface ElementDetail {
   annotations: Annotation[];
 }
 
+/** User-controlled semantic filters; categories combine with AND and members within a set with OR. */
 export interface Filters {
   query: string;
   kinds: Set<string>;
@@ -123,13 +135,17 @@ export interface Filters {
   context: boolean;
 }
 
+/** Why an element is currently visible: a strict filter match or one-hop context. */
 export type VisibilityStatus = 'match' | 'context';
 
+/** Exact IDs and visibility roles for nodes and relations rendered by either center view. */
 export interface VisibleProjection {
   nodeStatus: Map<string, VisibilityStatus>;
   relationStatus: Map<string, VisibilityStatus>;
 }
 
+/** Exact graph element identity shared by Sigma, table selection, and the details API. */
 export type Selection = { kind: 'object' | 'relation'; id: string };
 
+/** Supported DOM and Sigma color schemes. */
 export type Theme = 'light' | 'dark';

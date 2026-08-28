@@ -1,8 +1,10 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
+// The development proxy keeps browser requests same-origin while allowing isolated test ports.
 const apiOrigin = process.env.OVERARC_API_ORIGIN ?? 'http://127.0.0.1:5080';
 
+/** Shared Vite build/development and Vitest/jsdom configuration for the React workbench. */
 export default defineConfig({
   plugins: [react()],
   build: { outDir: 'dist', emptyOutDir: true },

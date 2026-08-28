@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 import { resolve } from 'node:path';
 
+// Browser tests use an immutable fixture workspace and never attach to the developer's live server.
 const testWorkspace = resolve('tests/fixtures/viewer-workspace');
 
+/** Runs the live ASP.NET/Vite stack against current Chromium and Firefox on isolated ports. */
 export default defineConfig({
   testDir: './tests/browser',
   fullyParallel: true,

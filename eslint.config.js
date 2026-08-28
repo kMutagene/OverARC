@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
+/** Applies TypeScript, React hook, and fast-refresh checks while excluding generated outputs. */
 export default tseslint.config(
   { ignores: ['dist', 'src/OverARC.Api/wwwroot', 'playwright-report', 'test-results'] },
   {

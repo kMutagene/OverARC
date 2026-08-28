@@ -1,5 +1,6 @@
 import type { Projection } from './types';
 
+/** Read-only exact-IRI-to-curator-label lookup built from the active projection. */
 export type IdentifierLabels = ReadonlyMap<string, string>;
 
 const HASH_PATTERN = /^[0-9a-f]{32,}$/i;
@@ -10,6 +11,7 @@ const KNOWN_NAMESPACES: ReadonlyArray<readonly [string, string]> = [
   ['urn:overarc:view:reference:', 'Derived reference'],
 ];
 
+/** Decodes percent-encoded identifier suffixes without throwing on malformed input. */
 function safeDecode(value: string): string {
   try {
     return decodeURIComponent(value);
@@ -18,12 +20,14 @@ function safeDecode(value: string): string {
   }
 }
 
+/** Preserves the recognizable beginning and end of long unknown identifiers. */
 function middleEllipsis(value: string, maximum = 44): string {
   if (value.length <= maximum) return value;
   const tail = 12;
   return `${value.slice(0, maximum - tail - 1)}…${value.slice(-tail)}`;
 }
 
+/** Shortens a namespace suffix, using a stable first/last form for hash identities. */
 function compactSuffix(value: string): string {
   const decoded = safeDecode(value);
   return HASH_PATTERN.test(decoded)
@@ -31,6 +35,7 @@ function compactSuffix(value: string): string {
     : middleEllipsis(decoded, 38);
 }
 
+/** Creates a deterministic display form for known URNs, HTTP IRIs, and arbitrary identifiers. */
 export function compactIdentifier(value: string): string {
   for (const [namespace, label] of KNOWN_NAMESPACES) {
     if (value.startsWith(namespace))
@@ -65,6 +70,7 @@ export function compactIdentifier(value: string): string {
   return cut >= 0 ? compactSuffix(value.slice(cut + 1)) : middleEllipsis(value);
 }
 
+/** Collects curator labels for terms and real objects while leaving unresolved placeholders explicit. */
 export function identifierLabels(projection: Projection | null): IdentifierLabels {
   const labels = new Map<string, string>();
   projection?.terms.forEach((term) => labels.set(term.id, term.label));
@@ -74,6 +80,7 @@ export function identifierLabels(projection: Projection | null): IdentifierLabel
   return labels;
 }
 
+/** Selects primary and optional secondary identifier text without changing the exact underlying value. */
 export function identifierPresentation(
   value: string,
   labels: IdentifierLabels,

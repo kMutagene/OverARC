@@ -2,6 +2,7 @@ import { IdentifierView } from '../../shared/IdentifierView';
 import type { IdentifierLabels } from '../../shared/identifierModel';
 import type { Annotation, ArcValue } from '../../shared/types';
 
+/** Recursively renders every ArcValue kind while keeping IRI and Ref values exact-copyable. */
 export function ArcValueView({ value, labels }: { value: ArcValue; labels: IdentifierLabels }) {
   if (value.items) {
     return (
@@ -29,6 +30,7 @@ export function ArcValueView({ value, labels }: { value: ArcValue; labels: Ident
   );
 }
 
+/** Renders curator-facing annotation values and provenance with exact metadata under disclosure. */
 export function AnnotationList({
   annotations,
   labels,

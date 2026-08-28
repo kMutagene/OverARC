@@ -17,6 +17,7 @@ import { WorkspaceSidebar } from '../features/workspace/WorkspaceSidebar';
 import { downloadText } from '../shared/download';
 import type { Filters, VisibleProjection } from '../shared/types';
 
+/** Composes the workbench and owns state shared by the workspace, graph/table, and inspector panes. */
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const panes = usePaneLayout();
@@ -54,6 +55,7 @@ export default function App() {
       : !visible.relationStatus.has(selection.selected.id)),
   );
 
+  /** Exports the currently visible nodes and relations as two exact-ID-preserving CSV files. */
   const exportCsv = () => {
     if (!workspace.projection) return;
     const csv = visibleCsv(workspace.projection, visible);

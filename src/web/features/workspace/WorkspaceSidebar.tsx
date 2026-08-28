@@ -4,6 +4,7 @@ import { FilterPanel } from './FilterPanel';
 import { GraphSummary } from './GraphSummary';
 import { StateList } from './StateList';
 
+/** Composition inputs for the workspace, filter, legend, export, and theme sidebar. */
 interface WorkspaceSidebarProps {
   workspace: Workspace | null;
   activeState: string | null;
@@ -21,6 +22,7 @@ interface WorkspaceSidebarProps {
   onToggleTheme: () => void;
 }
 
+/** Composes all left-pane controls and hides them from accessibility APIs when collapsed. */
 export function WorkspaceSidebar({
   workspace,
   activeState,
