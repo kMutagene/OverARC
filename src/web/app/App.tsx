@@ -1,5 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react';
-import { GraphPane } from '../features/graph/GraphPane';
+import { GraphPane, type CenterView } from '../features/graph/GraphPane';
 import {
   buildGraph,
   filterOptions,
@@ -23,6 +23,7 @@ export default function App() {
   const workspace = useWorkspace();
   const selection = useElementSelection(workspace.activeState, workspace.projection);
   const [filters, setFilters] = useState<Filters>(emptyFilters);
+  const [centerView, setCenterView] = useState<CenterView>('graph');
 
   const visible = useMemo<VisibleProjection>(
     () =>
@@ -32,8 +33,8 @@ export default function App() {
     [filters, workspace.projection],
   );
   const graph = useMemo(
-    () => (workspace.projection ? buildGraph(workspace.projection, visible) : null),
-    [visible, workspace.projection],
+    () => (workspace.projection ? buildGraph(workspace.projection) : null),
+    [workspace.projection],
   );
   const options = useMemo(
     () =>
@@ -45,6 +46,12 @@ export default function App() {
   const termLabels = useMemo(
     () => new Map(workspace.projection?.terms.map((term) => [term.id, term.label]) ?? []),
     [workspace.projection],
+  );
+  const selectionHidden = Boolean(
+    selection.selected &&
+    (selection.selected.kind === 'object'
+      ? !visible.nodeStatus.has(selection.selected.id)
+      : !visible.relationStatus.has(selection.selected.id)),
   );
 
   const exportCsv = () => {
@@ -91,12 +98,16 @@ export default function App() {
         resetToken={workspace.resetToken}
         theme={theme}
         selected={selection.selected}
+        activeView={centerView}
+        onViewChange={setCenterView}
         onSelect={selection.select}
       />
       <PaneResizer side="right" {...panes.right} />
       <Inspector
         detail={selection.detail}
         loading={selection.loading}
+        projection={workspace.projection}
+        hiddenByFilters={selectionHidden}
         collapsed={panes.right.width === 0}
         onClear={selection.clear}
       />

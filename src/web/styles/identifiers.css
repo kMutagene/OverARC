@@ -1,0 +1,74 @@
+.identifier-view {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 0.35rem;
+  vertical-align: middle;
+}
+
+.identifier-text {
+  display: inline-flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.identifier-primary {
+  font-weight: 600;
+}
+
+.identifier-secondary {
+  color: var(--overarc-muted);
+  font-size: 0.72rem;
+  white-space: normal;
+}
+
+.identifier-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.15rem;
+}
+
+.identifier-action,
+button.identifier-action {
+  display: inline-grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  color: var(--overarc-accent);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.2rem;
+  font-size: 0.78rem;
+  line-height: 1;
+  text-decoration: none;
+  user-select: none;
+}
+
+.identifier-action:hover,
+.identifier-action:focus-visible {
+  background: var(--overarc-surface-muted);
+  border-color: var(--overarc-line);
+}
+
+.identifier-view.exact {
+  align-items: flex-start;
+}
+
+.identifier-view.exact .identifier-text {
+  flex: 1 1 auto;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

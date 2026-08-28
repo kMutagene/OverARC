@@ -1,58 +1,98 @@
+import { IdentifierView } from '../../shared/IdentifierView';
+import type { IdentifierLabels } from '../../shared/identifierModel';
 import type { ElementDetail } from '../../shared/types';
-import { AnnotationList, ArcValueView, Iri } from './DetailValues';
+import { AnnotationList, ArcValueView } from './DetailValues';
 
-export function InspectorMetadata({ detail }: { detail: ElementDetail }) {
+interface SectionProps {
+  detail: ElementDetail;
+  labels: IdentifierLabels;
+}
+
+export function InspectorMetadata({ detail, labels }: SectionProps) {
   return (
-    <dl>
-      <dt>Exact IRI</dt>
-      <dd>
-        <Iri value={detail.id} />
-      </dd>
-      {detail.selector && (
-        <>
-          <dt>{detail.isDerivedReference ? 'Value selector' : 'Selector'}</dt>
+    <>
+      <dl className="inspector-summary">
+        {detail.objectKind && (
+          <>
+            <dt>Kind</dt>
+            <dd>{detail.objectKind}</dd>
+          </>
+        )}
+        {detail.subject && (
+          <>
+            <dt>Subject</dt>
+            <dd>
+              <IdentifierView value={detail.subject} labels={labels} />
+            </dd>
+          </>
+        )}
+        {detail.predicateId && (
+          <>
+            <dt>Predicate</dt>
+            <dd>
+              <IdentifierView
+                value={detail.predicateId}
+                labels={labels}
+                label={detail.predicateLabel}
+              />
+            </dd>
+          </>
+        )}
+        {detail.object && (
+          <>
+            <dt>Object</dt>
+            <dd>
+              <IdentifierView value={detail.object} labels={labels} />
+            </dd>
+          </>
+        )}
+      </dl>
+      <details className="technical-details element-technical-details">
+        <summary>Technical details</summary>
+        <dl>
+          <dt>Exact IRI</dt>
           <dd>
-            <code>{detail.selector}</code>
+            <IdentifierView value={detail.id} exact />
           </dd>
-        </>
-      )}
-      {detail.objectKind && (
-        <>
-          <dt>Kind</dt>
-          <dd>{detail.objectKind}</dd>
-        </>
-      )}
-      {detail.subject && (
-        <>
-          <dt>Subject</dt>
-          <dd>
-            <Iri value={detail.subject} />
-          </dd>
-        </>
-      )}
-      {detail.predicateId && (
-        <>
-          <dt>Predicate</dt>
-          <dd>
-            {detail.predicateLabel}
-            <br />
-            <Iri value={detail.predicateId} />
-          </dd>
-        </>
-      )}
-      {detail.object && (
-        <>
-          <dt>Object</dt>
-          <dd>
-            <Iri value={detail.object} />
-          </dd>
-        </>
-      )}
-    </dl>
+          {detail.selector && (
+            <>
+              <dt>{detail.isDerivedReference ? 'Value selector' : 'Selector'}</dt>
+              <dd>
+                <code>{detail.selector}</code>
+              </dd>
+            </>
+          )}
+          {detail.subject && (
+            <>
+              <dt>Subject IRI</dt>
+              <dd>
+                <IdentifierView value={detail.subject} exact />
+              </dd>
+            </>
+          )}
+          {detail.predicateId && (
+            <>
+              <dt>Predicate IRI</dt>
+              <dd>
+                <IdentifierView value={detail.predicateId} exact />
+              </dd>
+            </>
+          )}
+          {detail.object && (
+            <>
+              <dt>Object IRI</dt>
+              <dd>
+                <IdentifierView value={detail.object} exact />
+              </dd>
+            </>
+          )}
+        </dl>
+      </details>
+    </>
   );
 }
 
-export function PlaceholderRelations({ detail }: { detail: ElementDetail }) {
+export function PlaceholderRelations({ detail, labels }: SectionProps) {
   if (!detail.isPlaceholder || !detail.placeholderReferences) return null;
   return (
     <details className="inspector-section" open key={`${detail.id}-relations`}>
@@ -69,11 +109,11 @@ export function PlaceholderRelations({ detail }: { detail: ElementDetail }) {
             <dd>{reference.endpoint}</dd>
             <dt>Relation</dt>
             <dd>
-              <Iri value={reference.relationId} />
+              <IdentifierView value={reference.relationId} labels={labels} />
             </dd>
             <dt>Other endpoint</dt>
             <dd>
-              <Iri value={reference.otherId} />
+              <IdentifierView value={reference.otherId} labels={labels} />
             </dd>
           </dl>
         </article>
@@ -82,7 +122,7 @@ export function PlaceholderRelations({ detail }: { detail: ElementDetail }) {
   );
 }
 
-export function TypeAssertions({ detail }: { detail: ElementDetail }) {
+export function TypeAssertions({ detail, labels }: SectionProps) {
   if (detail.types.length === 0) return null;
   return (
     <details className="inspector-section" open key={`${detail.id}-types`}>
@@ -94,17 +134,30 @@ export function TypeAssertions({ detail }: { detail: ElementDetail }) {
       {detail.types.map((type) => (
         <article key={type.id}>
           <strong>{type.termLabel}</strong>
-          <br />
-          <Iri value={type.termId} />
-          <br />
-          <code>{type.selector}</code>
+          <details className="technical-details">
+            <summary>Technical details</summary>
+            <dl>
+              <dt>Assertion ID</dt>
+              <dd>
+                <IdentifierView value={type.id} exact />
+              </dd>
+              <dt>Term IRI</dt>
+              <dd>
+                <IdentifierView value={type.termId} labels={labels} exact />
+              </dd>
+              <dt>Selector</dt>
+              <dd>
+                <code>{type.selector}</code>
+              </dd>
+            </dl>
+          </details>
         </article>
       ))}
     </details>
   );
 }
 
-export function AssertionSections({ detail }: { detail: ElementDetail }) {
+export function AssertionSections({ detail, labels }: SectionProps) {
   if (detail.isPlaceholder || detail.isDerivedReference) return null;
   return (
     <>
@@ -119,18 +172,18 @@ export function AssertionSections({ detail }: { detail: ElementDetail }) {
           <article key={property.id}>
             <strong>{property.predicateLabel}</strong>
             <p>
-              <ArcValueView value={property.value} />
+              <ArcValueView value={property.value} labels={labels} />
             </p>
-            <details>
-              <summary>Assertion identifiers</summary>
+            <details className="technical-details">
+              <summary>Technical details</summary>
               <dl>
-                <dt>ID</dt>
+                <dt>Assertion ID</dt>
                 <dd>
-                  <Iri value={property.id} />
+                  <IdentifierView value={property.id} exact />
                 </dd>
-                <dt>Predicate</dt>
+                <dt>Predicate IRI</dt>
                 <dd>
-                  <Iri value={property.predicateId} />
+                  <IdentifierView value={property.predicateId} exact />
                 </dd>
                 <dt>Selector</dt>
                 <dd>
@@ -142,7 +195,7 @@ export function AssertionSections({ detail }: { detail: ElementDetail }) {
                 </dd>
               </dl>
             </details>
-            <AnnotationList annotations={property.annotations} />
+            <AnnotationList annotations={property.annotations} labels={labels} />
           </article>
         ))}
       </details>
@@ -152,7 +205,7 @@ export function AssertionSections({ detail }: { detail: ElementDetail }) {
             Annotations <small>{detail.annotations.length}</small>
           </h3>
         </summary>
-        <AnnotationList annotations={detail.annotations} />
+        <AnnotationList annotations={detail.annotations} labels={labels} />
         {detail.annotations.length === 0 && <p>None</p>}
       </details>
     </>

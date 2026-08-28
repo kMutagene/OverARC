@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { buildGraph, objectKindColor, visibleCsv, visibleProjection } from './graphModel';
+import {
+  buildGraph,
+  nodeViewStyle,
+  objectKindColor,
+  relationViewStyle,
+  visibleCsv,
+  visibleGraphBounds,
+  visibleProjection,
+} from './graphModel';
 import type { Filters, Projection } from '../../shared/types';
 
 const projection: Projection = {
@@ -125,9 +133,8 @@ describe('visibleCsv', () => {
 
 describe('projection mapping', () => {
   it('creates deterministic directed multigraph coordinates', () => {
-    const visible = visibleProjection(projection, filters());
-    const first = buildGraph(projection, visible);
-    const second = buildGraph(projection, visible);
+    const first = buildGraph(projection);
+    const second = buildGraph(projection);
     expect(first.multi).toBe(true);
     expect(first.type).toBe('directed');
     expect(first.size).toBe(3);
@@ -135,19 +142,35 @@ describe('projection mapping', () => {
   });
 
   it('colors nodes by ArcIR object kind while context only dims the kind color', () => {
-    const kindProjection: Projection = {
-      ...projection,
-      nodes: projection.nodes.map((node, index) => ({
-        ...node,
-        kind: index === 0 ? 'observable' : 'collection',
-      })),
-    };
-    const visible = visibleProjection(kindProjection, filters({ query: 'Alpha' }));
-    const graph = buildGraph(kindProjection, visible);
+    const match = nodeViewStyle('observable', false, 'match', 'light');
+    const context = nodeViewStyle('collection', false, 'context', 'light');
 
-    expect(graph.getNodeAttribute('a', 'color')).toBe(objectKindColor('observable'));
-    expect(graph.getNodeAttribute('b', 'color')).not.toBe(objectKindColor('collection'));
+    expect(match.color).toBe(objectKindColor('observable'));
+    expect(context.color).not.toBe(objectKindColor('collection'));
     expect(objectKindColor('observable')).not.toBe(objectKindColor('collection'));
+  });
+
+  it('keeps one complete graph while filters only produce view attributes', () => {
+    const graph = buildGraph(projection);
+    const strict = visibleProjection(projection, filters({ query: 'Alpha', context: false }));
+
+    expect(graph.nodes()).toEqual(['a', 'b', 'c']);
+    expect(nodeViewStyle('Sample', false, strict.nodeStatus.get('a'), 'light').hidden).toBe(false);
+    expect(nodeViewStyle('Study', false, strict.nodeStatus.get('b'), 'light').hidden).toBe(true);
+    expect(relationViewStyle(false, strict.relationStatus.get('ab'), 'light').hidden).toBe(true);
+  });
+
+  it('calculates focus bounds from visible node coordinates only', () => {
+    const graph = buildGraph(projection);
+    graph.mergeNodeAttributes('a', { x: 2, y: 3 });
+    graph.mergeNodeAttributes('b', { x: 100, y: 200 });
+    const visible = { nodeStatus: new Map([['a', 'match'] as const]), relationStatus: new Map() };
+    const bounds = visibleGraphBounds(graph, visible);
+
+    expect(bounds).not.toBeNull();
+    expect(bounds!.x[0]).toBeLessThan(2);
+    expect(bounds!.x[1]).toBeGreaterThan(2);
+    expect(bounds!.x[1]).toBeLessThan(100);
   });
 
   it('assigns deterministic lanes only to parallel non-self edges', () => {
@@ -171,12 +194,11 @@ describe('projection mapping', () => {
         },
       ],
     };
-    const visible = visibleProjection(withOverlaps, filters());
-    const graph = buildGraph(withOverlaps, visible);
-    const reordered = buildGraph(
-      { ...withOverlaps, relations: [...withOverlaps.relations].reverse() },
-      visible,
-    );
+    const graph = buildGraph(withOverlaps);
+    const reordered = buildGraph({
+      ...withOverlaps,
+      relations: [...withOverlaps.relations].reverse(),
+    });
 
     expect(
       ['ab', 'ab-2', 'ba'].map((edge) => graph.getEdgeAttribute(edge, 'parallelLane')),

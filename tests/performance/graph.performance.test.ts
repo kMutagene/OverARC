@@ -38,8 +38,9 @@ describe('generated 10k object / 25k relation benchmark', () => {
     const projection = benchmarkProjection();
     const started = performance.now();
     const visible = visibleProjection(projection, filters());
-    const graph = buildGraph(projection, visible);
+    const graph = buildGraph(projection);
     const elapsed = performance.now() - started;
+    expect(visible.nodeStatus.size).toBe(10_000);
     expect(graph.order).toBe(10_000);
     expect(graph.size).toBe(25_000);
     expect(elapsed).toBeLessThan(5_000);

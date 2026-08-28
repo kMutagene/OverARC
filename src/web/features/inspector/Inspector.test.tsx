@@ -43,15 +43,22 @@ const detail: ElementDetail = {
 };
 
 describe('Inspector', () => {
-  it('renders exact IDs, selectors, values, nested annotations, evidence, and sources', () => {
+  it('keeps curator values visible and exact technical metadata on demand', () => {
     render(<Inspector detail={detail} loading={false} />);
     expect(screen.getByRole('heading', { name: 'SAMTEST001' })).toBeVisible();
-    expect(screen.getByText('urn:object:sample/ä~1')).toBeVisible();
     expect(screen.getByText('9223372036854775807')).toBeVisible();
     expect(screen.getByText('22 degree Celsius')).toBeVisible();
     expect(screen.getByText('urn:evidence:paper')).toBeVisible();
     expect(screen.getByText('urn:source:record')).toBeVisible();
+    expect(screen.getByText('#/annotation')).not.toBeVisible();
+
+    const annotation = screen.getByText('Measurement').closest('article')!;
+    fireEvent.click(within(annotation).getByText('Technical details'));
     expect(screen.getByText('#/annotation')).toBeVisible();
+    expect(screen.getByText('#/annotation/value')).toBeVisible();
+
+    fireEvent.click(screen.getAllByText('Technical details')[0]);
+    expect(screen.getByText('urn:object:sample/ä~1')).toBeVisible();
   });
 
   it('provides an explicit way to clear the selection', () => {
@@ -114,8 +121,10 @@ describe('Inspector', () => {
 
     const inspector = within(view.container);
     expect(inspector.getByText(/It is not an ArcRelation/)).toBeVisible();
-    expect(inspector.getByText('urn:object:source')).toBeVisible();
-    expect(inspector.getByText('urn:object:target')).toBeVisible();
+    expect(inspector.getAllByText('urn:object:source')[0]).toBeVisible();
+    expect(inspector.getAllByText('urn:object:target')[0]).toBeVisible();
+    expect(inspector.getByText('Value selector')).not.toBeVisible();
+    fireEvent.click(inspector.getByText('Technical details'));
     expect(inspector.getByText('Value selector')).toBeVisible();
     expect(inspector.queryByRole('heading', { name: /Properties/ })).not.toBeInTheDocument();
   });
@@ -130,5 +139,11 @@ describe('Inspector', () => {
     fireEvent.click(heading.closest('summary')!);
 
     expect(disclosure).not.toHaveAttribute('open');
+  });
+
+  it('explains when the selected element is hidden by filters', () => {
+    render(<Inspector detail={detail} loading={false} hiddenByFilters />);
+    expect(screen.getByText(/hidden by the current filters/)).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'SAMTEST001' })).toBeVisible();
   });
 });

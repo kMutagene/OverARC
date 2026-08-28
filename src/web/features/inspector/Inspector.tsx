@@ -1,4 +1,6 @@
-import type { ElementDetail } from '../../shared/types';
+import { useMemo } from 'react';
+import { identifierLabels } from '../../shared/identifierModel';
+import type { ElementDetail, Projection } from '../../shared/types';
 import {
   AssertionSections,
   InspectorMetadata,
@@ -9,11 +11,21 @@ import {
 interface InspectorProps {
   detail: ElementDetail | null;
   loading: boolean;
+  projection?: Projection | null;
+  hiddenByFilters?: boolean;
   collapsed?: boolean;
   onClear?: () => void;
 }
 
-export function Inspector({ detail, loading, collapsed = false, onClear }: InspectorProps) {
+export function Inspector({
+  detail,
+  loading,
+  projection = null,
+  hiddenByFilters = false,
+  collapsed = false,
+  onClear,
+}: InspectorProps) {
+  const labels = useMemo(() => identifierLabels(projection), [projection]);
   if (collapsed) return <aside className="inspector pane-collapsed" aria-hidden="true" />;
   if (loading)
     return (
@@ -65,10 +77,16 @@ export function Inspector({ detail, loading, collapsed = false, onClear }: Inspe
           relation assertions of its own.
         </p>
       )}
-      <InspectorMetadata detail={detail} />
-      <PlaceholderRelations detail={detail} />
-      <TypeAssertions detail={detail} />
-      <AssertionSections detail={detail} />
+      {hiddenByFilters && (
+        <p className="filtered-selection-notice">
+          This element is hidden by the current filters. Its details remain available until you
+          clear the selection or switch states.
+        </p>
+      )}
+      <InspectorMetadata detail={detail} labels={labels} />
+      <PlaceholderRelations detail={detail} labels={labels} />
+      <TypeAssertions detail={detail} labels={labels} />
+      <AssertionSections detail={detail} labels={labels} />
     </aside>
   );
 }

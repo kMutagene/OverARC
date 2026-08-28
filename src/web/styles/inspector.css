@@ -104,6 +104,15 @@
   font-size: 0.85rem;
 }
 
+.filtered-selection-notice {
+  padding: 0.65rem;
+  color: var(--overarc-filtered-ink);
+  background: var(--overarc-filtered-surface);
+  border: 1px solid var(--overarc-filtered-line);
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+}
+
 .inspector code {
   white-space: normal;
   overflow-wrap: anywhere;
@@ -115,6 +124,49 @@
   padding: 0.5rem;
   background: var(--overarc-surface);
   border: 1px solid var(--overarc-line);
+}
+
+.nested-annotations > strong {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.inspector .annotation-card {
+  margin: 0.4rem 0 0;
+  padding: 0.55rem;
+  background: var(--overarc-surface-panel);
+  border: 1px solid var(--overarc-line);
+  border-left: 2px solid var(--overarc-accent);
+}
+
+.annotation-card > p {
+  margin: 0.2rem 0 0.4rem;
+}
+
+.inspector .annotation-provenance {
+  margin: 0.35rem 0;
+}
+
+.technical-details {
+  margin-top: 0.45rem;
+  padding: 0.35rem 0.45rem;
+  background: var(--overarc-surface);
+  border: 1px solid var(--overarc-line);
+  border-radius: 0.2rem;
+}
+
+.technical-details > summary {
+  color: var(--overarc-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.technical-details[open] > summary {
+  margin-bottom: 0.45rem;
+}
+
+.element-technical-details {
+  margin: 0.65rem 0 0.8rem;
 }
 
 .value-kind {

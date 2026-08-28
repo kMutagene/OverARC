@@ -4,6 +4,7 @@ import type {
   GraphNode,
   GraphRelation,
   Projection,
+  Theme,
   VisibilityStatus,
   VisibleProjection,
 } from '../../shared/types';
@@ -97,21 +98,67 @@ function hashPosition(id: string): { x: number; y: number } {
   return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
 }
 
-export function buildGraph(projection: Projection, visible: VisibleProjection): MultiDirectedGraph {
+export function nodeViewStyle(
+  kind: string | null,
+  isPlaceholder: boolean,
+  status: VisibilityStatus | undefined,
+  theme: Theme,
+) {
+  const kindColor = objectKindColor(kind);
+  const darkKindColor = mixWith(kindColor, [0xff, 0xff, 0xff], 0.18);
+  return {
+    hidden: status === undefined,
+    size: isPlaceholder ? 7 : status === 'match' ? 9 : 5,
+    color:
+      theme === 'dark'
+        ? status === 'context'
+          ? mixWithHex(darkKindColor, darkGraphBackground, 0.58)
+          : darkKindColor
+        : status === 'context'
+          ? mixWith(kindColor, [0xf4, 0xf5, 0xf6], 0.58)
+          : kindColor,
+  };
+}
+
+export function relationViewStyle(
+  isDerived: boolean,
+  status: VisibilityStatus | undefined,
+  theme: Theme,
+) {
+  const context = status === 'context';
+  return {
+    hidden: status === undefined,
+    size: status === 'match' ? 2 : 1,
+    color:
+      theme === 'dark'
+        ? context
+          ? isDerived
+            ? '#514868'
+            : '#40514f'
+          : isDerived
+            ? '#a78bfa'
+            : '#91aaa5'
+        : context
+          ? isDerived
+            ? '#d8c9ef'
+            : '#cbd5d1'
+          : isDerived
+            ? '#8b5cf6'
+            : '#526a66',
+  };
+}
+
+export function buildGraph(projection: Projection): MultiDirectedGraph {
   const graph = new MultiDirectedGraph();
   for (const node of projection.nodes) {
-    const status = visible.nodeStatus.get(node.id);
-    if (!status) continue;
     const kindColor = objectKindColor(node.kind);
     const darkKindColor = mixWith(kindColor, [0xff, 0xff, 0xff], 0.18);
     graph.addNode(node.id, {
       ...hashPosition(node.id),
       label: node.label,
-      size: node.isPlaceholder ? 7 : status === 'match' ? 9 : 5,
-      color: status === 'context' ? mixWith(kindColor, [0xf4, 0xf5, 0xf6], 0.58) : kindColor,
-      darkColor:
-        status === 'context' ? mixWithHex(darkKindColor, darkGraphBackground, 0.58) : darkKindColor,
-      status,
+      size: node.isPlaceholder ? 7 : 9,
+      color: kindColor,
+      darkColor: darkKindColor,
       kind: node.kind,
       isPlaceholder: node.isPlaceholder,
     });
@@ -119,30 +166,14 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
   for (const relation of [...projection.relations].sort((left, right) =>
     left.id < right.id ? -1 : left.id > right.id ? 1 : 0,
   )) {
-    const status = visible.relationStatus.get(relation.id);
-    if (!status || !graph.hasNode(relation.subject) || !graph.hasNode(relation.object)) continue;
+    if (!graph.hasNode(relation.subject) || !graph.hasNode(relation.object)) continue;
     graph.addDirectedEdgeWithKey(relation.id, relation.subject, relation.object, {
       label: relation.label,
-      size: status === 'match' ? 2 : 1,
-      color:
-        status === 'context'
-          ? relation.isDerived
-            ? '#d8c9ef'
-            : '#cbd5d1'
-          : relation.isDerived
-            ? '#8b5cf6'
-            : '#526a66',
-      darkColor:
-        status === 'context'
-          ? relation.isDerived
-            ? '#514868'
-            : '#40514f'
-          : relation.isDerived
-            ? '#a78bfa'
-            : '#91aaa5',
+      size: 2,
+      color: relation.isDerived ? '#8b5cf6' : '#526a66',
+      darkColor: relation.isDerived ? '#a78bfa' : '#91aaa5',
       isDerived: relation.isDerived,
       type: 'arrow',
-      status,
     });
   }
 
@@ -177,6 +208,42 @@ export function buildGraph(projection: Projection, visible: VisibleProjection): 
   }
 
   return graph;
+}
+
+export interface GraphBounds {
+  x: [number, number];
+  y: [number, number];
+}
+
+export function visibleGraphBounds(
+  graph: MultiDirectedGraph,
+  visible: VisibleProjection,
+): GraphBounds | null {
+  const positions = [...visible.nodeStatus.keys()]
+    .filter((node) => graph.hasNode(node))
+    .map((node) => graph.getNodeAttributes(node))
+    .filter(
+      (attributes) => Number.isFinite(attributes.x) && Number.isFinite(attributes.y),
+    ) as Array<{ x: number; y: number }>;
+  if (positions.length === 0) return null;
+
+  const xs = positions.map(({ x }) => x);
+  const ys = positions.map(({ y }) => y);
+  let minX = Math.min(...xs);
+  let maxX = Math.max(...xs);
+  let minY = Math.min(...ys);
+  let maxY = Math.max(...ys);
+  const span = Math.max(maxX - minX, maxY - minY, 1);
+  const padding = span * 0.08;
+  if (minX === maxX) {
+    minX -= span / 2;
+    maxX += span / 2;
+  }
+  if (minY === maxY) {
+    minY -= span / 2;
+    maxY += span / 2;
+  }
+  return { x: [minX - padding, maxX + padding], y: [minY - padding, maxY + padding] };
 }
 
 function csvCell(value: unknown): string {

@@ -22,6 +22,9 @@
   --overarc-reference-ink: #4c2c75;
   --overarc-reference-surface: #f5efff;
   --overarc-reference-line: #d4c0ed;
+  --overarc-filtered-ink: #5b4610;
+  --overarc-filtered-surface: #fff8df;
+  --overarc-filtered-line: #ead58c;
   color-scheme: light;
   font-size: 93.75%;
 }
@@ -49,6 +52,9 @@ html[data-theme='dark'] {
   --overarc-reference-ink: #dbc5ff;
   --overarc-reference-surface: #282035;
   --overarc-reference-line: #5f4d78;
+  --overarc-filtered-ink: #ffe19a;
+  --overarc-filtered-surface: #302817;
+  --overarc-filtered-line: #6f5c28;
   color-scheme: dark;
 }
 
