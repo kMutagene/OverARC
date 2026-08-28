@@ -2,8 +2,9 @@
 
 > **Status: implemented milestone (2026-08-28).** This viewer-first roadmap
 > supersedes the earlier F# server, generated API client, and early editor plan.
-> The sibling BioFSharp.INSDC roadmap remains authoritative for ArcIR, mapping,
-> curation transactions, provenance, and native ARC processes.
+> It remains authoritative for the delivered read-only viewer only;
+> [`curation-workbench.md`](curation-workbench.md) supersedes its future
+> integration gates for current ArcIR, SSSOM, and native ARC curation work.
 
 ## Decision and dependency boundary
 

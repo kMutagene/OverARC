@@ -4,9 +4,11 @@ export interface Workspace {
   relativeManifestPath: string;
   defaultStateId: string | null;
   states: StateSummary[];
+  lineageKind?: 'nativeArc';
+  findings?: string[];
 }
 
-/** Manifest metadata and current validation result for one immutable ArcIR state. */
+/** Metadata, validation, and optional native editability for one immutable ArcIR state. */
 export interface StateSummary {
   id: string;
   label: string;
@@ -18,6 +20,109 @@ export interface StateSummary {
   objectCount: number | null;
   relationCount: number | null;
   errors: string[];
+  editable?: boolean;
+  mappingArtifact?: MappingArtifactSummary;
+  curationErrors?: string[];
+}
+
+/** Validation and identity metadata for the native SSSOM base paired to a state. */
+export interface MappingArtifactSummary {
+  relativePath: string;
+  sha256?: string;
+  status: string;
+  sssomVersion?: string;
+  mappingSetId?: string;
+  mappingCount?: number;
+  errors: string[];
+}
+
+/** One populated standard or declared extension SSSOM slot with lossless lexical values. */
+export interface SssomField {
+  name: string;
+  values: string[];
+}
+
+/** One zero-based SSSOM mapping row projected without coercing numeric or identifier fields. */
+export interface SssomMapping {
+  index: number;
+  fields: SssomField[];
+}
+
+/** Validated SSSOM metadata and records for an immutable state or replayed draft. */
+export interface Mappings {
+  stateId: string;
+  draftId: string | null;
+  relativePath: string | null;
+  sha256: string;
+  isDraft: boolean;
+  sssomVersion: string | null;
+  mappingSetId: string;
+  license: string;
+  metadataFields: SssomField[];
+  mappings: SssomMapping[];
+}
+
+/** Exact SSSOM identity fields used by one replayed draft command and native provenance lane. */
+export interface SssomMappingRecord {
+  index: number;
+  recordId: string | null;
+  subjectLabel: string | null;
+  predicateId: string;
+  objectId: string | null;
+  objectLabel: string | null;
+  mappingJustification: string;
+}
+
+/** One ordered typed selected-literal operation in a server-owned draft. */
+export interface CurationOperation {
+  id: string;
+  selector: string;
+  literal: string;
+  targetTermId: string;
+  targetTermLabel: string;
+  predicateId: string;
+  proposedRecordId: string;
+  outputSelector: string;
+  arcIrStatus: string;
+  mappingCreated: boolean;
+  mappingRecord: SssomMappingRecord;
+}
+
+/** Reattachable in-memory draft whose 64-bit optimistic revision remains decimal text. */
+export interface CurationDraft {
+  id: string;
+  stateId: string;
+  revision: string;
+  processName: string;
+  curator: string;
+  createdUtc: string;
+  lastAccessUtc: string;
+  baseArcIrSha256: string;
+  baseSssomSha256: string;
+  arcIrSha256: string;
+  sssomSha256: string;
+  operations: CurationOperation[];
+}
+
+/** Immutable artifact identities and selected successor returned after an atomic local save. */
+export interface CurationSave {
+  draftId: string;
+  processName: string;
+  saveUtc: string;
+  successorStateId: string;
+  arcIrPath: string;
+  arcIrSha256: string;
+  mappingPath: string;
+  mappingSha256: string;
+  mappingCreated: boolean;
+  arcYamlSha256: string;
+}
+
+/** One supported exact string occurrence offered to the typed mapping dialog. */
+export interface LiteralOccurrence {
+  selector: string;
+  literal: string;
+  context: string;
 }
 
 /** Compact term metadata used for graph labels, filter choices, links, and selectors. */

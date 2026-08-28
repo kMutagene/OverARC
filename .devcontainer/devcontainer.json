@@ -9,12 +9,16 @@
   "mounts": [
     "source=overarc-bashhistory,target=/commandhistory,type=volume",
     "source=${localWorkspaceFolder}/../../BioFSharp/BioFSharp.INSDC,target=/workspaces/BioFSharp.INSDC,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/../../nfdi4plants/PolyglotSSSOM,target=/workspaces/PolyglotSSSOM,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/../../HLWeil/ProcessCore,target=/workspaces/ProcessCore,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
     "DOTNET_NOLOGO": "1",
     "BIOFSHARP_INSDC_ROOT": "/workspaces/BioFSharp.INSDC",
+    "POLYGLOTSSSOM_ROOT": "/workspaces/PolyglotSSSOM",
+    "PROCESSCORE_ROOT": "/workspaces/ProcessCore",
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "POWERSHELL_TELEMETRY_OPTOUT": "1"
   },

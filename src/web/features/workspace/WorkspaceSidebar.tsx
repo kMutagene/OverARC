@@ -1,4 +1,13 @@
-import type { Filters, Projection, Theme, VisibleProjection, Workspace } from '../../shared/types';
+import type {
+  CurationDraft,
+  Filters,
+  Projection,
+  StateSummary,
+  Theme,
+  VisibleProjection,
+  Workspace,
+} from '../../shared/types';
+import { CurationStatus } from '../curation/CurationStatus';
 import { ThemeToggle } from '../theme/ThemeToggle';
 import { FilterPanel } from './FilterPanel';
 import { GraphSummary } from './GraphSummary';
@@ -15,11 +24,19 @@ interface WorkspaceSidebarProps {
   termLabels: Map<string, string>;
   theme: Theme;
   collapsed: boolean;
+  activeSummary: StateSummary | null;
+  draft: CurationDraft | null;
+  curationError: string | null;
+  notice: string | null;
+  mutating: boolean;
   onChooseState: (id: string) => void;
   onRefresh: () => void;
   onFiltersChange: (filters: Filters) => void;
   onExportCsv: () => void;
   onToggleTheme: () => void;
+  onSave: () => void;
+  onDiscard: () => void;
+  onDismissNotice: () => void;
 }
 
 /** Composes all left-pane controls and hides them from accessibility APIs when collapsed. */
@@ -33,11 +50,19 @@ export function WorkspaceSidebar({
   termLabels,
   theme,
   collapsed,
+  activeSummary,
+  draft,
+  curationError,
+  notice,
+  mutating,
   onChooseState,
   onRefresh,
   onFiltersChange,
   onExportCsv,
   onToggleTheme,
+  onSave,
+  onDiscard,
+  onDismissNotice,
 }: WorkspaceSidebarProps) {
   return (
     <aside
@@ -47,7 +72,7 @@ export function WorkspaceSidebar({
     >
       <header className="app-header">
         <div>
-          <p className="eyebrow">Read-only ArcIR workbench</p>
+          <p className="eyebrow">ArcIR curation workbench</p>
           <h1>OverARC</h1>
           <p>{workspace?.name ?? 'Loading workspace…'}</p>
         </div>
@@ -58,6 +83,16 @@ export function WorkspaceSidebar({
         activeState={activeState}
         onChooseState={onChooseState}
         onRefresh={onRefresh}
+      />
+      <CurationStatus
+        state={activeSummary}
+        draft={draft}
+        notice={notice}
+        error={curationError}
+        busy={mutating}
+        onSave={onSave}
+        onDiscard={onDiscard}
+        onDismissNotice={onDismissNotice}
       />
       <FilterPanel
         filters={filters}

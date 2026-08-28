@@ -4,7 +4,11 @@ import type { ElementDetail, Projection, Selection, TermDetail } from '../../sha
 import { projectedDetail } from './detailModel';
 
 /** Owns exact state-bound selection and resolves graph or term details through the appropriate path. */
-export function useElementSelection(activeState: string | null, projection: Projection | null) {
+export function useElementSelection(
+  activeState: string | null,
+  projection: Projection | null,
+  draftId: string | null = null,
+) {
   const [selected, setSelected] = useState<Selection | null>(null);
   const [detail, setDetail] = useState<ElementDetail | null>(null);
   const [termDetail, setTermDetail] = useState<TermDetail | null>(null);
@@ -34,8 +38,10 @@ export function useElementSelection(activeState: string | null, projection: Proj
     setTermDetail(null);
 
     if (selected.kind === 'term') {
-      void api
-        .termDetails(activeState, selected.id)
+      const load = draftId
+        ? api.draftTermDetails(draftId, selected.id)
+        : api.termDetails(activeState, selected.id);
+      void load
         .then((next) => {
           if (!cancelled) setTermDetail(next);
         })
@@ -58,8 +64,10 @@ export function useElementSelection(activeState: string | null, projection: Proj
       return;
     }
 
-    void api
-      .details(activeState, selected.kind, selected.id)
+    const load = draftId
+      ? api.draftDetails(draftId, selected.kind, selected.id)
+      : api.details(activeState, selected.kind, selected.id);
+    void load
       .then((next) => {
         if (!cancelled) setDetail(next);
       })
@@ -72,7 +80,7 @@ export function useElementSelection(activeState: string | null, projection: Proj
     return () => {
       cancelled = true;
     };
-  }, [activeState, projection, selected]);
+  }, [activeState, draftId, projection, selected]);
 
   /** Replaces or clears selection while discarding any error from the previous element. */
   const select = useCallback((selection: Selection | null) => {

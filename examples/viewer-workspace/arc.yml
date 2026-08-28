@@ -1,0 +1,21 @@
+type: Dataset
+identifier: overarc-example-workspace
+title: OverARC example workspace
+description: Native ARC lineage root for the immutable PRJDB5192 ArcIR and SSSOM artifacts.
+dataFiles:
+  - type: Data
+    path: arcir/states/PRJDB5192_A.arcir.json
+    additionalType: ArcIR state
+    encodingFormat: application/json
+    additionalProperty:
+      - type: Annotation
+        name: sha256
+        value: c524a1b0f4ba49b0c13fe6791186b524276d5708339daac7b7e562d05ecd8a22
+  - type: Data
+    path: mappings/PRJDB5192_A.sssom.tsv
+    additionalType: SSSOM mapping set
+    encodingFormat: text/tab-separated-values
+    additionalProperty:
+      - type: Annotation
+        name: sha256
+        value: ddf8a5f2493c4237a1c4abb24a8fecb1cda8e40143c37dc128ede2bcd532e2d8

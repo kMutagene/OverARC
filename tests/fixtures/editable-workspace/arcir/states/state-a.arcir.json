@@ -1,0 +1,169 @@
+{
+  "formatVersion": "1.0",
+  "graph": {
+    "terms": {
+      "urn:overarc:term:archive-accession": {
+        "name": "Project archive accession",
+        "source": "OverARC example"
+      },
+      "urn:overarc:term:contains": { "name": "contains", "source": "OverARC example" },
+      "urn:overarc:term:description": { "name": "Description", "source": "OverARC example" },
+      "urn:overarc:term:evidence": { "name": "evidence", "source": "OverARC example" },
+      "urn:overarc:term:flag": { "name": "Reviewed", "source": "OverARC example" },
+      "urn:overarc:term:measurement": { "name": "Measurement", "source": "OverARC example" },
+      "urn:overarc:term:primaryId": { "name": "primaryId", "source": "OverARC example" },
+      "urn:overarc:term:project": { "name": "BioProject", "source": "OverARC example" },
+      "urn:overarc:term:sample": { "name": "BioSample", "source": "OverARC example" },
+      "urn:overarc:term:see-also": { "name": "see also", "source": "OverARC example" },
+      "urn:overarc:term:tag": { "name": "Tag", "source": "OverARC example" },
+      "urn:overarc:term:temperature": { "name": "Growth temperature", "source": "OverARC example" },
+      "urn:overarc:term:title": { "name": "Title", "source": "OverARC example" },
+      "urn:overarc:term:unit-celsius": { "name": "degree Celsius", "source": "UO" }
+    },
+    "objects": {
+      "urn:biofsharp:insdc:object:PRJTEST001": {
+        "kind": "collection",
+        "types": {
+          "urn:overarc:assertion:project-type": { "term": "urn:overarc:term:project" }
+        },
+        "properties": {
+          "urn:overarc:assertion:project-accession": {
+            "predicate": "urn:overarc:term:archive-accession",
+            "value": { "type": "string", "value": "PRJTEST001" },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:project-title": {
+            "predicate": "urn:overarc:term:title",
+            "value": { "type": "string", "value": "Fictional Arabidopsis temperature study" },
+            "annotations": {
+              "urn:overarc:annotation:reviewed": {
+                "property": "urn:overarc:term:flag",
+                "value": { "type": "literal", "value": { "type": "boolean", "value": true } },
+                "evidence": "urn:overarc:object:evidence-paper",
+                "source": null
+              }
+            }
+          },
+          "urn:overarc:assertion:project-count": {
+            "predicate": "urn:overarc:term:measurement",
+            "value": { "type": "integer", "value": 9223372036854775807 },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:project-score": {
+            "predicate": "urn:overarc:term:measurement",
+            "value": { "type": "float", "value": "1.25" },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:project-date": {
+            "predicate": "urn:overarc:term:description",
+            "value": { "type": "dateTime", "value": "2026-08-27T12:34:56.0000000+02:00" },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:project-list": {
+            "predicate": "urn:overarc:term:tag",
+            "value": {
+              "type": "list",
+              "value": [
+                { "type": "string", "value": "control" },
+                { "type": "iri", "value": "urn:overarc:term:sample" },
+                { "type": "ref", "value": "urn:biofsharp:insdc:object:SAMTEST001" }
+              ]
+            },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      },
+      "urn:biofsharp:insdc:object:SAMTEST001": {
+        "kind": "observable",
+        "types": {
+          "urn:overarc:assertion:sample-type": { "term": "urn:overarc:term:sample" }
+        },
+        "properties": {
+          "urn:overarc:assertion:sample-id": {
+            "predicate": "urn:overarc:term:primaryId",
+            "value": { "type": "string", "value": "SAMTEST001" },
+            "annotations": {}
+          },
+          "urn:overarc:assertion:sample-temperature": {
+            "predicate": "urn:overarc:term:temperature",
+            "value": { "type": "integer", "value": 22 },
+            "annotations": {
+              "urn:overarc:annotation:temperature-unit": {
+                "property": "urn:overarc:term:measurement",
+                "value": {
+                  "type": "literalWithUnit",
+                  "value": { "type": "integer", "value": 22 },
+                  "unit": "urn:overarc:term:unit-celsius"
+                },
+                "evidence": null,
+                "source": "urn:biofsharp:insdc:object:PRJTEST001"
+              }
+            }
+          }
+        },
+        "annotations": {}
+      },
+      "urn:overarc:object:evidence-paper": {
+        "kind": "resource",
+        "types": {},
+        "properties": {
+          "urn:overarc:assertion:evidence-title": {
+            "predicate": "urn:overarc:term:title",
+            "value": { "type": "string", "value": "Example publication" },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      },
+      "urn:biofsharp:insdc:object:SAM-MISSING": {
+        "kind": "observable",
+        "types": {},
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:overarc:object:unicode/ä~leaf": {
+        "kind": "observable",
+        "types": {},
+        "properties": {
+          "urn:overarc:assertion:unicode/value~1": {
+            "predicate": "urn:overarc:term:description",
+            "value": { "type": "string", "value": "Löwenzahn leaf / Blatt" },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      }
+    },
+    "relations": {
+      "urn:overarc:relation:contains-1": {
+        "subject": "urn:biofsharp:insdc:object:PRJTEST001",
+        "predicate": "urn:overarc:term:contains",
+        "object": "urn:biofsharp:insdc:object:SAMTEST001",
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:overarc:relation:contains-2": {
+        "subject": "urn:biofsharp:insdc:object:PRJTEST001",
+        "predicate": "urn:overarc:term:see-also",
+        "object": "urn:biofsharp:insdc:object:SAMTEST001",
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:overarc:relation:missing": {
+        "subject": "urn:biofsharp:insdc:object:PRJTEST001",
+        "predicate": "urn:overarc:term:contains",
+        "object": "urn:biofsharp:insdc:object:SAM-MISSING",
+        "properties": {},
+        "annotations": {}
+      },
+      "urn:overarc:relation:self": {
+        "subject": "urn:overarc:object:unicode/ä~leaf",
+        "predicate": "urn:overarc:term:see-also",
+        "object": "urn:overarc:object:unicode/ä~leaf",
+        "properties": {},
+        "annotations": {}
+      }
+    }
+  }
+}

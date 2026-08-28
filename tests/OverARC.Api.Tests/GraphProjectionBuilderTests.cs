@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using OverARC.Api;
 using Xunit;
@@ -97,6 +98,7 @@ public sealed class GraphProjectionBuilderTests
             "state.arcir.json",
             "digest",
             DateTimeOffset.UnixEpoch,
+            Encoding.UTF8.GetBytes(document.RootElement.GetRawText()),
             document);
         var builder = new GraphProjectionBuilder(new ArcIrInteropAdapter());
 

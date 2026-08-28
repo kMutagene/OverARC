@@ -146,4 +146,58 @@ describe('Inspector', () => {
     expect(screen.getByText(/hidden by the current filters/)).toBeVisible();
     expect(screen.getByRole('heading', { name: 'SAMTEST001' })).toBeVisible();
   });
+
+  it('offers typed mapping actions only for exact string property and annotation occurrences', () => {
+    const onMapLiteral = vi.fn();
+    render(
+      <Inspector
+        loading={false}
+        onMapLiteral={onMapLiteral}
+        detail={{
+          ...detail,
+          properties: [
+            ...detail.properties,
+            {
+              id: 'urn:assertion:title',
+              predicateId: 'urn:predicate:title',
+              predicateLabel: 'Title',
+              value: { type: 'string', display: 'control', text: 'control' },
+              selector: '#/title',
+              valueSelector: '#/title/value',
+              annotations: [],
+            },
+          ],
+          annotations: [
+            {
+              id: 'urn:annotation:note',
+              propertyId: 'urn:predicate:note',
+              propertyLabel: 'Note',
+              value: {
+                type: 'literal',
+                display: 'untreated',
+                literal: { type: 'string', display: 'untreated', text: 'untreated' },
+              },
+              selector: '#/note',
+              valueSelector: '#/note/value',
+            },
+          ],
+        }}
+      />,
+    );
+
+    const actions = screen.getAllByRole('button', { name: 'Map to term' });
+    expect(actions).toHaveLength(2);
+    actions[0].click();
+    actions[1].click();
+    expect(onMapLiteral).toHaveBeenNthCalledWith(1, {
+      selector: '#/title/value',
+      literal: 'control',
+      context: 'SAMTEST001 · Title',
+    });
+    expect(onMapLiteral).toHaveBeenNthCalledWith(2, {
+      selector: '#/note/value',
+      literal: 'untreated',
+      context: 'SAMTEST001 · Note annotation',
+    });
+  });
 });

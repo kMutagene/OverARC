@@ -135,6 +135,22 @@ public sealed class ApiTests : IClassFixture<ExampleApiFactory>
         response.EnsureSuccessStatusCode();
         Assert.Equal(before, File.GetLastWriteTimeUtc(Path.Combine(ExampleApiFactory.WorkspaceRoot, ".overarc", "viewer.json")));
     }
+
+    [Fact]
+    public async Task Legacy_manifest_states_remain_browseable_but_reject_mapping_and_draft_endpoints()
+    {
+        var mappings = await client.GetAsync("/api/v1/states/state-a/mappings");
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, mappings.StatusCode);
+        Assert.Equal("application/problem+json", mappings.Content.Headers.ContentType?.MediaType);
+
+        var draft = await client.PostAsJsonAsync(
+            "/api/v1/states/state-a/drafts",
+            new CreateDraftRequest("Curator"));
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, draft.StatusCode);
+        var problem = await draft.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(problem.TryGetProperty("errors", out var errors));
+        Assert.NotEmpty(errors.EnumerateArray());
+    }
 }
 
 public sealed class ExampleApiFactory : WebApplicationFactory<Program>

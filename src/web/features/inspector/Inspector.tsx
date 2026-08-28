@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { identifierLabels } from '../../shared/identifierModel';
-import type { ElementDetail, Projection, TermDetail } from '../../shared/types';
+import type { ElementDetail, LiteralOccurrence, Projection, TermDetail } from '../../shared/types';
 import { TermInspector } from '../terms/TermInspector';
 import {
   AssertionSections,
@@ -18,6 +18,7 @@ interface InspectorProps {
   hiddenByFilters?: boolean;
   collapsed?: boolean;
   onClear?: () => void;
+  onMapLiteral?: (occurrence: LiteralOccurrence) => void;
 }
 
 /** Dispatches the right pane between complete graph-element and term inspection. */
@@ -29,6 +30,7 @@ export function Inspector({
   hiddenByFilters = false,
   collapsed = false,
   onClear,
+  onMapLiteral,
 }: InspectorProps) {
   const labels = useMemo(() => identifierLabels(projection), [projection]);
   if (collapsed) return <aside className="inspector pane-collapsed" aria-hidden="true" />;
@@ -92,7 +94,7 @@ export function Inspector({
       <InspectorMetadata detail={detail} labels={labels} />
       <PlaceholderRelations detail={detail} labels={labels} />
       <TypeAssertions detail={detail} labels={labels} />
-      <AssertionSections detail={detail} labels={labels} />
+      <AssertionSections detail={detail} labels={labels} onMapLiteral={onMapLiteral} />
     </aside>
   );
 }

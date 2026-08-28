@@ -5,5 +5,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <BioFSharpInsdcRoot Condition="'$(BIOFSHARP_INSDC_ROOT)' != ''">$(BIOFSHARP_INSDC_ROOT)</BioFSharpInsdcRoot>
     <BioFSharpInsdcRoot Condition="'$(BioFSharpInsdcRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\BioFSharp\BioFSharp.INSDC'))</BioFSharpInsdcRoot>
+    <PolyglotSssomRoot Condition="'$(POLYGLOTSSSOM_ROOT)' != ''">$(POLYGLOTSSSOM_ROOT)</PolyglotSssomRoot>
+    <PolyglotSssomRoot Condition="'$(PolyglotSssomRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\nfdi4plants\PolyglotSSSOM'))</PolyglotSssomRoot>
+    <ProcessCoreRoot Condition="'$(PROCESSCORE_ROOT)' != ''">$(PROCESSCORE_ROOT)</ProcessCoreRoot>
+    <ProcessCoreRoot Condition="'$(ProcessCoreRoot)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\HLWeil\ProcessCore'))</ProcessCoreRoot>
   </PropertyGroup>
 </Project>

@@ -1,11 +1,20 @@
 import type { MultiDirectedGraph } from 'graphology';
-import type { Projection, Selection, Theme, VisibleProjection } from '../../shared/types';
+import type {
+  CurationDraft,
+  Mappings,
+  Projection,
+  Selection,
+  Theme,
+  VisibleProjection,
+} from '../../shared/types';
+import { ChangesView } from '../curation/ChangesView';
+import { MappingsView } from '../curation/MappingsView';
 import { GraphCanvas } from './GraphCanvas';
 import { GraphTableView } from './GraphTableView';
 import { TermsView } from '../terms/TermsView';
 
 /** Mutually exclusive first-class representations available in the center pane. */
-export type CenterView = 'graph' | 'table' | 'terms';
+export type CenterView = 'graph' | 'table' | 'terms' | 'mappings' | 'changes';
 
 /** Shared state and commands needed by the center graph/table workspace. */
 interface GraphPaneProps {
@@ -20,6 +29,10 @@ interface GraphPaneProps {
   activeView: CenterView;
   onViewChange: (view: CenterView) => void;
   onSelect: (selection: Selection | null) => void;
+  mappings: Mappings | null;
+  draft: CurationDraft | null;
+  mutating: boolean;
+  onUndo: (operationId: string) => void;
 }
 
 /** Hosts persistent graph, table, and term layers and switches the active accessible workspace. */
@@ -35,6 +48,10 @@ export function GraphPane({
   activeView,
   onViewChange,
   onSelect,
+  mappings,
+  draft,
+  mutating,
+  onUndo,
 }: GraphPaneProps) {
   return (
     <section className="graph-pane" aria-label="Graph, table, and term views">
@@ -62,6 +79,22 @@ export function GraphPane({
           onClick={() => onViewChange('terms')}
         >
           Terms
+        </button>
+        <button
+          type="button"
+          className={activeView === 'mappings' ? 'active' : 'secondary'}
+          aria-pressed={activeView === 'mappings'}
+          onClick={() => onViewChange('mappings')}
+        >
+          Mappings
+        </button>
+        <button
+          type="button"
+          className={activeView === 'changes' ? 'active' : 'secondary'}
+          aria-pressed={activeView === 'changes'}
+          onClick={() => onViewChange('changes')}
+        >
+          Changes {draft && <span>{draft.operations.length}</span>}
         </button>
       </nav>
       {error && (
@@ -100,6 +133,13 @@ export function GraphPane({
             onSelect={onSelect}
           />
           <TermsView projection={projection} active={activeView === 'terms'} onSelect={onSelect} />
+          <MappingsView mappings={mappings} active={activeView === 'mappings'} />
+          <ChangesView
+            draft={draft}
+            active={activeView === 'changes'}
+            disabled={mutating}
+            onUndo={onUndo}
+          />
         </>
       )}
       {!loading && !graph && !error && <div className="loading">No valid state is available.</div>}

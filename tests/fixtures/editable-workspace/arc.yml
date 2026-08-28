@@ -1,0 +1,21 @@
+type: Dataset
+identifier: overarc-editable-test-workspace
+title: OverARC editable test workspace
+description: Native ARC lineage root for deterministic curation integration tests.
+dataFiles:
+  - type: Data
+    path: arcir/states/state-a.arcir.json
+    additionalType: ArcIR state
+    encodingFormat: application/json
+    additionalProperty:
+      - type: Annotation
+        name: sha256
+        value: 00e72ea10805ec95272096904cbd8135206fa6f9e8554b7ab95b96dedc1b58bb
+  - type: Data
+    path: mappings/state-a.sssom.tsv
+    additionalType: SSSOM mapping set
+    encodingFormat: text/tab-separated-values
+    additionalProperty:
+      - type: Annotation
+        name: sha256
+        value: 8969eb9923a590dc2a2de6be4d9f214fb77fa3b120566f1fbd266a5f70a77e89

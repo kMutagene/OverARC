@@ -1,5 +1,7 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { GraphPane, type CenterView } from '../features/graph/GraphPane';
+import { MappingDialog } from '../features/curation/MappingDialog';
+import { UnsavedChangesDialog } from '../features/curation/UnsavedChangesDialog';
 import {
   buildGraph,
   filterOptions,
@@ -15,16 +17,21 @@ import { emptyFilters } from '../features/workspace/filterModel';
 import { useWorkspace } from '../features/workspace/useWorkspace';
 import { WorkspaceSidebar } from '../features/workspace/WorkspaceSidebar';
 import { downloadText } from '../shared/download';
-import type { Filters, VisibleProjection } from '../shared/types';
+import type { Filters, LiteralOccurrence, VisibleProjection } from '../shared/types';
 
 /** Composes the workbench and owns state shared by the workspace, graph/table, and inspector panes. */
 export default function App() {
   const { theme, toggleTheme } = useTheme();
   const panes = usePaneLayout();
   const workspace = useWorkspace();
-  const selection = useElementSelection(workspace.activeState, workspace.projection);
+  const selection = useElementSelection(
+    workspace.activeState,
+    workspace.projection,
+    workspace.draft?.id ?? null,
+  );
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [centerView, setCenterView] = useState<CenterView>('graph');
+  const [mappingOccurrence, setMappingOccurrence] = useState<LiteralOccurrence | null>(null);
 
   const visible = useMemo<VisibleProjection>(
     () =>
@@ -85,11 +92,19 @@ export default function App() {
         termLabels={termLabels}
         theme={theme}
         collapsed={panes.left.width === 0}
+        activeSummary={workspace.activeSummary}
+        draft={workspace.draft}
+        curationError={workspace.curationError}
+        notice={workspace.notice}
+        mutating={workspace.mutating}
         onChooseState={workspace.chooseState}
         onRefresh={() => void workspace.refresh()}
         onFiltersChange={setFilters}
         onExportCsv={exportCsv}
         onToggleTheme={toggleTheme}
+        onSave={() => void workspace.saveDraft()}
+        onDiscard={() => void workspace.discardDraft()}
+        onDismissNotice={workspace.clearNotice}
       />
       <PaneResizer side="left" {...panes.left} />
       <GraphPane
@@ -104,6 +119,10 @@ export default function App() {
         activeView={centerView}
         onViewChange={setCenterView}
         onSelect={selection.select}
+        mappings={workspace.mappings}
+        draft={workspace.draft}
+        mutating={workspace.mutating}
+        onUndo={(operationId) => void workspace.undoOperation(operationId)}
       />
       <PaneResizer side="right" {...panes.right} />
       <Inspector
@@ -114,7 +133,43 @@ export default function App() {
         hiddenByFilters={selectionHidden}
         collapsed={panes.right.width === 0}
         onClear={selection.clear}
+        onMapLiteral={
+          workspace.activeSummary?.editable
+            ? (occurrence) => {
+                workspace.clearCurationError();
+                setMappingOccurrence(occurrence);
+              }
+            : undefined
+        }
       />
+      {mappingOccurrence && workspace.projection && (
+        <MappingDialog
+          occurrence={mappingOccurrence}
+          terms={workspace.projection.terms}
+          mappings={workspace.mappings}
+          draft={workspace.draft}
+          error={workspace.curationError}
+          submitting={workspace.mutating}
+          onCancel={() => {
+            workspace.clearCurationError();
+            setMappingOccurrence(null);
+          }}
+          onSubmit={(targetTermId, predicateId, curator) => {
+            void workspace
+              .addLiteralMapping(mappingOccurrence, targetTermId, predicateId, curator)
+              .then((next) => {
+                if (next) setMappingOccurrence(null);
+              });
+          }}
+        />
+      )}
+      {workspace.pendingState && workspace.draft && (
+        <UnsavedChangesDialog
+          draft={workspace.draft}
+          busy={workspace.mutating}
+          onDecision={(decision) => void workspace.resolveStateSwitch(decision)}
+        />
+      )}
     </main>
   );
 }

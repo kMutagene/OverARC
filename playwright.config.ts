@@ -7,6 +7,7 @@ const testWorkspace = resolve('tests/fixtures/viewer-workspace');
 /** Runs the live ASP.NET/Vite stack against current Chromium and Firefox on isolated ports. */
 export default defineConfig({
   testDir: './tests/browser',
+  testIgnore: 'curation.spec.ts',
   fullyParallel: true,
   workers: 6,
   forbidOnly: !!process.env.CI,
@@ -23,13 +24,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `dotnet run --project src/OverARC.Api/OverARC.Api.csproj --no-build -- --urls http://127.0.0.1:5081 --workspace "${testWorkspace}"`,
+      command: `dotnet src/OverARC.Api/bin/Debug/net10.0/OverARC.Api.dll --urls http://127.0.0.1:5081 --workspace "${testWorkspace}"`,
       url: 'http://127.0.0.1:5081/_health',
       reuseExistingServer: false,
       timeout: 120_000,
     },
     {
-      command: 'npm run dev -- --port 5174 --strictPort',
+      command: 'node node_modules/vite/bin/vite.js --port 5174 --strictPort',
       url: 'http://127.0.0.1:5174',
       env: { OVERARC_API_ORIGIN: 'http://127.0.0.1:5081' },
       reuseExistingServer: false,

@@ -1,6 +1,6 @@
 import { IdentifierView } from '../../shared/IdentifierView';
 import type { IdentifierLabels } from '../../shared/identifierModel';
-import type { Annotation, ArcValue } from '../../shared/types';
+import type { Annotation, ArcValue, LiteralOccurrence } from '../../shared/types';
 
 /** Recursively renders every ArcValue kind while keeping IRI and Ref values exact-copyable. */
 export function ArcValueView({ value, labels }: { value: ArcValue; labels: IdentifierLabels }) {
@@ -34,9 +34,13 @@ export function ArcValueView({ value, labels }: { value: ArcValue; labels: Ident
 export function AnnotationList({
   annotations,
   labels,
+  context,
+  onMapLiteral,
 }: {
   annotations: Annotation[];
   labels: IdentifierLabels;
+  context: string;
+  onMapLiteral?: (occurrence: LiteralOccurrence) => void;
 }) {
   if (annotations.length === 0) return null;
   return (
@@ -46,6 +50,23 @@ export function AnnotationList({
         <article className="annotation-card" key={annotation.id}>
           <strong>{annotation.propertyLabel}</strong>
           <p>{annotation.value.display}</p>
+          {onMapLiteral &&
+            annotation.value.literal?.type === 'string' &&
+            annotation.value.literal.text !== undefined && (
+              <button
+                type="button"
+                className="compact map-literal-action"
+                onClick={() =>
+                  onMapLiteral({
+                    selector: annotation.valueSelector,
+                    literal: annotation.value.literal!.text!,
+                    context: `${context} · ${annotation.propertyLabel} annotation`,
+                  })
+                }
+              >
+                Map to term
+              </button>
+            )}
           {annotation.evidence && (
             <dl className="annotation-provenance">
               <dt>Evidence</dt>

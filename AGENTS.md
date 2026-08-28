@@ -7,20 +7,20 @@ handling.
 ## Project purpose and current scope
 
 OverARC is the production curation workbench built on the ARC intermediate
-representation (ArcIR). The current milestone is a curator-oriented, read-only
-graph viewer for immutable ArcIR 1.0 states. It lists locally configured states,
-projects objects and relations into a Sigma graph, exposes registered terms and
-their usage occurrences, provides complete assertion and annotation details,
-filters the visible graph, and exports PNG/CSV views.
+representation (ArcIR). Its delivered viewer lists immutable states, projects
+objects and relations into a Sigma graph, exposes registered terms and their
+usage occurrences, provides complete assertion and annotation details, filters
+the visible graph, and exports PNG/CSV views.
 
-Editing, Git writes, provenance/history views, diagnostics, SSSOM, DataHub access,
-and external-workspace setup are future phases. Do not invent a JSON patch or
-write canonical ArcIR directly. Authoritative editing starts only when the core
-libraries expose curation transactions that produce a new state and its
-provenance/process artifacts atomically. See `plans/implementation.md` for the
-authoritative roadmap.
+The active milestone adds the first authoritative edit workflow: mapping one
+selected string occurrence to a registered term while publishing immutable ArcIR
+and SSSOM successors with native ARC provenance. Do not invent a JSON patch or
+write canonical ArcIR directly. Use the core transformations and codecs through
+the dedicated adapters, and keep saves within the atomic publication boundary.
+`plans/implementation.md` records the completed viewer milestone;
+`plans/curation-workbench.md` is authoritative for current curation work.
 
-## Where ArcIR comes from
+## Where core domain models come from
 
 ArcIR is not defined in this repository. Its source of truth is the sibling
 `BioFSharp.INSDC` checkout, specifically:
@@ -29,17 +29,25 @@ ArcIR is not defined in this repository. Its source of truth is the sibling
 BioFSharp.INSDC/src/BioFSharp.ArcIR/BioFSharp.ArcIR.fsproj
 ```
 
-The ASP.NET project references that F# project directly. MSBuild resolves the
-checkout from `BIOFSHARP_INSDC_ROOT`; `Directory.Build.props` supplies the known
-local sibling-layout fallback. The devcontainer mounts the sibling checkout at
-`/workspaces/BioFSharp.INSDC`. CI is expected to use the pinned BioFSharp commit
-recorded in the implementation plan.
+SSSOM and native ARC provenance are likewise owned by sibling checkouts:
 
-Only `src/OverARC.Api/ArcIrInteropAdapter.cs` may deal with F# representation
-details. F# maps, unions, options, and results must terminate there and must not
-escape into HTTP DTOs or TypeScript contracts. `BioFSharp.ArcIR` owns the
-canonical codec, validation, IRI model, and typed JSON selectors; OverARC owns
-application configuration, projection DTOs, and workbench behavior.
+```text
+PolyglotSSSOM/src/SSSOM/SSSOM.fsproj
+ProcessCore/src/ProcessCore/ProcessCore.fsproj
+```
+
+MSBuild resolves the three roots from `BIOFSHARP_INSDC_ROOT`,
+`POLYGLOTSSSOM_ROOT`, and `PROCESSCORE_ROOT`; `Directory.Build.props` supplies
+known local sibling-layout fallbacks. The devcontainer mounts all three checkouts,
+and CI uses the exact revisions in the active curation plan.
+
+Only `ArcIrInteropAdapter.cs`, `SssomInteropAdapter.cs`, and
+`ProcessCoreInteropAdapter.cs` may deal with their respective F# representation
+details. F# maps, unions, options, results, and records must terminate there and
+must not escape into HTTP DTOs or TypeScript contracts. The core libraries own
+their canonical codecs, validation, and domain transformations; OverARC owns
+application configuration, drafts, transport DTOs, publication, and workbench
+behavior.
 
 Do not add a competing production workbench to `BioFSharp.INSDC`, copy ArcIR
 types into this repository, or remove the sibling repository's existing viewer.
@@ -52,12 +60,12 @@ React/TypeScript workbench
         ▼
 C# ASP.NET Core API and transport DTOs
         │
-        ├── WorkspaceService: manifest, safe paths, digests, cache
+        ├── Workspace services: discovery, safe paths, drafts, publication
         ├── GraphProjectionBuilder: ArcIR JSON projection and details
-        └── ArcIrInteropAdapter: the only C#/F# boundary
+        └── Dedicated ArcIR, SSSOM, and ProcessCore adapters
                 │
                 ▼
-        sibling BioFSharp.ArcIR project
+        sibling core-library projects
 ```
 
 The frontend is intentionally ordinary React rather than Fable. The published
@@ -68,8 +76,9 @@ application embeds the Vite build into the loopback-bound ASP.NET server.
 ```text
 .
 ├── build/                         FAKE build implementation
-├── examples/viewer-workspace/     checked-in viewer configuration and ArcIR states
+├── examples/viewer-workspace/     native ARC plus checked-in ArcIR/SSSOM artifacts
 ├── plans/implementation.md        authoritative milestone and integration gates
+├── plans/curation-workbench.md    active authoritative curation roadmap
 ├── src/
 │   ├── OverARC.Api/               C# ASP.NET Core API
 │   └── web/
@@ -178,22 +187,28 @@ development server. Build output under `dist/` and
 
 ## Workspace and backend safety
 
-The viewer manifest is application configuration, not provenance. State paths are
-relative to the workspace, must remain below it, and may not traverse symbolic
-links/reparse points. Digests bind entries to immutable bytes. Invalid entries
-remain listed independently and must not prevent valid-state browsing.
+Native discovery uses `arc.yml` and explicit ProcessCore artifact succession;
+it never uses timestamps or viewer-manifest order to infer current artifacts.
+Workspaces without `arc.yml` use the legacy viewer manifest and remain read-only.
+The viewer manifest is application configuration, not provenance. All declared
+artifact paths are relative to the workspace, must remain below it, and may not
+traverse symbolic links/reparse points. Digests bind entries to immutable bytes.
+Invalid entries remain listed independently and must not prevent valid-state
+browsing.
 
-No viewer action may modify the workspace, its manifest, ArcIR state files, or the
-sibling BioFSharp checkout. Tests generate the 10k/25k benchmark at runtime rather
-than committing it. Preserve RFC 7807 errors and the documented `/api/v1`
-contract when changing backend behavior.
+Browsing, filtering, inspection, and draft mutation may not modify workspace
+artifacts. Only an explicit curation save may publish create-new ArcIR/SSSOM
+artifacts and atomically replace native `arc.yml`; it never writes the viewer
+manifest, predecessor artifacts, Git, or sibling checkouts. Tests generate the
+10k/25k benchmark at runtime rather than committing it. Preserve RFC 7807 errors
+and the documented `/api/v1` contract when changing backend behavior.
 
 ## Files and changes to avoid
 
 - Do not edit generated build/publish output.
 - Do not redefine or fork the ArcIR JSON schema in OverARC.
 - Do not expose raw F# representations through C# contracts.
-- Do not add editing before the core curation-transaction gate.
+- Do not bypass the selected-literal core transformation or atomic save gate.
 - Do not treat filesystem modification time or the initially selected state as
   provenance, lineage, or “latest curated state.”
 - Preserve unrelated working-tree changes; example workspaces are often edited

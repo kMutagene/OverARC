@@ -7,10 +7,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
+    <!-- ProcessCore's current Microsoft.Data.Sqlite dependency resolves an older vulnerable native bundle. -->
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj" />
+    <ProjectReference Include="$(PolyglotSssomRoot)\src\SSSOM\SSSOM.fsproj" />
+    <ProjectReference Include="$(ProcessCoreRoot)\src\ProcessCore\ProcessCore.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +26,16 @@
              CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <Target Name="ValidateBioFSharpRoot" BeforeTargets="ResolveProjectReferences">
+  <Target Name="ValidateSiblingDependencyRoots" BeforeTargets="ResolveProjectReferences">
     <Error
       Condition="!Exists('$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj')"
       Text="BioFSharp.ArcIR was not found under '$(BioFSharpInsdcRoot)'. Set BIOFSHARP_INSDC_ROOT to the BioFSharp.INSDC checkout." />
+    <Error
+      Condition="!Exists('$(PolyglotSssomRoot)\src\SSSOM\SSSOM.fsproj')"
+      Text="PolyglotSSSOM was not found under '$(PolyglotSssomRoot)'. Set POLYGLOTSSSOM_ROOT to the PolyglotSSSOM checkout." />
+    <Error
+      Condition="!Exists('$(ProcessCoreRoot)\src\ProcessCore\ProcessCore.fsproj')"
+      Text="ProcessCore was not found under '$(ProcessCoreRoot)'. Set PROCESSCORE_ROOT to the ProcessCore checkout." />
   </Target>
 
   <Target Name="IncludeFrontendAndExampleWorkspace" BeforeTargets="ComputeFilesToPublish">

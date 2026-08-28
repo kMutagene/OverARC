@@ -1,9 +1,91 @@
-# OverARC — full session summary (May 12, 2026)
+# OverARC
 
-> **Historical context:** the current application architecture and delivery plan
-> are maintained in [`plans/implementation.md`](plans/implementation.md). Where
-> this session summary conflicts with that plan or the current BioFSharp.INSDC
-> roadmap, the newer plans are authoritative.
+OverARC is a React and ASP.NET Core curation workbench for immutable ArcIR states.
+The completed read-only milestone is documented in
+[`plans/implementation.md`](plans/implementation.md); the active authoritative
+edit roadmap is [`plans/curation-workbench.md`](plans/curation-workbench.md).
+
+## Local development dependencies
+
+The API currently consumes three F# core libraries as configurable sibling
+project references. Set these environment variables when the checkouts do not use
+the known sibling layout:
+
+| Variable | Checkout | Assessed revision |
+| --- | --- | --- |
+| `BIOFSHARP_INSDC_ROOT` | `BioFSharp/BioFSharp.INSDC` | `10dc95b53a5eaab7000f6795da57f05012064a13` |
+| `POLYGLOTSSSOM_ROOT` | `nfdi4plants/PolyglotSSSOM` | `fd38a3e7ccfc538934bc24b8d009c040db399b3c` |
+| `PROCESSCORE_ROOT` | `HLWeil/ProcessCore` | `c01f8f315eecbd07f597c6da25bee830c2db1047` |
+
+From OverARC, the default Windows checkout layout resolves to
+`../../BioFSharp/BioFSharp.INSDC`, `../../nfdi4plants/PolyglotSSSOM`, and
+`../../HLWeil/ProcessCore`. The devcontainer mounts the same repositories under
+`/workspaces`, and CI checks out the exact revisions above. On Windows, use
+`build.cmd Restore`, `build.cmd Build`, and `build.cmd Test`; use the corresponding
+`./build.sh` targets on Linux/macOS.
+
+## Workspace discovery
+
+When a workspace contains `arc.yml`, OverARC treats ProcessCore's native ARC
+model as the sole lineage authority. It follows explicit same-kind artifact
+successions to current ArcIR states, verifies declared SHA-256 bindings, and
+pairs each state with a valid SSSOM 1.1 artifact before enabling edits. ArcIR
+states with missing or invalid mappings remain browseable but read-only, and
+artifact findings are reported independently. Discovery never uses filesystem
+timestamps or `.overarc/viewer.json` to infer native lineage.
+
+Workspaces without `arc.yml` continue through the legacy viewer-manifest
+provider. They retain the original API and browsing behavior and are always
+read-only. Neither provider writes during discovery or refresh.
+
+Drafts are server-owned and in memory. Each draft records typed literal-mapping
+commands against exact ArcIR and SSSOM digests, replays the ordered commands from
+those immutable bases after every add or undo, and expires after 24 hours without
+access. Exact SSSOM mappings are reused without changing mapping bytes; new rows
+receive stable draft-time `urn:uuid:` identities. Draft activity never changes
+workspace files, and a server restart intentionally loses unsaved drafts.
+
+Curation saves replay and validate a draft under an exclusive workspace lock,
+stage canonical ArcIR, SSSOM, and ProcessCore bytes on the workspace filesystem,
+and publish immutable successors with create-new semantics. `arc.yml` is replaced
+last as the semantic commit point; the predecessor artifacts, Git metadata, and
+`.overarc/viewer.json` are never changed. A private `.overarc/save-journal.json`
+supports digest-checked completion or rollback after an interruption and is
+operational state rather than provenance. Native `arc.yml` records complete
+artifact succession plus exact ArcIR and SSSOM fragments, curator, UTC save time,
+and the CTRO-typed mapping application under one shared curation process name.
+
+The hand-written `/api/v1` curation contract exposes state and draft mappings,
+draft create/reattach/discard, replayed projection/details, typed add/undo, and
+atomic save operations. Optimistic revisions are decimal strings so browser
+clients never coerce 64-bit values through JavaScript numbers. Unknown resources,
+stale revisions or bases, and invalid operations/saves use RFC 7807 responses with
+`404`, `409`, and `422` respectively; validation responses include ordinary
+structured `errors` values.
+
+## First edit workflow
+
+Select an editable native state, inspect an object or relation from either the
+Graph or Table view, and use **Map to term** beside a supported string property or
+annotation occurrence. The dialog searches only terms already registered in the
+active ArcIR graph, retains the exact literal and selector, and offers the five
+supported SKOS predicates. The initial operation also asks for the curator name;
+later operations remain part of the same named process.
+
+All center views immediately follow the replayed draft. **Mappings** shows the
+current SSSOM metadata and rows, while **Changes** shows ordered operations, exact
+input/output selectors, record IDs, and per-operation undo. The browser stores
+only the server-issued draft ID in `sessionStorage`, so a reload can reattach while
+the server remains alive. Switching states with unsaved operations requires an
+explicit Save, Discard, or Stay decision. Save publishes immutable successors and
+native provenance; it does not modify predecessor artifacts, Git, or the viewer
+manifest.
+
+## Historical project summary (May 12, 2026)
+
+The material below records early project and conference planning. Where it
+conflicts with the implementation plans or current code, the newer sources are
+authoritative.
  
 ## Project identity & venue
  

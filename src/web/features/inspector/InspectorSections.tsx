@@ -1,12 +1,13 @@
 import { IdentifierView } from '../../shared/IdentifierView';
 import type { IdentifierLabels } from '../../shared/identifierModel';
-import type { ElementDetail } from '../../shared/types';
+import type { ElementDetail, LiteralOccurrence } from '../../shared/types';
 import { AnnotationList, ArcValueView } from './DetailValues';
 
 /** Shared exact detail and label lookup used by all inspector sections. */
 interface SectionProps {
   detail: ElementDetail;
   labels: IdentifierLabels;
+  onMapLiteral?: (occurrence: LiteralOccurrence) => void;
 }
 
 /** Renders the element summary and collapsed exact IDs/selectors. */
@@ -162,7 +163,7 @@ export function TypeAssertions({ detail, labels }: SectionProps) {
 }
 
 /** Renders collapsible property and root-annotation sections for canonical ArcIR elements. */
-export function AssertionSections({ detail, labels }: SectionProps) {
+export function AssertionSections({ detail, labels, onMapLiteral }: SectionProps) {
   if (detail.isPlaceholder || detail.isDerivedReference) return null;
   return (
     <>
@@ -179,6 +180,23 @@ export function AssertionSections({ detail, labels }: SectionProps) {
             <p>
               <ArcValueView value={property.value} labels={labels} />
             </p>
+            {onMapLiteral &&
+              property.value.type === 'string' &&
+              property.value.text !== undefined && (
+                <button
+                  type="button"
+                  className="compact map-literal-action"
+                  onClick={() =>
+                    onMapLiteral({
+                      selector: property.valueSelector,
+                      literal: property.value.text!,
+                      context: `${detail.label} · ${property.predicateLabel}`,
+                    })
+                  }
+                >
+                  Map to term
+                </button>
+              )}
             <details className="technical-details">
               <summary>Technical details</summary>
               <dl>
@@ -200,7 +218,12 @@ export function AssertionSections({ detail, labels }: SectionProps) {
                 </dd>
               </dl>
             </details>
-            <AnnotationList annotations={property.annotations} labels={labels} />
+            <AnnotationList
+              annotations={property.annotations}
+              labels={labels}
+              context={`${detail.label} · ${property.predicateLabel}`}
+              onMapLiteral={onMapLiteral}
+            />
           </article>
         ))}
       </details>
@@ -210,7 +233,12 @@ export function AssertionSections({ detail, labels }: SectionProps) {
             Annotations <small>{detail.annotations.length}</small>
           </h3>
         </summary>
-        <AnnotationList annotations={detail.annotations} labels={labels} />
+        <AnnotationList
+          annotations={detail.annotations}
+          labels={labels}
+          context={detail.label}
+          onMapLiteral={onMapLiteral}
+        />
         {detail.annotations.length === 0 && <p>None</p>}
       </details>
     </>
