@@ -5,16 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BioFSharp.ArcIR" Version="0.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
+    <PackageReference Include="PolyglotSSSOM" Version="0.1.0" />
+    <PackageReference Include="ProcessCore" Version="0.1.3" />
     <!-- ProcessCore's current Microsoft.Data.Sqlite dependency resolves an older vulnerable native bundle. -->
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj" />
-    <ProjectReference Include="$(PolyglotSssomRoot)\src\SSSOM\SSSOM.fsproj" />
-    <ProjectReference Include="$(ProcessCoreRoot)\src\ProcessCore\ProcessCore.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,18 +22,6 @@
              Link="examples\viewer-workspace\%(RecursiveDir)%(Filename)%(Extension)"
              CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
-
-  <Target Name="ValidateSiblingDependencyRoots" BeforeTargets="ResolveProjectReferences">
-    <Error
-      Condition="!Exists('$(BioFSharpInsdcRoot)\src\BioFSharp.ArcIR\BioFSharp.ArcIR.fsproj')"
-      Text="BioFSharp.ArcIR was not found under '$(BioFSharpInsdcRoot)'. Set BIOFSHARP_INSDC_ROOT to the BioFSharp.INSDC checkout." />
-    <Error
-      Condition="!Exists('$(PolyglotSssomRoot)\src\SSSOM\SSSOM.fsproj')"
-      Text="PolyglotSSSOM was not found under '$(PolyglotSssomRoot)'. Set POLYGLOTSSSOM_ROOT to the PolyglotSSSOM checkout." />
-    <Error
-      Condition="!Exists('$(ProcessCoreRoot)\src\ProcessCore\ProcessCore.fsproj')"
-      Text="ProcessCore was not found under '$(ProcessCoreRoot)'. Set PROCESSCORE_ROOT to the ProcessCore checkout." />
-  </Target>
 
   <Target Name="IncludeFrontendAndExampleWorkspace" BeforeTargets="ComputeFilesToPublish">
     <Error Condition="!Exists('$(MSBuildProjectDirectory)\..\..\dist\index.html')"

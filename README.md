@@ -7,22 +7,18 @@ edit roadmap is [`plans/curation-workbench.md`](plans/curation-workbench.md).
 
 ## Local development dependencies
 
-The API currently consumes three F# core libraries as configurable sibling
-project references. Set these environment variables when the checkouts do not use
-the known sibling layout:
+The API consumes stable NuGet packages for its three F# domain libraries:
 
-| Variable | Checkout | Assessed revision |
+| Package | Version | Responsibility |
 | --- | --- | --- |
-| `BIOFSHARP_INSDC_ROOT` | `BioFSharp/BioFSharp.INSDC` | `10dc95b53a5eaab7000f6795da57f05012064a13` |
-| `POLYGLOTSSSOM_ROOT` | `nfdi4plants/PolyglotSSSOM` | `fd38a3e7ccfc538934bc24b8d009c040db399b3c` |
-| `PROCESSCORE_ROOT` | `HLWeil/ProcessCore` | `c01f8f315eecbd07f597c6da25bee830c2db1047` |
+| `BioFSharp.ArcIR` | `0.3.0` | ArcIR model, canonical codec, selectors, validation, and transformations |
+| `PolyglotSSSOM` | `0.1.0` | SSSOM decoding, validation, editing, and canonical encoding |
+| `ProcessCore` | `0.1.3` | Native `arc.yml` model, codec, and provenance graph |
 
-From OverARC, the default Windows checkout layout resolves to
-`../../BioFSharp/BioFSharp.INSDC`, `../../nfdi4plants/PolyglotSSSOM`, and
-`../../HLWeil/ProcessCore`. The devcontainer mounts the same repositories under
-`/workspaces`, and CI checks out the exact revisions above. On Windows, use
-`build.cmd Restore`, `build.cmd Build`, and `build.cmd Test`; use the corresponding
-`./build.sh` targets on Linux/macOS.
+`dotnet restore` resolves these packages directly from NuGet.org; no adjacent
+source checkouts or dependency-root environment variables are required. On
+Windows, use `build.cmd Restore`, `build.cmd Build`, and `build.cmd Test`; use
+the corresponding `./build.sh` targets on Linux/macOS.
 
 ## Workspace discovery
 

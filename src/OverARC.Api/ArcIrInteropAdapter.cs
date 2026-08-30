@@ -5,7 +5,7 @@ namespace OverARC.Api;
 /// <summary>Terminates BioFSharp.ArcIR representations behind one narrow C# boundary.</summary>
 public sealed class ArcIrInteropAdapter
 {
-    /// <summary>Validates canonical ArcIR bytes with the sibling F# codec and flattens F# errors into transport-safe text.</summary>
+    /// <summary>Validates canonical ArcIR bytes with the packaged F# codec and flattens F# errors into transport-safe text.</summary>
     public IReadOnlyList<string> Validate(byte[] bytes)
     {
         using var stream = new MemoryStream(bytes, writable: false);

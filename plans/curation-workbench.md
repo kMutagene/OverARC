@@ -1,6 +1,6 @@
 # Selected literal-to-term curation workbench
 
-> **Status: implementation complete; Windows verification passed (Steps 1–8 complete; Linux CI pending).** This is the next OverARC milestone after the read-only
+> **Status: implementation complete; stable NuGet migration verified on Windows (Steps 1–8 complete; Linux CI pending).** This is the next OverARC milestone after the read-only
 > graph, table, and term workbench. Dependency and editable-workspace foundations are implemented. Before every
 > implementation commit, update this status and the status of each affected step
 > so the plans describe exactly what the commit contains and verifies.
@@ -32,14 +32,10 @@ store lineage in `.overarc/viewer.json`.
   recovery, and curator UI behavior.
 - Only dedicated C# interop adapters may expose F# library representations.
   HTTP DTOs and TypeScript contracts remain ordinary transport types.
-- Local iteration may use configurable sibling `ProjectReference` values. The
-  references must be isolated behind MSBuild root properties and adapters so a
-  later switch to NuGet packages is a build change, not an application rewrite.
-- CI and development documentation pin the exact sibling revisions used by a
-  commit. The revisions assessed while writing this plan are:
-  - BioFSharp.INSDC: `10dc95b53a5eaab7000f6795da57f05012064a13`
-  - PolyglotSSSOM: `fd38a3e7ccfc538934bc24b8d009c040db399b3c`
-  - ProcessCore: `c01f8f315eecbd07f597c6da25bee830c2db1047`
+- OverARC consumes exact stable NuGet versions: `BioFSharp.ArcIR` `0.3.0`,
+  `PolyglotSSSOM` `0.1.0`, and `ProcessCore` `0.1.3`.
+- Local development, the devcontainer, and CI restore those packages directly.
+  They do not require dependency source checkouts or root environment variables.
 
 ### Workspace and lineage
 
@@ -127,25 +123,24 @@ store lineage in `.overarc/viewer.json`.
 
 ### Step 1 — Establish dependency and editable-workspace foundations _(implemented 2026-08-28)_
 
-Add configurable roots and local sibling project references for PolyglotSSSOM
-and ProcessCore alongside BioFSharp.ArcIR. Add dedicated interop adapters and
-update the devcontainer, CI checkout pins, build documentation, and repository
-architecture comments. Create an edit-enabled test workspace and evolve the
+Consume stable NuGet packages for PolyglotSSSOM, ProcessCore, and
+BioFSharp.ArcIR behind dedicated interop adapters. Keep the devcontainer, CI,
+build documentation, and repository architecture free of dependency-source
+checkout assumptions. Create an edit-enabled test workspace and evolve the
 example workspace to contain native `arc.yml`, immutable ArcIR state artifacts,
 and a valid empty SSSOM 1.1 mapping set. Preserve a legacy manifest-only fixture.
 
 **Acceptance gate**
 
-Windows restore, formatting, build, test, and publish gates pass. The pinned Linux
-checkout and root configuration is present in CI and awaits its next pushed run.
+Windows restore, formatting, build, test, and publish gates pass. Linux CI
+restores the same exact package versions and awaits its next pushed run.
 
-- The solution restores and builds on Windows and Linux with documented sibling
-  fallbacks.
-- CI checks out the exact dependency revisions declared by the active plan.
+- The solution restores and builds on Windows and Linux using NuGet.org.
+- CI restores the exact dependency package versions declared by the active plan.
 - OverARC contains no copied ArcIR, SSSOM, or ProcessCore domain model.
 - F# types do not cross the adapter/DTO boundary.
 - The native fixture is edit-capable and the legacy fixture remains read-only.
-- No upstream ProcessCore or PolyglotSSSOM source change is required.
+- No dependency source checkout or upstream source change is required.
 - The affected plan status is updated before the foundation commit.
 
 ### Step 2 — Add the selected-literal ArcIR core transformation _(implemented 2026-08-28)_
@@ -170,7 +165,7 @@ kinds, already-applied mappings, and conflicting companions.
 - Invalid or conflicting operations return typed failures without returning a
   partially modified graph.
 - Canonical encode/decode and validation succeed for the transformed state.
-- The sibling BioFSharp authoritative plan and API documentation describe the
+- The upstream BioFSharp authoritative plan and API documentation describe the
   implemented primitive before its commit.
 
 The core transformation is implemented without application-layer dependencies.
@@ -383,22 +378,22 @@ Firefox and inspect the published files, not only API responses.
 - Dependency pins, architecture documentation, AGENTS guidance, and every
   affected plan status match the implementation included in the final commit.
 
-The complete Windows gate now passes through the FAKE entry point: `Format`,
-`Build`, and `Test`, with 52 backend tests, 40 frontend unit/performance tests,
-12 Chromium/Firefox viewer regressions, and two serial Chromium/Firefox
-curation-publication scenarios. Those curation scenarios build temporary copies
-of the editable fixture, cover create/add/replayed views/reload/undo and
-Save/Discard/Stay, prove invalid and stale saves are blocked, inspect successor
-ArcIR and SSSOM bytes plus canonical `arc.yml`, and verify predecessor bytes.
-Recovery, concurrency, exact mapping reuse, and sequential duplicate-content
-branch publication are covered in the backend suite. The packaged `Publish`
-target also succeeds. Linux verification remains assigned to the configured CI
-workflow once these uncommitted changes are placed on a CI-visible revision.
+The complete Windows gate now passes through the FAKE entry point using the
+stable NuGet dependency graph: `Format`, `Build`, and `Test`, with 52 backend
+tests, 40 frontend unit/performance tests, 12 Chromium/Firefox viewer regressions,
+and two serial Chromium/Firefox curation-publication scenarios. Those curation
+scenarios build temporary copies of the editable fixture, cover
+create/add/replayed views/reload/undo and Save/Discard/Stay, prove invalid and
+stale saves are blocked, inspect successor ArcIR and SSSOM bytes plus canonical
+`arc.yml`, and verify predecessor bytes. Recovery, concurrency, exact mapping
+reuse, and sequential duplicate-content branch publication are covered in the
+backend suite. The packaged `Publish` target also succeeds. Linux verification
+remains assigned to the configured CI workflow once this commit is pushed to a
+CI-visible branch.
 
 ## Deferred work
 
 - Git commit/push, DataHub synchronization, remote locking, and publication.
-- NuGet consumption after the required sibling packages are released.
 - Persisted or multi-user drafts, authentication, and curator identity UI.
 - Ontology lookup, registering new terms, and target-term import.
 - Apply-to-all/batch mapping, list members, non-string scalars, and edit types

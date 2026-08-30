@@ -200,4 +200,4 @@ immutable state and its native provenance/process artifacts atomically.
 - Formatting, linting, .NET tests, frontend tests, performance tests, and Chromium
   and Firefox flows pass through the repository verification path.
 - No API exposes F# representation details and no viewer action mutates ArcIR,
-  manifests, the workspace, Git, or the sibling checkout.
+  manifests, the workspace, Git, or installed dependency packages.

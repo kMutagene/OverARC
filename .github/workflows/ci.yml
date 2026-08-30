@@ -12,21 +12,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: OverARC
-      - uses: actions/checkout@v4
-        with:
-          repository: BioFSharp/BioFSharp.INSDC
-          ref: 10dc95b53a5eaab7000f6795da57f05012064a13
-          path: BioFSharp.INSDC
-      - uses: actions/checkout@v4
-        with:
-          repository: nfdi4plants/PolyglotSSSOM
-          ref: fd38a3e7ccfc538934bc24b8d009c040db399b3c
-          path: PolyglotSSSOM
-      - uses: actions/checkout@v4
-        with:
-          repository: HLWeil/ProcessCore
-          ref: c01f8f315eecbd07f597c6da25bee830c2db1047
-          path: ProcessCore
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -37,17 +22,9 @@ jobs:
           cache-dependency-path: OverARC/package-lock.json
       - name: Build and test
         working-directory: OverARC
-        env:
-          BIOFSHARP_INSDC_ROOT: ${{ github.workspace }}/BioFSharp.INSDC
-          POLYGLOTSSSOM_ROOT: ${{ github.workspace }}/PolyglotSSSOM
-          PROCESSCORE_ROOT: ${{ github.workspace }}/ProcessCore
         run: |
           npx playwright install --with-deps chromium firefox
           ./build.sh Test
       - name: Publish single-server application
         working-directory: OverARC
-        env:
-          BIOFSHARP_INSDC_ROOT: ${{ github.workspace }}/BioFSharp.INSDC
-          POLYGLOTSSSOM_ROOT: ${{ github.workspace }}/PolyglotSSSOM
-          PROCESSCORE_ROOT: ${{ github.workspace }}/ProcessCore
         run: ./build.sh Publish

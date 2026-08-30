@@ -16,8 +16,8 @@ ARC-native provenance around that state; it does not require the viewer to inven
 or own those contracts.
 
 OverARC therefore starts with immutable ArcIR states and stays deliberately
-read-only. It does not write ArcIR, Git, the viewer manifest, an ARC, or the
-sibling checkout. Editing becomes authoritative only when the Phase 6 core
+read-only. It does not write ArcIR, Git, the viewer manifest, an ARC, or installed
+dependency packages. Editing becomes authoritative only when the Phase 6 core
 libraries expose a curation transaction that can produce a new state and its
 provenance/process artifacts atomically.
 
@@ -46,7 +46,7 @@ TypeScript.
 The first milestone is a curator-oriented, read-only desktop workbench:
 
 - React 19, TypeScript, Vite, Pico CSS, Graphology, Sigma v3, and React Sigma;
-- C# ASP.NET Core referencing only the sibling `BioFSharp.ArcIR.fsproj`;
+- C# ASP.NET Core consuming the stable `BioFSharp.ArcIR` NuGet package;
 - a repository-maintained fictional INSDC-like example workspace;
 - listing and opening multiple immutable states, without comparison;
 - object/relation graph projection with complete assertion and annotation detail;
@@ -72,10 +72,9 @@ root. The cross-platform entry points expose:
 - `Dev` — start ASP.NET on `127.0.0.1:5080` and Vite on `127.0.0.1:5173`; and
 - `Publish` — embed `dist/` and the example workspace into the ASP.NET output.
 
-`BIOFSHARP_INSDC_ROOT` selects the sibling checkout. The known local sibling
-layout is the fallback. The devcontainer mounts that checkout at
-`/workspaces/BioFSharp.INSDC`; CI checks out pinned commit
-`8e0928e6ad031a559dbbf52c8cdb55051e2f4b48` before running FAKE.
+The API restores the exact stable `BioFSharp.ArcIR` package version from
+NuGet.org. Local development, the devcontainer, and CI do not require a
+BioFSharp.INSDC source checkout or dependency-root environment variable.
 
 Frontend formatting, linting, testing, and Pico conventions follow the adjacent
 DataPLANT validation dashboard. Vite and Vitest are pinned beyond the vulnerable
@@ -225,7 +224,7 @@ worker hook.
 The milestone is accepted when `Dev` works with the example workspace, `Publish`
 serves the same workflow from one loopback process, invalid states cannot disrupt
 valid ones, dependency audits are clean, and no viewer action changes workspace or
-sibling-repository bytes.
+installed dependency-package bytes.
 
 ## Future integration gates
 
@@ -235,7 +234,8 @@ sibling-repository bytes.
 - Authoritative editing starts only with the Phase 6 curation transaction API. The
   UI must not invent a JSON patch or write canonical ArcIR directly.
 - DataHubClient may later replace or supplement the local workspace provider.
-- Package consumption may replace the sibling project reference after ArcIR 0.3.0.
+- Core-library package upgrades require explicit compatibility review and gate
+  verification.
 - F2 preview/export remains behind its compiler boundary and product decision.
 
 OverARC owns the production workbench. No competing editor should be added to

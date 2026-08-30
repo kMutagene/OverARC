@@ -157,5 +157,5 @@ rebuilding a filtered subgraph.
 - Filtering and view switching never reset graph positions or camera.
 - Table mode is fully usable without the graph being visible.
 - The inspector remains complete while technical noise is collapsed by default.
-- No viewer action modifies ArcIR, manifests, or the sibling repository.
+- No viewer action modifies ArcIR, manifests, or installed dependency packages.
 - No API or canonical ArcIR compatibility change is introduced.

@@ -22,24 +22,19 @@ the dedicated adapters, and keep saves within the atomic publication boundary.
 
 ## Where core domain models come from
 
-ArcIR is not defined in this repository. Its source of truth is the sibling
-`BioFSharp.INSDC` checkout, specifically:
+ArcIR, SSSOM, and native ARC provenance are not defined in this repository.
+Their source repositories remain authoritative, while OverARC consumes their
+stable NuGet packages:
 
-```text
-BioFSharp.INSDC/src/BioFSharp.ArcIR/BioFSharp.ArcIR.fsproj
-```
+| Domain                | NuGet package     | Version |
+| --------------------- | ----------------- | ------- |
+| ArcIR                 | `BioFSharp.ArcIR` | `0.3.0` |
+| SSSOM                 | `PolyglotSSSOM`   | `0.1.0` |
+| Native ARC provenance | `ProcessCore`     | `0.1.3` |
 
-SSSOM and native ARC provenance are likewise owned by sibling checkouts:
-
-```text
-PolyglotSSSOM/src/SSSOM/SSSOM.fsproj
-ProcessCore/src/ProcessCore/ProcessCore.fsproj
-```
-
-MSBuild resolves the three roots from `BIOFSHARP_INSDC_ROOT`,
-`POLYGLOTSSSOM_ROOT`, and `PROCESSCORE_ROOT`; `Directory.Build.props` supplies
-known local sibling-layout fallbacks. The devcontainer mounts all three checkouts,
-and CI uses the exact revisions in the active curation plan.
+Package versions are pinned in `OverARC.Api.csproj` and restored from NuGet.org.
+No adjacent dependency source checkout, root environment variable, devcontainer
+bind mount, or CI source checkout is required to build OverARC.
 
 Only `ArcIrInteropAdapter.cs`, `SssomInteropAdapter.cs`, and
 `ProcessCoreInteropAdapter.cs` may deal with their respective F# representation
@@ -50,7 +45,7 @@ application configuration, drafts, transport DTOs, publication, and workbench
 behavior.
 
 Do not add a competing production workbench to `BioFSharp.INSDC`, copy ArcIR
-types into this repository, or remove the sibling repository's existing viewer.
+types into this repository, or remove the upstream repository's existing viewer.
 
 ## Architecture
 
@@ -65,7 +60,7 @@ C# ASP.NET Core API and transport DTOs
         └── Dedicated ArcIR, SSSOM, and ProcessCore adapters
                 │
                 ▼
-        sibling core-library projects
+        versioned core-library NuGet packages
 ```
 
 The frontend is intentionally ordinary React rather than Fable. The published
@@ -199,9 +194,10 @@ browsing.
 Browsing, filtering, inspection, and draft mutation may not modify workspace
 artifacts. Only an explicit curation save may publish create-new ArcIR/SSSOM
 artifacts and atomically replace native `arc.yml`; it never writes the viewer
-manifest, predecessor artifacts, Git, or sibling checkouts. Tests generate the
-10k/25k benchmark at runtime rather than committing it. Preserve RFC 7807 errors
-and the documented `/api/v1` contract when changing backend behavior.
+manifest, predecessor artifacts, Git, or dependency source repositories. Tests
+generate the 10k/25k benchmark at runtime rather than committing it. Preserve
+RFC 7807 errors and the documented `/api/v1` contract when changing backend
+behavior.
 
 ## Files and changes to avoid
 
