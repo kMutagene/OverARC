@@ -389,7 +389,9 @@ stale saves are blocked, inspect successor ArcIR and SSSOM bytes plus canonical
 reuse, and sequential duplicate-content branch publication are covered in the
 backend suite. The packaged `Publish` target also succeeds. Linux verification
 remains assigned to the configured CI workflow once this commit is pushed to a
-CI-visible branch.
+CI-visible branch. Vite excludes backend-owned `.overarc` runtime state from
+frontend file watching so the exclusive Windows publication lock cannot
+terminate the development server.
 
 ## Deferred work
 

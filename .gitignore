@@ -315,6 +315,12 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# OverARC atomic-save runtime state
+**/.overarc/save.lock
+**/.overarc/save-journal.json
+**/.overarc/save-journal.json.tmp-*
+**/.overarc/staging/
+
 # Visual Studio 6 build log
 *.plg
 

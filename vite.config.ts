@@ -11,6 +11,8 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5173,
+    // The backend owns this runtime state and may hold its publication lock exclusively on Windows.
+    watch: { ignored: ['**/.overarc/**'] },
     warmup: { clientFiles: ['./src/web/main.tsx'] },
     proxy: { '/api': apiOrigin, '/_health': apiOrigin },
   },
