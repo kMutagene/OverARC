@@ -12,13 +12,19 @@ objects and relations into a Sigma graph, exposes registered terms and their
 usage occurrences, provides complete assertion and annotation details, filters
 the visible graph, and exports PNG/CSV views.
 
-The active milestone adds the first authoritative edit workflow: mapping one
-selected string occurrence to a registered term while publishing immutable ArcIR
-and SSSOM successors with native ARC provenance. Do not invent a JSON patch or
-write canonical ArcIR directly. Use the core transformations and codecs through
-the dedicated adapters, and keep saves within the atomic publication boundary.
+The delivered workbench includes the first authoritative edit workflow: mapping
+one selected string occurrence to a registered term while publishing immutable
+ArcIR and SSSOM successors with native ARC provenance. The delivered conference
+demo screenshot milestone adds independently launchable, prebuilt
+sample-decomposition workspaces; it does not add structural authoring, history
+traversal, Git integration, or an in-app workspace picker. Do not invent a JSON
+patch or write
+canonical ArcIR directly. Use the core transformations and codecs through the
+dedicated adapters, and keep saves within the atomic publication boundary.
 `plans/implementation.md` records the completed viewer milestone;
-`plans/curation-workbench.md` is authoritative for current curation work.
+`plans/curation-workbench.md` records the completed first edit workflow; and
+`plans/sample-decomposition-conference-demo.md` records the delivered screenshot
+milestone and is authoritative for deferred structural authoring.
 
 ## Where core domain models come from
 
@@ -72,8 +78,10 @@ application embeds the Vite build into the loopback-bound ASP.NET server.
 .
 ├── build/                         FAKE build implementation
 ├── examples/viewer-workspace/     native ARC plus checked-in ArcIR/SSSOM artifacts
+├── examples/sample-decomposition/ three self-contained screenshot workspaces
 ├── plans/implementation.md        authoritative milestone and integration gates
-├── plans/curation-workbench.md    active authoritative curation roadmap
+├── plans/curation-workbench.md    completed first edit workflow roadmap
+├── plans/sample-decomposition-conference-demo.md demo and structural roadmap
 ├── src/
 │   ├── OverARC.Api/               C# ASP.NET Core API
 │   └── web/
@@ -132,6 +140,12 @@ same-origin development proxy. Playwright uses isolated ports `5081`/`5174` and
 the immutable workspace under `tests/fixtures`; it must not reuse an active
 development server. Build output under `dist/` and
 `src/OverARC.Api/wwwroot/` is generated; do not hand-edit it.
+
+Pass `--workspace <path>` after the `Dev` target to select a development
+workspace. Relative paths resolve against the repository root, absolute paths
+are accepted, and the default remains `examples/viewer-workspace`. The option is
+forwarded only to the API; `npm run dev` remains Vite-only, and API/Vite output
+remains unprefixed and interleaved in the shared console.
 
 ## Frontend conventions
 

@@ -1,0 +1,34 @@
+type: Dataset
+identifier: overarc-sample-decomposition-demo
+title: OverARC sample decomposition conference demo
+description: Self-contained immutable ArcIR, SSSOM, and native curation provenance for the conference screenshots.
+annotations:
+  -
+    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    type: Annotation
+    name: sha256
+    value: 1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0
+    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+  -
+    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    type: Annotation
+    name: sha256
+    value: 7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528
+    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+dataFiles:
+  -
+    type: Data
+    path: arcir/states/Flat Sample.arcir.json
+    additionalType: ArcIR state
+    encodingFormat: application/json
+    additionalProperty:
+      -
+        "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+  -
+    type: Data
+    path: mappings/sample-decomposition.sssom.tsv
+    additionalType: SSSOM mapping set
+    encodingFormat: text/tab-separated-values
+    additionalProperty:
+      -
+        "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"

@@ -42,7 +42,8 @@ function GraphRuntime({
   layoutRef.current = layout;
   cameraRef.current = camera;
   const [layoutRunning, setLayoutRunning] = useState(false);
-  const { hoveredNode, hoveredEdge, clearHover } = useSigmaInteractions(selected, onSelect);
+  const [labelsVisible, setLabelsVisible] = useState(false);
+  const { hoveredEdge, clearHover } = useSigmaInteractions(selected, onSelect);
 
   // A new state/reset token is the only lifecycle event that reloads coordinates and camera.
   useEffect(() => {
@@ -77,7 +78,6 @@ function GraphRuntime({
     sigma.setSetting('defaultDrawNodeHover', HOVER_RENDERERS[theme]);
     sigma.setSetting('nodeReducer', (node, data) => {
       const isSelected = selected?.kind === 'object' && selected.id === node;
-      const isHovered = hoveredNode === node;
       const style = nodeViewStyle(
         typeof data.kind === 'string' ? data.kind : null,
         Boolean(data.isPlaceholder),
@@ -87,10 +87,9 @@ function GraphRuntime({
       return {
         ...data,
         ...style,
-        label:
-          style.hidden || (data.isPlaceholder && !isSelected && !isHovered) ? null : data.label,
+        label: style.hidden || !labelsVisible ? null : data.label,
         highlighted: isSelected,
-        forceLabel: isSelected,
+        forceLabel: labelsVisible,
       };
     });
     sigma.setSetting('edgeReducer', (edge, data) => {
@@ -104,7 +103,7 @@ function GraphRuntime({
       return {
         ...data,
         ...style,
-        label: !style.hidden && (isSelected || isHovered) ? data.label : null,
+        label: !style.hidden && labelsVisible ? data.label : null,
         color: style.hidden
           ? style.color
           : isSelected
@@ -113,12 +112,12 @@ function GraphRuntime({
               ? palette.hover
               : style.color,
         size: isSelected ? 4 : isHovered ? Math.max(style.size, 3) : style.size,
-        forceLabel: isSelected || isHovered,
+        forceLabel: !style.hidden && labelsVisible,
         zIndex: isSelected || isHovered ? 1 : 0,
       };
     });
     sigma.refresh();
-  }, [hoveredEdge, hoveredNode, selected, sigma, theme, visible]);
+  }, [hoveredEdge, labelsVisible, selected, sigma, theme, visible]);
 
   /** Restores deterministic coordinates and the default camera after stopping the worker layout. */
   const resetLayout = () => {
@@ -149,10 +148,12 @@ function GraphRuntime({
   return (
     <GraphControls
       layoutRunning={layoutRunning}
+      labelsVisible={labelsVisible}
       onZoomIn={() => camera.zoomIn()}
       onZoomOut={() => camera.zoomOut()}
       onFocusAll={focusVisible}
       onToggleLayout={toggleLayout}
+      onToggleLabels={() => setLabelsVisible((visible) => !visible)}
       onResetLayout={resetLayout}
       onExportPng={() => downloadGraphPng(sigma, theme)}
     />

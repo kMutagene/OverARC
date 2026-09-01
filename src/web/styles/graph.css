@@ -62,18 +62,24 @@
 .graph-controls {
   position: absolute;
   z-index: 5;
-  top: 3.65rem;
+  bottom: 0.725rem;
   left: 0.725rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+  max-width: calc(100% - 1.45rem);
+  padding: 0.25rem;
+  background: color-mix(in srgb, var(--overarc-surface) 94%, transparent);
+  border: 1px solid var(--overarc-line);
+  border-radius: 0.35rem;
+  box-shadow: 0 2px 10px var(--overarc-shadow);
 }
 
 .graph-controls button {
   width: auto;
   margin: 0;
   padding: 0.325rem 0.55rem;
-  box-shadow: 0 2px 10px var(--overarc-shadow);
+  box-shadow: none;
 }
 
 .loading,

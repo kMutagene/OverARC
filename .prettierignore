@@ -6,3 +6,6 @@ README.md
 pm
 .devcontainer/devcontainer-lock.json
 examples/viewer-workspace/arcir/states
+examples/sample-decomposition/**/arc.yml
+examples/sample-decomposition/**/arcir/states
+examples/sample-decomposition/**/mappings

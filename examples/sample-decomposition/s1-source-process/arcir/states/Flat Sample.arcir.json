@@ -1,0 +1,89 @@
+{
+  "formatVersion": "1.0",
+  "graph": {
+    "terms": {
+      "http://purl.obolibrary.org/obo/GENO_0000222": {
+        "name": "genotype",
+        "source": "GENO"
+      },
+      "http://purl.obolibrary.org/obo/PATO_0000146": {
+        "name": "temperature",
+        "source": "PATO"
+      },
+      "http://purl.obolibrary.org/obo/UO_0000027": {
+        "name": "°C",
+        "source": "UO"
+      },
+      "urn:overarc:demo:term:genotype": {
+        "name": "Genotype",
+        "source": "OverARC demo local field"
+      },
+      "urn:overarc:demo:term:input-to": {
+        "name": "is input to",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:name": {
+        "name": "Name",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:plant": {
+        "name": "Plant",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:process": {
+        "name": "Process",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:produces": {
+        "name": "produces",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:sample": {
+        "name": "Sample",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:temperature": {
+        "name": "Temperature",
+        "source": "OverARC demo local field"
+      }
+    },
+    "objects": {
+      "urn:overarc:demo:object:sample": {
+        "kind": "observable",
+        "types": {
+          "urn:overarc:demo:assertion:sample-type": {
+            "term": "urn:overarc:demo:term:sample"
+          }
+        },
+        "properties": {
+          "urn:overarc:demo:assertion:genotype": {
+            "predicate": "urn:overarc:demo:term:genotype",
+            "value": {
+              "type": "string",
+              "value": "A+"
+            },
+            "annotations": {}
+          },
+          "urn:overarc:demo:assertion:sample-name": {
+            "predicate": "urn:overarc:demo:term:name",
+            "value": {
+              "type": "string",
+              "value": "Sample"
+            },
+            "annotations": {}
+          },
+          "urn:overarc:demo:assertion:temperature": {
+            "predicate": "urn:overarc:demo:term:temperature",
+            "value": {
+              "type": "string",
+              "value": "30°C"
+            },
+            "annotations": {}
+          }
+        },
+        "annotations": {}
+      }
+    },
+    "relations": {}
+  }
+}

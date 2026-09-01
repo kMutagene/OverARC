@@ -2,8 +2,11 @@
 
 OverARC is a React and ASP.NET Core curation workbench for immutable ArcIR states.
 The completed read-only milestone is documented in
-[`plans/implementation.md`](plans/implementation.md); the active authoritative
-edit roadmap is [`plans/curation-workbench.md`](plans/curation-workbench.md).
+[`plans/implementation.md`](plans/implementation.md), and the completed first
+edit workflow is recorded in
+[`plans/curation-workbench.md`](plans/curation-workbench.md). The delivered demo
+screenshot milestone and deferred structural roadmap are documented in
+[`plans/sample-decomposition-conference-demo.md`](plans/sample-decomposition-conference-demo.md).
 
 ## Local development dependencies
 
@@ -19,6 +22,13 @@ The API consumes stable NuGet packages for its three F# domain libraries:
 source checkouts or dependency-root environment variables are required. On
 Windows, use `build.cmd Restore`, `build.cmd Build`, and `build.cmd Test`; use
 the corresponding `./build.sh` targets on Linux/macOS.
+
+`build.cmd Dev` starts Vite and API `dotnet watch` together, using
+`examples/viewer-workspace` by default. Pass `--workspace <path>` to select a
+different workspace at startup; relative paths resolve from the repository root
+and absolute paths are accepted. Plain `npm run dev` remains Vite-only. The
+three conference screenshot commands are documented in
+[`examples/sample-decomposition/README.md`](examples/sample-decomposition/README.md).
 
 ## Workspace discovery
 
@@ -61,9 +71,10 @@ structured `errors` values.
 
 ## First edit workflow
 
-Select an editable native state, inspect an object or relation from either the
-Graph or Table view, and use **Map to term** beside a supported string property or
-annotation occurrence. The dialog searches only terms already registered in the
+Select an editable native state, use **Enter curation mode**, then inspect an
+object or relation from either the Graph or Table view and use **Map to term**
+beside a supported string property or annotation occurrence. Browse mode hides
+these mapping actions. The dialog searches only terms already registered in the
 active ArcIR graph, retains the exact literal and selector, and offers the five
 supported SKOS predicates. The initial operation also asks for the curator name;
 later operations remain part of the same named process.

@@ -32,6 +32,12 @@ export default function App() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [centerView, setCenterView] = useState<CenterView>('graph');
   const [mappingOccurrence, setMappingOccurrence] = useState<LiteralOccurrence | null>(null);
+  const [curationStateId, setCurationStateId] = useState<string | null>(null);
+  const curationMode = Boolean(
+    workspace.activeState &&
+    curationStateId === workspace.activeState &&
+    workspace.activeSummary?.editable,
+  );
 
   const visible = useMemo<VisibleProjection>(
     () =>
@@ -97,6 +103,7 @@ export default function App() {
         curationError={workspace.curationError}
         notice={workspace.notice}
         mutating={workspace.mutating}
+        curationMode={curationMode}
         onChooseState={workspace.chooseState}
         onRefresh={() => void workspace.refresh()}
         onFiltersChange={setFilters}
@@ -105,6 +112,11 @@ export default function App() {
         onSave={() => void workspace.saveDraft()}
         onDiscard={() => void workspace.discardDraft()}
         onDismissNotice={workspace.clearNotice}
+        onToggleCurationMode={() => {
+          workspace.clearCurationError();
+          setMappingOccurrence(null);
+          setCurationStateId(curationMode ? null : workspace.activeState);
+        }}
       />
       <PaneResizer side="left" {...panes.left} />
       <GraphPane
@@ -134,7 +146,7 @@ export default function App() {
         collapsed={panes.right.width === 0}
         onClear={selection.clear}
         onMapLiteral={
-          workspace.activeSummary?.editable
+          curationMode
             ? (occurrence) => {
                 workspace.clearCurationError();
                 setMappingOccurrence(occurrence);

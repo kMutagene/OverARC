@@ -1,0 +1,362 @@
+type: Dataset
+identifier: overarc-sample-decomposition-demo
+title: OverARC sample decomposition conference demo
+description: Self-contained immutable ArcIR, SSSOM, and native curation provenance for the conference screenshots.
+dateModified: 2026-09-01T09:00:00.0000000+00:00
+recipes:
+  -
+    "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    type: Recipe
+    name: OverARC structural curation
+    parameters:
+      -
+        type: FormalParameter
+        name: curation transformation
+    "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+annotations:
+  -
+    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    type: Annotation
+    name: sha256
+    value: 1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0
+    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+  -
+    "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    type: Annotation
+    name: sha256
+    value: 60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5
+    "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+  -
+    "@id": "#ParameterValue_curation_transformation_publish_immutable_ArcIR_successor_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: publish immutable ArcIR successor
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#Annotation_curator_conference-demo_overarc_local"
+    type: Annotation
+    name: curator
+    value: conference-demo@overarc.local
+  -
+    "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+    type: Annotation
+    name: save time
+    value: 2026-09-01T09:00:00.0000000+00:00
+  -
+    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    type: Annotation
+    name: sha256
+    value: 7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528
+    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+  -
+    "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000001"
+    type: Annotation
+    name: record id
+    value: urn:uuid:00000000-0000-5000-8000-000000000001
+    "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000001"
+  -
+    "@id": "#Annotation_mapping_predicate_skos_exactMatch"
+    type: Annotation
+    name: mapping predicate
+    value: skos:exactMatch
+    "@id": "#Annotation_mapping_predicate_skos_exactMatch"
+  -
+    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+    type: Annotation
+    name: target term
+    value: http://purl.obolibrary.org/obo/GENO_0000222
+    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+  -
+    "@id": "#ParameterValue_curation_transformation_apply_genotype_term_mapping_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: apply genotype term mapping
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#ParameterValue_curation_transformation_move_genotype_assertion_to_Source_plant_annotation_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: move genotype assertion to Source plant annotation
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#ParameterValue_curation_transformation_create_Source_plant_observable_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: create Source plant observable
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#ParameterValue_curation_transformation_create_Process_activity_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: create Process activity
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#ParameterValue_curation_transformation_connect_Source_plant_to_Process_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: connect Source plant to Process
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+  -
+    "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_parameter_curation_transformation"
+    type: Annotation
+    name: curation transformation
+    additionalType: ParameterValue
+    value: connect Process to Sample
+    instanceOf:
+      type: FormalParameter
+      name: curation transformation
+processes:
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: artifact succession
+    inputs:
+      -
+        type: Data
+        path: arcir/states/Flat Sample.arcir.json
+        additionalType: ArcIR state
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR state
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_publish_immutable_ArcIR_successor_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: mapping application
+    inputs:
+      -
+        type: Data
+        path: mappings/sample-decomposition.sssom.tsv
+        additionalType: SSSOM mapping record
+        selector: "#row=2"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc7111
+        encodingFormat: text/tab-separated-values
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+          -
+            "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000001"
+          -
+            "@id": "#Annotation_mapping_predicate_skos_exactMatch"
+          -
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR genotype annotation
+        selector: "#/graph/objects/urn:overarc:demo:object:source-plant/annotations/urn:overarc:demo:assertion:genotype"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+          -
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+          -
+            "@id": "#Annotation_mapping_predicate_skos_exactMatch"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_apply_genotype_term_mapping_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: moved fragment
+    inputs:
+      -
+        type: Data
+        path: arcir/states/Flat Sample.arcir.json
+        additionalType: ArcIR property assertion
+        selector: "#/graph/objects/urn:overarc:demo:object:sample/properties/urn:overarc:demo:assertion:genotype"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR genotype annotation
+        selector: "#/graph/objects/urn:overarc:demo:object:source-plant/annotations/urn:overarc:demo:assertion:genotype"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+          -
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+          -
+            "@id": "#Annotation_mapping_predicate_skos_exactMatch"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_move_genotype_assertion_to_Source_plant_annotation_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: created fragment
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR object
+        selector: "#/graph/objects/urn:overarc:demo:object:source-plant"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_create_Source_plant_observable_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: created activity fragment
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR object
+        selector: "#/graph/objects/urn:overarc:demo:object:process"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_create_Process_activity_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: created input relation fragment
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR relation
+        selector: "#/graph/relations/urn:overarc:demo:relation:input-1"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_connect_Source_plant_to_Process_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+  -
+    type: Process
+    name: Externalize genotype
+    additionalType: created output relation fragment
+    outputs:
+      -
+        type: Data
+        path: arcir/states/Genotype externalized.arcir.json
+        additionalType: ArcIR relation
+        selector: "#/graph/relations/urn:overarc:demo:relation:output-final"
+        selectorFormat: https://www.rfc-editor.org/rfc/rfc6901
+        encodingFormat: application/json
+        additionalProperty:
+          -
+            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    executesRecipe:
+      "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
+    parameterValue:
+      -
+        "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_parameter_curation_transformation"
+      -
+        "@id": "#Annotation_curator_conference-demo_overarc_local"
+      -
+        "@id": "#Annotation_save_time_2026-09-01T09_00_00_0000000_00_00"
+dataFiles:
+  -
+    type: Data
+    path: arcir/states/Flat Sample.arcir.json
+    additionalType: ArcIR state
+    encodingFormat: application/json
+    additionalProperty:
+      -
+        "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+  -
+    type: Data
+    path: mappings/sample-decomposition.sssom.tsv
+    additionalType: SSSOM mapping set
+    encodingFormat: text/tab-separated-values
+    additionalProperty:
+      -
+        "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+  -
+    type: Data
+    path: arcir/states/Genotype externalized.arcir.json
+    additionalType: ArcIR state
+    encodingFormat: application/json
+    additionalProperty:
+      -
+        "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"

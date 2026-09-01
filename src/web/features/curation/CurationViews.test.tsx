@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { CurationDraft, Mappings } from '../../shared/types';
+import type { CurationDraft, Mappings, StateSummary } from '../../shared/types';
 import { ChangesView } from './ChangesView';
+import { CurationStatus } from './CurationStatus';
 import { MappingsView } from './MappingsView';
 
 const draft: CurationDraft = {
@@ -67,7 +68,48 @@ const mappings: Mappings = {
   ],
 };
 
+const editableState: StateSummary = {
+  id: 'state-a',
+  label: 'State A',
+  relativePath: 'arcir/state-a.json',
+  sha256: 'a'.repeat(64),
+  status: 'valid',
+  lastWriteUtc: null,
+  formatVersion: '1.0',
+  objectCount: 1,
+  relationCount: 0,
+  errors: [],
+  editable: true,
+};
+
 describe('curation center views', () => {
+  it('keeps editing controls behind an explicit curation-mode switch', () => {
+    const onToggleMode = vi.fn();
+    const shared = {
+      state: editableState,
+      draft: null,
+      notice: null,
+      error: null,
+      busy: false,
+      onSave: vi.fn(),
+      onDiscard: vi.fn(),
+      onDismissNotice: vi.fn(),
+      onToggleMode,
+    };
+    const view = render(<CurationStatus {...shared} curationMode={false} />);
+
+    expect(screen.getByText(/Browse mode is active/)).toBeVisible();
+    screen.getByRole('button', { name: 'Enter curation mode' }).click();
+    expect(onToggleMode).toHaveBeenCalledOnce();
+
+    view.rerender(<CurationStatus {...shared} curationMode />);
+    expect(screen.getByText(/Curation mode is active/)).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Exit curation mode' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
   it('shows exact draft accounting and invokes replay-based undo', () => {
     const onUndo = vi.fn();
     render(<ChangesView draft={draft} active disabled={false} onUndo={onUndo} />);

@@ -71,6 +71,21 @@ test('switches state, refreshes, controls layout, and exports', async ({ page })
   await expect(visibleGraph.getByText('3 objects · 2 relations', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Graph', exact: true }).click();
+  const graphControls = page.getByLabel('Graph controls');
+  const graphPane = page.getByLabel('Graph, table, and term views');
+  const controlsBounds = await graphControls.boundingBox();
+  const graphBounds = await graphPane.boundingBox();
+  if (!controlsBounds || !graphBounds) throw new Error('Graph control bounds are unavailable.');
+  expect(controlsBounds.y + controlsBounds.height).toBeGreaterThan(
+    graphBounds.y + graphBounds.height * 0.85,
+  );
+  const showLabels = page.getByRole('button', { name: 'Show labels' });
+  await expect(showLabels).toHaveAttribute('aria-pressed', 'false');
+  await showLabels.click();
+  await expect(page.getByRole('button', { name: 'Hide labels' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await page.getByRole('button', { name: 'Start layout' }).click();
   await expect(page.getByRole('button', { name: 'Stop layout' })).toBeVisible();
   await page.getByRole('button', { name: 'Table', exact: true }).click();

@@ -8,6 +8,7 @@ open Fake.Core.TargetOperators
 // This FAKE entry point keeps restore/build/test/dev/publish behavior identical across local shells and CI.
 let args = Environment.GetCommandLineArgs() |> Array.skip 1 |> Array.toList
 let requestedTarget = args |> List.tryHead |> Option.defaultValue "Build"
+let targetArguments = args |> List.skip (if List.isEmpty args then 0 else 1)
 let context = Context.FakeExecutionContext.Create false "build/Build.fsproj" []
 Context.setExecutionContext (Context.RuntimeContext.Fake context)
 Target.initEnvironment ()
@@ -17,6 +18,44 @@ let solution = Path.Combine(root, "OverARC.slnx")
 let web = root
 let api = Path.Combine(root, "src", "OverARC.Api", "OverARC.Api.csproj")
 let publishDirectory = Path.Combine(root, "artifacts", "publish")
+
+/// Resolves and validates the optional Dev workspace before any target dependency starts.
+let resolveDevWorkspace arguments =
+    let usage = "Usage: Dev [--workspace <path>]"
+
+    let rec parse workspace remaining =
+        match remaining with
+        | [] -> workspace
+        | "--workspace" :: [] -> failwithf "Missing value for Dev option '--workspace'. %s" usage
+        | "--workspace" :: value :: _ when value.StartsWith("--", StringComparison.Ordinal) ->
+            failwithf "Missing value for Dev option '--workspace'. %s" usage
+        | "--workspace" :: _ :: _ when Option.isSome workspace ->
+            failwithf "Dev option '--workspace' may only be specified once. %s" usage
+        | "--workspace" :: value :: tail when String.IsNullOrWhiteSpace value ->
+            failwithf "Missing value for Dev option '--workspace'. %s" usage
+        | "--workspace" :: value :: tail -> parse (Some value) tail
+        | option :: _ when option.StartsWith("--", StringComparison.Ordinal) ->
+            failwithf "Unknown Dev option '%s'. %s" option usage
+        | argument :: _ -> failwithf "Unexpected Dev argument '%s'. %s" argument usage
+
+    let configured =
+        parse None arguments
+        |> Option.defaultValue (Path.Combine("examples", "viewer-workspace"))
+
+    let resolved =
+        try Path.GetFullPath(configured, root)
+        with error -> failwithf "Invalid Dev workspace path '%s': %s" configured error.Message
+
+    if not (Directory.Exists resolved) then
+        failwithf "Dev workspace directory does not exist: %s" resolved
+
+    resolved
+
+let devWorkspace =
+    if requestedTarget.Equals("Dev", StringComparison.OrdinalIgnoreCase) then
+        resolveDevWorkspace targetArguments
+    else
+        Path.Combine(root, "examples", "viewer-workspace")
 
 /// Resolves npm to the Windows command shim while leaving native executable names unchanged elsewhere.
 let resolveExecutable executable =
@@ -73,7 +112,7 @@ Target.create "Dev" (fun _ ->
         Process.Start info
         |> Option.ofObj
         |> Option.defaultWith (fun () -> failwithf "Could not start %s" executable)
-    use apiProcess = start "dotnet" [ "watch"; "--project"; api; "--no-hot-reload"; "--"; "--workspace"; Path.Combine(root, "examples", "viewer-workspace") ] root
+    use apiProcess = start "dotnet" [ "watch"; "--project"; api; "--no-hot-reload"; "--"; "--workspace"; devWorkspace ] root
     use webProcess = start "npm" [ "run"; "dev" ] web
     Task.WaitAny(apiProcess.WaitForExitAsync(), webProcess.WaitForExitAsync()) |> ignore
     if not apiProcess.HasExited then apiProcess.Kill(true)

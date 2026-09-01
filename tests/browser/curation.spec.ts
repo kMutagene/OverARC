@@ -67,6 +67,11 @@ async function mapProjectTitle(page: Page, curator: string) {
   await page.getByRole('button', { name: 'Inspect object PRJTEST001' }).click();
   const inspector = page.getByLabel('Element inspector');
   const titleProperty = inspector.locator('article').filter({ hasText: literal }).first();
+  const enterCuration = page.getByRole('button', { name: 'Enter curation mode' });
+  if (await enterCuration.isVisible()) {
+    await expect(titleProperty.getByRole('button', { name: 'Map to term' })).toHaveCount(0);
+    await enterCuration.click();
+  }
   await titleProperty.getByRole('button', { name: 'Map to term' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Map literal to registered term' });
@@ -123,9 +128,7 @@ test('curates through replay, guards state changes, and publishes inspectable su
 
   await page.goto(`/?state=${encodeURIComponent(active.id)}`);
   await expect(page.getByRole('heading', { name: 'OverARC' })).toBeVisible();
-  await expect(page.getByLabel('Curation status')).toContainText(
-    'This native state supports selected literal mapping.',
-  );
+  await expect(page.getByLabel('Curation status')).toContainText('Browse mode is active.');
 
   await mapProjectTitle(page, 'Browser Curator');
   const draftId = await page.evaluate(() => window.sessionStorage.getItem('overarc.draftId'));

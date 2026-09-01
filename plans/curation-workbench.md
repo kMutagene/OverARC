@@ -4,6 +4,11 @@
 > graph, table, and term workbench. Dependency and editable-workspace foundations are implemented. Before every
 > implementation commit, update this status and the status of each affected step
 > so the plans describe exactly what the commit contains and verifies.
+>
+> The implemented successor screenshot milestone is the
+> [Sample decomposition conference demo](sample-decomposition-conference-demo.md),
+> which delivers three launchable screenshot workspaces before general
+> structural authoring. Git-backed history traversal remains deferred.
 
 ## Goal
 
@@ -323,9 +328,11 @@ Changes shows the current draft's ordered operations and supports undo; committe
 history is not part of this slice.
 
 For supported string occurrences, add a `Map to term` action in the Inspector.
-The dialog searches only the active state's registered term dictionary, shows
-exact source literal and selector context, offers the five predicate choices,
-warns about mappings to other targets, and submits a typed draft operation.
+Keep those actions hidden in the default browse mode and expose them only after
+the curator explicitly enters curation mode for the active editable state. The
+dialog searches only the active state's registered term dictionary, shows exact
+source literal and selector context, offers the five predicate choices, warns
+about mappings to other targets, and submits a typed draft operation.
 
 Render all existing exploration views from the draft projection, show the
 process-level unsaved status, and store the draft ID in `sessionStorage`. On state
@@ -345,9 +352,10 @@ switch or navigation away from a dirty draft, offer Save, Discard, and Stay.
   current declaration documentation.
 
 The workbench now offers first-class Mappings and Changes center views, exact
-occurrence mapping actions in the Inspector, a registered-term-only accessible
-dialog, process-level draft status, replay-based undo, and Save/Discard/Stay state
-switch protection. Every exploration surface follows the current draft; only the
+occurrence mapping actions gated by an explicit curation mode in the Inspector,
+a registered-term-only accessible dialog, process-level draft status,
+replay-based undo, and Save/Discard/Stay state switch protection. Every
+exploration surface follows the current draft; only the
 server-issued draft ID is retained in `sessionStorage`, with explicit live
 reattach and lost-draft handling. Component and hook coverage verifies dialog
 focus/cancel/error behavior, supported occurrence actions, generic SSSOM fields,

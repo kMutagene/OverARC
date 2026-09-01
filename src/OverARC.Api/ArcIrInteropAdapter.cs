@@ -5,6 +5,25 @@ namespace OverARC.Api;
 /// <summary>Terminates BioFSharp.ArcIR representations behind one narrow C# boundary.</summary>
 public sealed class ArcIrInteropAdapter
 {
+    /// <summary>Decodes ArcIR bytes and returns the packaged codec's deterministic canonical encoding.</summary>
+    public byte[] EncodeCanonical(byte[] bytes)
+    {
+        using var stream = new MemoryStream(bytes, writable: false);
+        var decoded = ArcIRJson.read(stream);
+        if (decoded.IsError)
+            throw new InvalidDataException(string.Join(
+                "; ",
+                decoded.ErrorValue.Select(error => $"{error.Code}: {error.Message}")));
+
+        var encoded = ArcIRJson.writeBytes(decoded.ResultValue);
+        if (encoded.IsError)
+            throw new InvalidDataException(string.Join(
+                "; ",
+                encoded.ErrorValue.Select(error => $"{error.Code}: {error.Message}")));
+
+        return encoded.ResultValue;
+    }
+
     /// <summary>Validates canonical ArcIR bytes with the packaged F# codec and flattens F# errors into transport-safe text.</summary>
     public IReadOnlyList<string> Validate(byte[] bytes)
     {

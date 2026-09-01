@@ -13,7 +13,7 @@ import { FilterPanel } from './FilterPanel';
 import { GraphSummary } from './GraphSummary';
 import { StateList } from './StateList';
 
-/** Composition inputs for the workspace, filter, legend, export, and theme sidebar. */
+/** Composition inputs for the workspace, curation, filter, legend, export, and theme sidebar. */
 interface WorkspaceSidebarProps {
   workspace: Workspace | null;
   activeState: string | null;
@@ -29,6 +29,7 @@ interface WorkspaceSidebarProps {
   curationError: string | null;
   notice: string | null;
   mutating: boolean;
+  curationMode: boolean;
   onChooseState: (id: string) => void;
   onRefresh: () => void;
   onFiltersChange: (filters: Filters) => void;
@@ -37,6 +38,7 @@ interface WorkspaceSidebarProps {
   onSave: () => void;
   onDiscard: () => void;
   onDismissNotice: () => void;
+  onToggleCurationMode: () => void;
 }
 
 /** Composes all left-pane controls and hides them from accessibility APIs when collapsed. */
@@ -55,6 +57,7 @@ export function WorkspaceSidebar({
   curationError,
   notice,
   mutating,
+  curationMode,
   onChooseState,
   onRefresh,
   onFiltersChange,
@@ -63,6 +66,7 @@ export function WorkspaceSidebar({
   onSave,
   onDiscard,
   onDismissNotice,
+  onToggleCurationMode,
 }: WorkspaceSidebarProps) {
   return (
     <aside
@@ -90,9 +94,11 @@ export function WorkspaceSidebar({
         notice={notice}
         error={curationError}
         busy={mutating}
+        curationMode={curationMode}
         onSave={onSave}
         onDiscard={onDiscard}
         onDismissNotice={onDismissNotice}
+        onToggleMode={onToggleCurationMode}
       />
       <FilterPanel
         filters={filters}
