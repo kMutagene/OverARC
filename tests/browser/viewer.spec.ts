@@ -9,6 +9,16 @@ test('loads states, filters with context, and inspects complete details', async 
     name: 'Open OverARC workspace',
   });
   await expect(openWorkspace).toHaveAttribute('title', 'Open OverARC workspace');
+  const addNode = workspaceToolbar.getByRole('button', { name: 'Add node' });
+  const addRelation = workspaceToolbar.getByRole('button', { name: 'Add relation' });
+  await expect(addNode).toHaveAttribute('title', 'Add node');
+  await expect(addRelation).toHaveAttribute('title', 'Add relation');
+  await expect(workspaceToolbar.getByRole('button')).toHaveCount(3);
+  const locationBeforePlaceholderActions = page.url();
+  await addNode.click();
+  await addRelation.click();
+  expect(page.url()).toBe(locationBeforePlaceholderActions);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   const subtitleBounds = await workspaceSubtitle.boundingBox();
   const toolbarBounds = await workspaceToolbar.boundingBox();
   if (!subtitleBounds || !toolbarBounds)

@@ -7,7 +7,7 @@ import type {
   VisibleProjection,
   Workspace,
 } from '../../shared/types';
-import { FolderOpen } from 'lucide-react';
+import { CirclePlus, FolderOpen, GitBranchPlus } from 'lucide-react';
 import { CurationStatus } from '../curation/CurationStatus';
 import { ThemeToggle } from '../theme/ThemeToggle';
 import { FilterPanel } from './FilterPanel';
@@ -20,6 +20,16 @@ const workspaceToolbarActions: readonly SidebarToolbarAction[] = [
     id: 'open-workspace',
     label: 'Open OverARC workspace',
     icon: FolderOpen,
+  },
+  {
+    id: 'add-node',
+    label: 'Add node',
+    icon: CirclePlus,
+  },
+  {
+    id: 'add-relation',
+    label: 'Add relation',
+    icon: GitBranchPlus,
   },
 ];
 

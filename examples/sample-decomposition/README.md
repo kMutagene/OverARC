@@ -37,7 +37,9 @@ concern; there is no in-app picker.
    (`has_input`), and Extraction → Sample (`has_output`) with the `30 °C`
    parameter visible.
 4. Open **Mappings** in every workspace and confirm both the Genotype →
-   `GENO:0000222` and Temperature → `PATO:0000146` rows.
+   `GENO:0000536` and Temperature → `PATO:0000146` rows. Both are literal
+   mappings with `subject_type` set to `rdfs literal`; both ontology targets
+   have `object_type` set to `owl class`.
 
 Graph camera, layout, label, and PNG controls are grouped at the lower left of
 the graph pane. Use **Show labels** to display every node and edge label and

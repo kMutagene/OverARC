@@ -51,16 +51,29 @@ const mappings: Mappings = {
   sssomVersion: '1.1',
   mappingSetId: 'https://example.org/mappings',
   license: 'CC0',
-  metadataFields: [{ name: 'ext_note', values: ['retained'] }],
+  metadataFields: [
+    { name: 'curie_map', values: ['GENO: http://purl.obolibrary.org/obo/GENO_'] },
+    { name: 'ext_note', values: ['retained'] },
+  ],
   mappings: [
     {
       index: 0,
       fields: [
+        { name: 'subject_id', values: ['urn:local:control'] },
         { name: 'subject_label', values: ['control'] },
-        { name: 'predicate_id', values: ['skos:exactMatch'] },
-        { name: 'object_id', values: ['urn:term:control'] },
+        { name: 'subject_type', values: ['RdfsLiteral'] },
+        {
+          name: 'predicate_id',
+          values: ['http://www.w3.org/2004/02/skos/core#exactMatch'],
+        },
+        { name: 'object_id', values: ['http://purl.obolibrary.org/obo/GENO_0000536'] },
         { name: 'object_label', values: ['control role'] },
-        { name: 'mapping_justification', values: ['semapv:ManualMappingCuration'] },
+        { name: 'object_type', values: ['OwlClass'] },
+        {
+          name: 'mapping_justification',
+          values: ['https://w3id.org/semapv/vocab/ManualMappingCuration'],
+        },
+        { name: 'comment', values: ['Example curator description.'] },
         { name: 'record_id', values: ['urn:uuid:record'] },
         { name: 'ext_note', values: ['row retained'] },
       ],
@@ -120,13 +133,30 @@ describe('curation center views', () => {
     expect(onUndo).toHaveBeenCalledWith('operation');
   });
 
-  it('shows retained mapping metadata, row extensions, and exact target IDs', () => {
+  it('shows semantic mapping columns, compact links, types, descriptions, and retained fields', () => {
     render(<MappingsView mappings={mappings} active />);
     expect(screen.getByRole('region', { name: 'SSSOM mappings' })).toBeVisible();
-    expect(screen.getAllByText('urn:term:control')[0]).toBeVisible();
+    expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
+      'Subject',
+      'Predicate',
+      'Object',
+      'Justification',
+    ]);
+    expect(screen.getByText('rdfs literal')).toBeVisible();
+    expect(screen.getByText('owl class')).toBeVisible();
+    expect(screen.getByText('Example curator description.')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'skos:exactMatch' })).toHaveAttribute(
+      'href',
+      'http://www.w3.org/2004/02/skos/core#exactMatch',
+    );
+    expect(screen.getByRole('link', { name: 'GENO:0000536' })).toHaveAttribute(
+      'href',
+      'http://purl.obolibrary.org/obo/GENO_0000536',
+    );
     screen.getByText('Mapping-set metadata').click();
     expect(screen.getByText('retained')).toBeVisible();
-    screen.getByText('7 fields').click();
+    screen.getByText('3 additional fields').click();
+    expect(screen.getByText('urn:uuid:record')).toBeVisible();
     expect(screen.getByText('row retained')).toBeVisible();
   });
 });

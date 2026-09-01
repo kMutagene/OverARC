@@ -15,17 +15,17 @@ recipes:
     "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
 annotations:
   -
-    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+    "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
     type: Annotation
     name: sha256
-    value: 33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669
-    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+    value: 032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb
+    "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
   -
-    "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+    "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     type: Annotation
     name: sha256
-    value: 213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0
-    "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+    value: 29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd
+    "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
   -
     "@id": "#ParameterValue_curation_transformation_publish_immutable_ArcIR_successor_parameter_curation_transformation"
     type: Annotation
@@ -46,11 +46,11 @@ annotations:
     name: save time
     value: 2026-09-01T09:00:00.0000000+00:00
   -
-    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
     type: Annotation
     name: sha256
-    value: 7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528
-    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    value: f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080
+    "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
   -
     "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000001"
     type: Annotation
@@ -64,11 +64,11 @@ annotations:
     value: skos:exactMatch
     "@id": "#Annotation_mapping_predicate_skos_exactMatch"
   -
-    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000536"
     type: Annotation
     name: target term
-    value: http://purl.obolibrary.org/obo/GENO_0000222
-    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+    value: http://purl.obolibrary.org/obo/GENO_0000536
+    "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000536"
   -
     "@id": "#ParameterValue_curation_transformation_apply_genotype_term_mapping_parameter_curation_transformation"
     type: Annotation
@@ -124,11 +124,11 @@ annotations:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+    "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     type: Annotation
     name: sha256
-    value: 62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee
-    "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+    value: 35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b
+    "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
   -
     "@id": "#Annotation_save_time_2026-09-01T09_15_00_0000000_00_00"
     type: Annotation
@@ -264,7 +264,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+            "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
     outputs:
       -
         type: Data
@@ -273,7 +273,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -297,13 +297,13 @@ processes:
         encodingFormat: text/tab-separated-values
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+            "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
           -
             "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000001"
           -
             "@id": "#Annotation_mapping_predicate_skos_exactMatch"
           -
-            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000536"
     outputs:
       -
         type: Data
@@ -314,9 +314,9 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
           -
-            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000536"
           -
             "@id": "#Annotation_mapping_predicate_skos_exactMatch"
     executesRecipe:
@@ -342,7 +342,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+            "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
     outputs:
       -
         type: Data
@@ -353,9 +353,9 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
           -
-            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
+            "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000536"
           -
             "@id": "#Annotation_mapping_predicate_skos_exactMatch"
     executesRecipe:
@@ -381,7 +381,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -405,7 +405,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -429,7 +429,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -453,7 +453,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -475,7 +475,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     outputs:
       -
         type: Data
@@ -484,7 +484,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -508,7 +508,7 @@ processes:
         encodingFormat: text/tab-separated-values
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+            "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
           -
             "@id": "#Annotation_record_id_urn_uuid_00000000-0000-5000-8000-000000000002"
           -
@@ -525,7 +525,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_PATO_0000146"
           -
@@ -555,7 +555,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
           -
             "@id": "#Annotation_literal_30_C"
     executesRecipe:
@@ -581,7 +581,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     outputs:
       -
         type: Data
@@ -592,7 +592,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_PATO_0000146"
           -
@@ -622,7 +622,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -646,7 +646,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -670,7 +670,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
           -
             "@id": "#Annotation_name_Process"
     outputs:
@@ -683,7 +683,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
           -
             "@id": "#Annotation_name_Extraction"
     executesRecipe:
@@ -709,7 +709,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+            "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
     outputs:
       -
         type: Data
@@ -720,7 +720,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -744,7 +744,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -768,7 +768,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+            "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -786,7 +786,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+        "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
   -
     type: Data
     path: mappings/sample-decomposition.sssom.tsv
@@ -794,7 +794,7 @@ dataFiles:
     encodingFormat: text/tab-separated-values
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+        "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
   -
     type: Data
     path: arcir/states/Genotype externalized.arcir.json
@@ -802,7 +802,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
+        "@id": "#Annotation_sha256_29e3b2b5ed04fe34c09128db10d736cfbab8c4a2a27ef734cc3b7635d5f14efd"
   -
     type: Data
     path: arcir/states/Growth and extraction.arcir.json
@@ -810,4 +810,4 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
+        "@id": "#Annotation_sha256_35d6744996d9de06dfe622354afce8435b01233c9bacc4a007f8c4c1e851997b"

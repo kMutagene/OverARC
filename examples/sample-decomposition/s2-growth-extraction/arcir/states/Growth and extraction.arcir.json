@@ -2,7 +2,7 @@
   "formatVersion": "1.0",
   "graph": {
     "terms": {
-      "http://purl.obolibrary.org/obo/GENO_0000222": {
+      "http://purl.obolibrary.org/obo/GENO_0000536": {
         "name": "genotype",
         "source": "GENO"
       },
@@ -157,7 +157,7 @@
         },
         "annotations": {
           "urn:overarc:demo:assertion:genotype": {
-            "property": "http://purl.obolibrary.org/obo/GENO_0000222",
+            "property": "http://purl.obolibrary.org/obo/GENO_0000536",
             "value": {
               "type": "literal",
               "value": {

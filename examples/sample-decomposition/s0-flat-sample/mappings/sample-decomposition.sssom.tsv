@@ -11,6 +11,8 @@
 #creator_label:
 #  - OverARC
 #license: https://creativecommons.org/publicdomain/zero/1.0/
+#subject_type: rdfs literal
+#object_type: owl class
 record_id	subject_id	subject_label	predicate_id	object_id	object_label	mapping_justification	creator_id	creator_label
-uuid:00000000-0000-5000-8000-000000000001	demo:genotype	Genotype	skos:exactMatch	GENO:0000222	genotype	semapv:ManualMappingCuration	overarc_creator:OverARC	OverARC
+uuid:00000000-0000-5000-8000-000000000001	demo:genotype	Genotype	skos:exactMatch	GENO:0000536	genotype	semapv:ManualMappingCuration	overarc_creator:OverARC	OverARC
 uuid:00000000-0000-5000-8000-000000000002	demo:temperature	Temperature	skos:exactMatch	PATO:0000146	temperature	semapv:ManualMappingCuration	overarc_creator:OverARC	OverARC

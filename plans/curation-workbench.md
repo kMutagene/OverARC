@@ -323,9 +323,13 @@ under local resource pressure.
 ### Step 7 — Add Mappings, Changes, and the first edit interaction
 
 Add `Mappings` and `Changes` to the existing center-view selector. Mappings shows
-the active mapping-set metadata and records, including preserved loaded fields.
-Changes shows the current draft's ordered operations and supports undo; committed
-history is not part of this slice.
+the active mapping-set metadata and records in Subject, Predicate, Object, and
+Justification columns. Subject and object entity types appear below their
+labels, object identifiers remain visible, predicate and dereferenceable term
+identifiers use compact linked CURIEs, and mapping comments or description
+extensions appear as row descriptions. Per-row disclosures retain every other
+loaded field. Changes shows the current draft's ordered operations and supports
+undo; committed history is not part of this slice.
 
 For supported string occurrences, add a `Map to term` action in the Inspector.
 Keep those actions hidden in the default browse mode and expose them only after
@@ -360,6 +364,9 @@ server-issued draft ID is retained in `sessionStorage`, with explicit live
 reattach and lost-draft handling. Component and hook coverage verifies dialog
 focus/cancel/error behavior, supported occurrence actions, generic SSSOM fields,
 ordered commands, exact optimistic revisions, reattachment, and loss recovery.
+The compact mapping table additionally verifies semantic column headings,
+linked compact predicates and object identifiers, subject/object types, optional
+free-text descriptions, and supplemental-field disclosures.
 The dedicated temporary-workspace browser flow covers the complete interaction
 in Chromium and Firefox and also caught and fixed duplicate-content successor
 selection by matching the published path and digest rather than assuming digests

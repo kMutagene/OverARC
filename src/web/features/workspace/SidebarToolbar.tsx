@@ -5,7 +5,6 @@ export interface SidebarToolbarAction {
   id: string;
   label: string;
   icon: LucideIcon;
-  onActivate?: () => void;
 }
 
 /** Renders an extensible row of accessible icon actions below the workspace subtitle. */
@@ -21,7 +20,6 @@ export function SidebarToolbar({ actions }: { actions: readonly SidebarToolbarAc
             key={action.id}
             aria-label={action.label}
             title={action.label}
-            onClick={action.onActivate}
           >
             <Icon aria-hidden="true" focusable="false" size={18} strokeWidth={1.8} />
           </button>

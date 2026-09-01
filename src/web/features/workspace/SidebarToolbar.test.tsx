@@ -1,12 +1,10 @@
 import { FolderOpen, Settings } from 'lucide-react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { SidebarToolbar } from './SidebarToolbar';
 
 describe('SidebarToolbar', () => {
-  it('renders extensible labelled icon actions and activates their handlers', () => {
-    const onOpen = vi.fn();
-    const onSettings = vi.fn();
+  it('renders an extensible collection of labelled icon buttons', () => {
     render(
       <SidebarToolbar
         actions={[
@@ -14,9 +12,8 @@ describe('SidebarToolbar', () => {
             id: 'open',
             label: 'Open OverARC workspace',
             icon: FolderOpen,
-            onActivate: onOpen,
           },
-          { id: 'settings', label: 'Settings', icon: Settings, onActivate: onSettings },
+          { id: 'settings', label: 'Settings', icon: Settings },
         ]}
       />,
     );
@@ -24,9 +21,6 @@ describe('SidebarToolbar', () => {
     expect(screen.getByRole('toolbar', { name: 'Workspace toolbar' })).toBeVisible();
     const open = screen.getByRole('button', { name: 'Open OverARC workspace' });
     expect(open).toHaveAttribute('title', 'Open OverARC workspace');
-    open.click();
-    screen.getByRole('button', { name: 'Settings' }).click();
-    expect(onOpen).toHaveBeenCalledOnce();
-    expect(onSettings).toHaveBeenCalledOnce();
+    expect(screen.getByRole('button', { name: 'Settings' })).toHaveAttribute('title', 'Settings');
   });
 });

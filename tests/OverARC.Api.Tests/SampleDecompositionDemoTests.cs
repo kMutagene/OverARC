@@ -25,7 +25,7 @@ public sealed class SampleDecompositionDemoTests
     private const string ProcessType = "urn:overarc:demo:term:process";
     private const string HasInput = "urn:overarc:demo:term:has_input";
     private const string HasOutput = "urn:overarc:demo:term:has_output";
-    private const string HasGenotype = "http://purl.obolibrary.org/obo/GENO_0000222";
+    private const string Genotype = "http://purl.obolibrary.org/obo/GENO_0000536";
     private const string Temperature = "http://purl.obolibrary.org/obo/PATO_0000146";
     private const string DegreeCelsius = "http://purl.obolibrary.org/obo/UO_0000027";
     private const string ExactMatch = "skos:exactMatch";
@@ -121,7 +121,7 @@ public sealed class SampleDecompositionDemoTests
         AssertRelation(projection, FinalRelation, Process, HasOutput, "has_output", Sample);
 
         var source = await Details(service, state.Id, SourcePlant);
-        AssertAnnotation(source, "genotype", "A+", HasGenotype, GenotypeAssertion);
+        AssertAnnotation(source, "genotype", "A+", Genotype, GenotypeAssertion);
         Assert.DoesNotContain(source.Properties, property => property.Id == GenotypeAssertion);
         var process = await Details(service, state.Id, Process);
         AssertProperty(process, "Name", "Process", "string", assertionId: ProcessNameAssertion);
@@ -162,7 +162,7 @@ public sealed class SampleDecompositionDemoTests
         var extraction = await Details(service, state.Id, Process);
         AssertProperty(extraction, "Name", "Extraction", "string", assertionId: ProcessNameAssertion);
         var source = await Details(service, state.Id, SourcePlant);
-        AssertAnnotation(source, "genotype", "A+", HasGenotype, GenotypeAssertion);
+        AssertAnnotation(source, "genotype", "A+", Genotype, GenotypeAssertion);
         Assert.DoesNotContain(source.Properties, property => property.Id == GenotypeAssertion);
         var sample = await Details(service, state.Id, Sample);
         Assert.DoesNotContain(sample.Properties, property => property.Id == TemperatureAssertion);
@@ -172,7 +172,7 @@ public sealed class SampleDecompositionDemoTests
     [InlineData("s0-flat-sample")]
     [InlineData("s1-source-process")]
     [InlineData("s2-growth-extraction")]
-    public async Task Every_workspace_displays_the_same_two_entity_mapping_rows(string directory)
+    public async Task Every_workspace_displays_the_same_two_literal_mapping_rows(string directory)
     {
         using var service = CreateService(WorkspaceRoot(directory));
         var state = Assert.Single((await service.GetWorkspaceAsync(default)).States);
@@ -184,7 +184,7 @@ public sealed class SampleDecompositionDemoTests
         Assert.Equal("https://creativecommons.org/publicdomain/zero/1.0/", mappings.License);
         Assert.Collection(
             mappings.Mappings,
-            row => AssertMapping(row, GenotypeRecord, LocalGenotype, "Genotype", HasGenotype, "genotype"),
+            row => AssertMapping(row, GenotypeRecord, LocalGenotype, "Genotype", Genotype, "genotype"),
             row => AssertMapping(row, TemperatureRecord, LocalTemperature, "Temperature", Temperature, "temperature"));
         Assert.DoesNotContain(mappings.Mappings, row => Field(row, "subject_label") is ["A+"] or ["30°C"]);
         Assert.DoesNotContain(mappings.Mappings, row => Field(row, "object_id").Contains(DegreeCelsius, StringComparer.Ordinal));
@@ -230,6 +230,8 @@ public sealed class SampleDecompositionDemoTests
             {
                 Assert.Empty(sssom.Validate(bytes));
                 Assert.Equal(bytes, sssom.EncodeCanonical(bytes));
+                Assert.Contains("#subject_type: rdfs literal", File.ReadAllText(path));
+                Assert.Contains("#object_type: owl class", File.ReadAllText(path));
             }
         }
     }
@@ -285,7 +287,7 @@ public sealed class SampleDecompositionDemoTests
             FinalState);
 
         var genotypeMapping = Assert.Single(firstEvent, process => process.ProcessType == "mapping application");
-        AssertMappingInput(genotypeMapping, s1Root, LocalGenotype, HasGenotype, GenotypeRecord);
+        AssertMappingInput(genotypeMapping, s1Root, LocalGenotype, Genotype, GenotypeRecord);
         AssertArcIrFragment(
             genotypeMapping.Output,
             GenotypeState,
@@ -481,9 +483,11 @@ public sealed class SampleDecompositionDemoTests
         Assert.Equal([recordId], Field(row, "record_id"));
         Assert.Equal([subjectId], Field(row, "subject_id"));
         Assert.Equal([subjectLabel], Field(row, "subject_label"));
+        Assert.Equal(["RdfsLiteral"], Field(row, "subject_type"));
         Assert.Equal([ExpandedExactMatch], Field(row, "predicate_id"));
         Assert.Equal([objectId], Field(row, "object_id"));
         Assert.Equal([objectLabel], Field(row, "object_label"));
+        Assert.Equal(["OwlClass"], Field(row, "object_type"));
         Assert.Equal([ExpandedManualCuration], Field(row, "mapping_justification"));
         Assert.Equal(["https://github.com/kMutagene/OverARC"], Field(row, "creator_id"));
         Assert.Equal(["OverARC"], Field(row, "creator_label"));

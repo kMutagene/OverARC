@@ -4,17 +4,17 @@ title: OverARC sample decomposition conference demo
 description: Self-contained immutable ArcIR, SSSOM, and native curation provenance for the conference screenshots.
 annotations:
   -
-    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+    "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
     type: Annotation
     name: sha256
-    value: 33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669
-    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+    value: 032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb
+    "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
   -
-    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
     type: Annotation
     name: sha256
-    value: 7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528
-    "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+    value: f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080
+    "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"
 dataFiles:
   -
     type: Data
@@ -23,7 +23,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
+        "@id": "#Annotation_sha256_032ecdd3cc6311fb92b0c42f9df1caa8cd6125b735baa190f1ca1285867ecceb"
   -
     type: Data
     path: mappings/sample-decomposition.sssom.tsv
@@ -31,4 +31,4 @@ dataFiles:
     encodingFormat: text/tab-separated-values
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
+        "@id": "#Annotation_sha256_f25ac03ce5f362f90e7706d35dd5b02dfd3a90200169b60586787ead94d6f080"

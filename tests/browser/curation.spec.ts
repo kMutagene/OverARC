@@ -147,16 +147,13 @@ test('curates through replay, guards state changes, and publishes inspectable su
 
   await page.getByRole('button', { name: 'Mappings', exact: true }).click();
   const mappings = page.getByRole('region', { name: 'SSSOM mappings' });
-  await expect(mappings.getByRole('cell', { name: literal, exact: true })).toBeVisible();
+  await expect(mappings.getByText(literal, { exact: true })).toBeVisible();
+  const targetCell = mappings.getByRole('cell').filter({ hasText: 'BioProject' });
+  await expect(targetCell).toBeVisible();
+  await expect(targetCell.getByTitle(targetTerm)).toBeVisible();
   await expect(
-    mappings.getByRole('cell', { name: new RegExp(`BioProject ${targetTerm}`) }),
-  ).toBeVisible();
-  await expect(
-    mappings.getByRole('cell', {
-      name: 'http://www.w3.org/2004/02/skos/core#exactMatch',
-      exact: true,
-    }),
-  ).toBeVisible();
+    mappings.getByRole('link', { name: 'skos:exactMatch', exact: true }),
+  ).toHaveAttribute('href', 'http://www.w3.org/2004/02/skos/core#exactMatch');
 
   await page.getByRole('button', { name: /Changes 1/ }).click();
   const changes = page.getByRole('region', { name: 'Draft changes' });

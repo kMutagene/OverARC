@@ -125,7 +125,7 @@
 
 .mapping-table-content table {
   width: 100%;
-  min-width: 70rem;
+  min-width: 48rem;
   margin: 0;
   font-size: 0.76rem;
 }
@@ -149,6 +149,33 @@
 .changes-view code {
   white-space: normal;
   overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+
+.mapping-entity {
+  display: grid;
+  justify-items: start;
+  gap: 0.12rem;
+}
+
+.mapping-entity small {
+  color: var(--overarc-muted);
+  font-size: 0.7rem;
+}
+
+.mapping-term-link {
+  color: var(--overarc-accent);
+  text-underline-offset: 0.12em;
+}
+
+.mapping-description {
+  margin: 0.35rem 0 0;
+  color: var(--overarc-muted);
+  white-space: pre-wrap;
+}
+
+.mapping-row-details {
+  margin-top: 0.45rem;
   font-size: 0.72rem;
 }
 

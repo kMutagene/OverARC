@@ -96,15 +96,17 @@ parameter content shown in inspectors rather than separate graph nodes.
 Create one immutable SSSOM mapping set and copy its identical canonical bytes to
 all three workspaces:
 
-| Local field                         | External target              | Mapping predicate |
-| ----------------------------------- | ---------------------------- | ----------------- |
-| `urn:overarc:demo:term:genotype`    | `GENO:0000222` (`genotype`)  | `skos:exactMatch` |
-| `urn:overarc:demo:term:temperature` | `PATO:0000146` (temperature) | `skos:exactMatch` |
+| Local field                         | Subject type   | External target              | Object type | Mapping predicate |
+| ----------------------------------- | -------------- | ---------------------------- | ----------- | ----------------- |
+| `urn:overarc:demo:term:genotype`    | `rdfs literal` | `GENO:0000536` (`genotype`)  | `owl class` | `skos:exactMatch` |
+| `urn:overarc:demo:term:temperature` | `rdfs literal` | `PATO:0000146` (temperature) | `owl class` | `skos:exactMatch` |
 
 Define the local terms equivalently to their targets and record
-`semapv:ManualMappingCuration`. Keep `A+` as an unmapped fictional genotype code.
-Register degree Celsius directly as `UO:0000027`; never map the complete
-`"30°C"` literal to the unit term.
+`semapv:ManualMappingCuration`. Both rows are SSSOM literal mappings. Their
+shared `subject_type` and `object_type` values are canonically condensed into
+mapping-set metadata and propagate to both rows. Keep `A+` as an unmapped
+fictional genotype code. Register degree Celsius directly as `UO:0000027`;
+never map the complete `"30°C"` literal to the unit term.
 
 Record two native curation events:
 
@@ -127,7 +129,8 @@ hand-maintaining competing formats.
    Sample (`has_output`) with Source plant selected and `A+` visible.
 3. Launch S2 and capture the four outgoing `has_input`/`has_output` activity
    relations with Growth selected and its `30 °C` parameter visible.
-4. Confirm Mappings displays both field mapping rows in each workspace.
+4. Confirm Mappings displays both field mapping rows in each workspace with
+   literal subjects, OWL-class objects, and compact linked predicates.
 5. Use Reset layout before capture so the starting coordinates are reproducible.
 
 Document one `Dev --workspace` command per workspace.
@@ -147,8 +150,13 @@ Document one `Dev --workspace` command per workspace.
   reveals them for the active editable state and exits automatically when the
   selected state changes.
 - The left sidebar exposes an extensible icon toolbar below the workspace
-  subtitle. Its initial open-workspace affordance has an accessible hover label;
-  workspace selection remains a startup concern rather than an in-app picker.
+  subtitle. Open-workspace, add-node, and add-relation affordances have
+  accessible hover labels; workspace selection and structural authoring remain
+  deferred rather than being implemented by these toolbar buttons.
+- The Mappings table uses Subject, Predicate, Object, and Justification columns,
+  displays subject/object types beneath labels and object IRIs beneath target
+  labels, links compact CURIE predicates, surfaces optional mapping comments or
+  descriptions, and retains supplemental fields in row disclosures.
 - Automated API tests cover the exact graphs, stable IDs, assertions, unit
   parameter, mappings, shared bytes, canonical encodings, artifact containment,
   digests, event membership, selectors, and descriptive transformation labels.
@@ -167,6 +175,24 @@ tests, and its focused viewer scenario in Chromium and Firefox.
 The activity-owned relation refinement passed all 14 focused demo tests,
 including exact `has_input`/`has_output` directions and labels, canonical bytes,
 shared predecessors, digests, and native provenance selectors.
+
+The genotype-term correction to `GENO:0000536` passed all 14 focused demo
+tests, including canonical bytes, shared artifacts, digest bindings, SSSOM
+mapping rows, and native provenance inputs.
+
+The literal-mapping metadata correction passed all 14 focused demo tests,
+including the propagated `rdfs literal` subject type, canonical bytes, shared
+artifacts, updated digest bindings, and native provenance inputs.
+
+The mapping-table presentation refinement passed repository `Format`, `Build`,
+and `Publish`, all 66 API tests, all 43 frontend/performance tests, all 14 focused
+demo tests, and every assertion in the focused Chromium curation scenario. The
+full `Test` invocation passed 10 of 12 parallel viewer scenarios; two Chromium
+workers did not mount Sigma within five seconds under local load, while their
+Firefox counterparts and both immediate serial Chromium retries passed. Local
+focused Playwright runners required interruption after reporting success because
+their web-server shutdown did not exit, so this refinement does not record the
+aggregate `Test` target as a clean pass.
 
 ## Later milestone — Structural authoring through the UI
 
