@@ -3,6 +3,17 @@ import { expect, test } from '@playwright/test';
 test('loads states, filters with context, and inspects complete details', async ({ page }) => {
   await page.goto('/?state=state-a');
   await expect(page.getByRole('heading', { name: 'OverARC' })).toBeVisible();
+  const workspaceSubtitle = page.getByText('OverARC example workspace', { exact: true });
+  const workspaceToolbar = page.getByRole('toolbar', { name: 'Workspace toolbar' });
+  const openWorkspace = workspaceToolbar.getByRole('button', {
+    name: 'Open OverARC workspace',
+  });
+  await expect(openWorkspace).toHaveAttribute('title', 'Open OverARC workspace');
+  const subtitleBounds = await workspaceSubtitle.boundingBox();
+  const toolbarBounds = await workspaceToolbar.boundingBox();
+  if (!subtitleBounds || !toolbarBounds)
+    throw new Error('Workspace toolbar bounds are unavailable.');
+  expect(toolbarBounds.y).toBeGreaterThanOrEqual(subtitleBounds.y + subtitleBounds.height);
   await expect(page.getByRole('button', { name: /Example state A/ })).toHaveClass(/active/);
   const visibleGraph = page.getByRole('heading', { name: 'Visible graph' }).locator('..');
   await expect(visibleGraph.getByText('5 objects · 5 relations', { exact: true })).toBeVisible();

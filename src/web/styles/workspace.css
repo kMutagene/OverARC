@@ -28,6 +28,28 @@
   line-height: 1;
 }
 
+.sidebar-toolbar {
+  display: flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.55rem 0 0.75rem;
+}
+
+.sidebar-toolbar-button {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.sidebar-toolbar-button svg {
+  pointer-events: none;
+}
+
 .sidebar h2 {
   margin-bottom: 0.6rem;
   font-size: 0.93rem;

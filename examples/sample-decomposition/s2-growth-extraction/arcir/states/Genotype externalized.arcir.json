@@ -18,8 +18,12 @@
         "name": "Genotype",
         "source": "OverARC demo local field"
       },
-      "urn:overarc:demo:term:input-to": {
-        "name": "is input to",
+      "urn:overarc:demo:term:has_input": {
+        "name": "has_input",
+        "source": "OverARC demo"
+      },
+      "urn:overarc:demo:term:has_output": {
+        "name": "has_output",
         "source": "OverARC demo"
       },
       "urn:overarc:demo:term:name": {
@@ -32,10 +36,6 @@
       },
       "urn:overarc:demo:term:process": {
         "name": "Process",
-        "source": "OverARC demo"
-      },
-      "urn:overarc:demo:term:produces": {
-        "name": "produces",
         "source": "OverARC demo"
       },
       "urn:overarc:demo:term:sample": {
@@ -129,15 +129,15 @@
     },
     "relations": {
       "urn:overarc:demo:relation:input-1": {
-        "subject": "urn:overarc:demo:object:source-plant",
-        "predicate": "urn:overarc:demo:term:input-to",
-        "object": "urn:overarc:demo:object:process",
+        "subject": "urn:overarc:demo:object:process",
+        "predicate": "urn:overarc:demo:term:has_input",
+        "object": "urn:overarc:demo:object:source-plant",
         "properties": {},
         "annotations": {}
       },
       "urn:overarc:demo:relation:output-final": {
         "subject": "urn:overarc:demo:object:process",
-        "predicate": "urn:overarc:demo:term:produces",
+        "predicate": "urn:overarc:demo:term:has_output",
         "object": "urn:overarc:demo:object:sample",
         "properties": {},
         "annotations": {}

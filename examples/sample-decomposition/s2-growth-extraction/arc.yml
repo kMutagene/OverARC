@@ -15,17 +15,17 @@ recipes:
     "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
 annotations:
   -
-    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
     type: Annotation
     name: sha256
-    value: 1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0
-    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    value: 33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669
+    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
   -
-    "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     type: Annotation
     name: sha256
-    value: 60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5
-    "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+    value: 213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0
+    "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
   -
     "@id": "#ParameterValue_curation_transformation_publish_immutable_ArcIR_successor_parameter_curation_transformation"
     type: Annotation
@@ -106,29 +106,29 @@ annotations:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#ParameterValue_curation_transformation_connect_Source_plant_to_Process_parameter_curation_transformation"
+    "@id": "#ParameterValue_curation_transformation_connect_Process_to_Source_plant_with_has_input_parameter_curation_transformation"
     type: Annotation
     name: curation transformation
     additionalType: ParameterValue
-    value: connect Source plant to Process
+    value: connect Process to Source plant with has_input
     instanceOf:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_parameter_curation_transformation"
+    "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_with_has_output_parameter_curation_transformation"
     type: Annotation
     name: curation transformation
     additionalType: ParameterValue
-    value: connect Process to Sample
+    value: connect Process to Sample with has_output
     instanceOf:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+    "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     type: Annotation
     name: sha256
-    value: e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c
-    "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+    value: 62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee
+    "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
   -
     "@id": "#Annotation_save_time_2026-09-01T09_15_00_0000000_00_00"
     type: Annotation
@@ -225,29 +225,29 @@ annotations:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#ParameterValue_curation_transformation_rewire_Source_plant_input_from_Process_to_Growth_parameter_curation_transformation"
+    "@id": "#ParameterValue_curation_transformation_rewire_has_input_relation_from_Process_to_Growth_parameter_curation_transformation"
     type: Annotation
     name: curation transformation
     additionalType: ParameterValue
-    value: rewire Source plant input from Process to Growth
+    value: rewire has_input relation from Process to Growth
     instanceOf:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#ParameterValue_curation_transformation_connect_Growth_to_Grown_plant_parameter_curation_transformation"
+    "@id": "#ParameterValue_curation_transformation_connect_Growth_to_Grown_plant_with_has_output_parameter_curation_transformation"
     type: Annotation
     name: curation transformation
     additionalType: ParameterValue
-    value: connect Growth to Grown plant
+    value: connect Growth to Grown plant with has_output
     instanceOf:
       type: FormalParameter
       name: curation transformation
   -
-    "@id": "#ParameterValue_curation_transformation_connect_Grown_plant_to_Extraction_parameter_curation_transformation"
+    "@id": "#ParameterValue_curation_transformation_connect_Extraction_to_Grown_plant_with_has_input_parameter_curation_transformation"
     type: Annotation
     name: curation transformation
     additionalType: ParameterValue
-    value: connect Grown plant to Extraction
+    value: connect Extraction to Grown plant with has_input
     instanceOf:
       type: FormalParameter
       name: curation transformation
@@ -264,7 +264,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+            "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
     outputs:
       -
         type: Data
@@ -273,7 +273,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -314,7 +314,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
           -
@@ -342,7 +342,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+            "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
     outputs:
       -
         type: Data
@@ -353,7 +353,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_GENO_0000222"
           -
@@ -381,7 +381,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -405,7 +405,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -429,12 +429,12 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
       -
-        "@id": "#ParameterValue_curation_transformation_connect_Source_plant_to_Process_parameter_curation_transformation"
+        "@id": "#ParameterValue_curation_transformation_connect_Process_to_Source_plant_with_has_input_parameter_curation_transformation"
       -
         "@id": "#Annotation_curator_conference-demo_overarc_local"
       -
@@ -453,12 +453,12 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
       -
-        "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_parameter_curation_transformation"
+        "@id": "#ParameterValue_curation_transformation_connect_Process_to_Sample_with_has_output_parameter_curation_transformation"
       -
         "@id": "#Annotation_curator_conference-demo_overarc_local"
       -
@@ -475,7 +475,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     outputs:
       -
         type: Data
@@ -484,7 +484,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -525,7 +525,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_PATO_0000146"
           -
@@ -555,7 +555,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
           -
             "@id": "#Annotation_literal_30_C"
     executesRecipe:
@@ -581,7 +581,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     outputs:
       -
         type: Data
@@ -592,7 +592,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
           -
             "@id": "#Annotation_target_term_http___purl_obolibrary_org_obo_PATO_0000146"
           -
@@ -622,7 +622,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -646,7 +646,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
@@ -670,7 +670,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
           -
             "@id": "#Annotation_name_Process"
     outputs:
@@ -683,7 +683,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
           -
             "@id": "#Annotation_name_Extraction"
     executesRecipe:
@@ -709,7 +709,7 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+            "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
     outputs:
       -
         type: Data
@@ -720,12 +720,12 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
       -
-        "@id": "#ParameterValue_curation_transformation_rewire_Source_plant_input_from_Process_to_Growth_parameter_curation_transformation"
+        "@id": "#ParameterValue_curation_transformation_rewire_has_input_relation_from_Process_to_Growth_parameter_curation_transformation"
       -
         "@id": "#Annotation_curator_conference-demo_overarc_local"
       -
@@ -744,12 +744,12 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
       -
-        "@id": "#ParameterValue_curation_transformation_connect_Growth_to_Grown_plant_parameter_curation_transformation"
+        "@id": "#ParameterValue_curation_transformation_connect_Growth_to_Grown_plant_with_has_output_parameter_curation_transformation"
       -
         "@id": "#Annotation_curator_conference-demo_overarc_local"
       -
@@ -768,12 +768,12 @@ processes:
         encodingFormat: application/json
         additionalProperty:
           -
-            "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+            "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"
     executesRecipe:
       "@id": "#Recipe_OverARC_structural_curation_version_none_url_none"
     parameterValue:
       -
-        "@id": "#ParameterValue_curation_transformation_connect_Grown_plant_to_Extraction_parameter_curation_transformation"
+        "@id": "#ParameterValue_curation_transformation_connect_Extraction_to_Grown_plant_with_has_input_parameter_curation_transformation"
       -
         "@id": "#Annotation_curator_conference-demo_overarc_local"
       -
@@ -786,7 +786,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+        "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
   -
     type: Data
     path: mappings/sample-decomposition.sssom.tsv
@@ -802,7 +802,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_60efa28cd37266b117ac0b2a4500c64c19bf6866ec68f0763bdb8ab5dcafc0c5"
+        "@id": "#Annotation_sha256_213ac31221e46b578111d855c37e2f35203032459158747aa85b957f3a0ebce0"
   -
     type: Data
     path: arcir/states/Growth and extraction.arcir.json
@@ -810,4 +810,4 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_e78152c54126e6eee311c6975ff4e2c601a7fee577009de1a9cf99e4b32e978c"
+        "@id": "#Annotation_sha256_62b3fe67be47e3a6082fb629687a11908655343e47fa39eeb4918e312c62afee"

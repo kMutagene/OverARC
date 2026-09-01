@@ -29,11 +29,12 @@ concern; there is no in-app picker.
 
 1. In S0, use **Reset layout**, select **Sample**, and show its `Genotype = A+`
    and `Temperature = 30°C` assertions.
-2. In S1, use **Reset layout**, select **Source plant**, and show the
-   Source plant → Process → Sample chain with its `genotype = A+` annotation
-   visible.
-3. In S2, use **Reset layout**, select **Growth**, and show the Source plant →
-   Growth → Grown plant → Extraction → Sample chain with the `30 °C`
+2. In S1, use **Reset layout**, select **Source plant**, and show Process →
+   Source plant (`has_input`) and Process → Sample (`has_output`) with the
+   `genotype = A+` annotation visible.
+3. In S2, use **Reset layout**, select **Growth**, and show Growth → Source plant
+   (`has_input`), Growth → Grown plant (`has_output`), Extraction → Grown plant
+   (`has_input`), and Extraction → Sample (`has_output`) with the `30 °C`
    parameter visible.
 4. Open **Mappings** in every workspace and confirm both the Genotype →
    `GENO:0000222` and Temperature → `PATO:0000146` rows.

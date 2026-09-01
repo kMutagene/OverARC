@@ -9,5 +9,8 @@
 # Canonical ArcIR states are immutable byte artifacts; Git must never rewrite them.
 *.arcir.json -text
 
+# Canonical demo ProcessCore manifests use their codec's native CRLF encoding.
+examples/sample-decomposition/**/arc.yml -text whitespace=cr-at-eol
+
 # Binary assets must not undergo text conversion.
 *.xlsx binary

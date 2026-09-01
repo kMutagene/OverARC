@@ -4,11 +4,11 @@ title: OverARC sample decomposition conference demo
 description: Self-contained immutable ArcIR, SSSOM, and native curation provenance for the conference screenshots.
 annotations:
   -
-    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
     type: Annotation
     name: sha256
-    value: 1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0
-    "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+    value: 33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669
+    "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
   -
     "@id": "#Annotation_sha256_7f716e017ea7c29d1094ca205da4ffeb24f10eba5840cbf394a7be82e5f05528"
     type: Annotation
@@ -23,7 +23,7 @@ dataFiles:
     encodingFormat: application/json
     additionalProperty:
       -
-        "@id": "#Annotation_sha256_1a599e2b523ac51bb3fdace5b9693b04c643bbd97ab7b735006475e0dda15be0"
+        "@id": "#Annotation_sha256_33cec4de67662a853c59c2328792b6d70c1583871c708f7950487af30b2c5669"
   -
     type: Data
     path: mappings/sample-decomposition.sssom.tsv

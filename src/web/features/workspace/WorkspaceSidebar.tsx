@@ -7,11 +7,21 @@ import type {
   VisibleProjection,
   Workspace,
 } from '../../shared/types';
+import { FolderOpen } from 'lucide-react';
 import { CurationStatus } from '../curation/CurationStatus';
 import { ThemeToggle } from '../theme/ThemeToggle';
 import { FilterPanel } from './FilterPanel';
 import { GraphSummary } from './GraphSummary';
+import { SidebarToolbar, type SidebarToolbarAction } from './SidebarToolbar';
 import { StateList } from './StateList';
+
+const workspaceToolbarActions: readonly SidebarToolbarAction[] = [
+  {
+    id: 'open-workspace',
+    label: 'Open OverARC workspace',
+    icon: FolderOpen,
+  },
+];
 
 /** Composition inputs for the workspace, curation, filter, legend, export, and theme sidebar. */
 interface WorkspaceSidebarProps {
@@ -82,6 +92,7 @@ export function WorkspaceSidebar({
         </div>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </header>
+      <SidebarToolbar actions={workspaceToolbarActions} />
       <StateList
         workspace={workspace}
         activeState={activeState}

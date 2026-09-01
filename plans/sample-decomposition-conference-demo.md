@@ -60,11 +60,11 @@ Create three independent native workspace roots:
 Each workspace exposes exactly one current ArcIR state through the existing
 current-tip discovery behavior.
 
-| Project | Visible state         | Content graph                                             |
-| ------- | --------------------- | --------------------------------------------------------- |
-| S0      | Flat Sample           | one Sample object and no relations                        |
-| S1      | Genotype externalized | Source plant → Process → Sample                           |
-| S2      | Growth and extraction | Source plant → Growth → Grown plant → Extraction → Sample |
+| Project | Visible state         | Content graph                                                                                                                                        |
+| ------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S0      | Flat Sample           | one Sample object and no relations                                                                                                                   |
+| S1      | Genotype externalized | Process → Source plant (`has_input`); Process → Sample (`has_output`)                                                                                |
+| S2      | Growth and extraction | Growth → Source plant (`has_input`); Growth → Grown plant (`has_output`); Extraction → Grown plant (`has_input`); Extraction → Sample (`has_output`) |
 
 ### State definitions
 
@@ -72,11 +72,12 @@ current-tip discovery behavior.
   `Temperature = "30°C"` string assertions.
 - **S1:** remove Genotype from Sample; create a Source plant `Observable` with
   the mapped object annotation `genotype = "A+"`; create an `Activity` named
-  Process; connect Source plant → Process → Sample. Sample retains Temperature.
+  Process; connect Process to Source plant with `has_input` and to Sample with
+  `has_output`. Sample retains Temperature.
 - **S2:** remove Temperature from Sample; create a Growth `Activity` with integer
   value `30` and unit `UO:0000027`; create a Grown plant `Observable`; retain the
-  existing Process activity IRI while renaming it Extraction; rewire the final
-  chain.
+  existing Process activity IRI while renaming it Extraction; represent every
+  input and output as an outgoing activity relation.
 
 The Sample and Process/Extraction IRIs remain stable across revisions. ArcIR
 objects and ArcRelations appear in Sigma. `A+` and `30 °C` remain assertion or
@@ -122,10 +123,10 @@ hand-maintaining competing formats.
 ### Screenshot acceptance
 
 1. Launch S0 and capture the Graph with Sample selected and both fields visible.
-2. Launch S1 and capture Source plant → Process → Sample with Source plant
-   selected and `A+` visible.
-3. Launch S2 and capture the final five-object chain with Growth selected and its
-   `30 °C` parameter visible.
+2. Launch S1 and capture Process → Source plant (`has_input`) and Process →
+   Sample (`has_output`) with Source plant selected and `A+` visible.
+3. Launch S2 and capture the four outgoing `has_input`/`has_output` activity
+   relations with Growth selected and its `30 °C` parameter visible.
 4. Confirm Mappings displays both field mapping rows in each workspace.
 5. Use Reset layout before capture so the starting coordinates are reproducible.
 
@@ -145,6 +146,9 @@ Document one `Dev --workspace` command per workspace.
 - Browse mode hides literal-mapping actions. An explicit curation-mode toggle
   reveals them for the active editable state and exits automatically when the
   selected state changes.
+- The left sidebar exposes an extensible icon toolbar below the workspace
+  subtitle. Its initial open-workspace affordance has an accessible hover label;
+  workspace selection remains a startup concern rather than an in-app picker.
 - Automated API tests cover the exact graphs, stable IDs, assertions, unit
   parameter, mappings, shared bytes, canonical encodings, artifact containment,
   digests, event membership, selectors, and descriptive transformation labels.
@@ -155,6 +159,14 @@ space-containing paths, eager invalid-argument failures, and the repository
 `Format`, `Build`, `Test`, and `Publish` gates. The full Test gate passed 66 API
 tests, 42 frontend/performance tests, 12 viewer browser tests, and 2 curation
 browser tests. The configured Linux CI gate remains pending.
+
+The subsequent sidebar-toolbar refinement passed Prettier, ESLint,
+`git diff --check`, the production frontend build, all 43 frontend/performance
+tests, and its focused viewer scenario in Chromium and Firefox.
+
+The activity-owned relation refinement passed all 14 focused demo tests,
+including exact `has_input`/`has_output` directions and labels, canonical bytes,
+shared predecessors, digests, and native provenance selectors.
 
 ## Later milestone — Structural authoring through the UI
 

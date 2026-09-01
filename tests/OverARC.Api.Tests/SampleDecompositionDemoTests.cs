@@ -23,8 +23,8 @@ public sealed class SampleDecompositionDemoTests
     private const string SampleType = "urn:overarc:demo:term:sample";
     private const string PlantType = "urn:overarc:demo:term:plant";
     private const string ProcessType = "urn:overarc:demo:term:process";
-    private const string InputTo = "urn:overarc:demo:term:input-to";
-    private const string Produces = "urn:overarc:demo:term:produces";
+    private const string HasInput = "urn:overarc:demo:term:has_input";
+    private const string HasOutput = "urn:overarc:demo:term:has_output";
     private const string HasGenotype = "http://purl.obolibrary.org/obo/GENO_0000222";
     private const string Temperature = "http://purl.obolibrary.org/obo/PATO_0000146";
     private const string DegreeCelsius = "http://purl.obolibrary.org/obo/UO_0000027";
@@ -117,8 +117,8 @@ public sealed class SampleDecompositionDemoTests
             (SourcePlant, "Source plant", "observable", PlantType),
             (Process, "Process", "activity", ProcessType),
             (Sample, "Sample", "observable", SampleType));
-        AssertRelation(projection, InputRelation, SourcePlant, InputTo, Process);
-        AssertRelation(projection, FinalRelation, Process, Produces, Sample);
+        AssertRelation(projection, InputRelation, Process, HasInput, "has_input", SourcePlant);
+        AssertRelation(projection, FinalRelation, Process, HasOutput, "has_output", Sample);
 
         var source = await Details(service, state.Id, SourcePlant);
         AssertAnnotation(source, "genotype", "A+", HasGenotype, GenotypeAssertion);
@@ -144,10 +144,10 @@ public sealed class SampleDecompositionDemoTests
             (GrownPlant, "Grown plant", "observable", PlantType),
             (Process, "Extraction", "activity", ProcessType),
             (Sample, "Sample", "observable", SampleType));
-        AssertRelation(projection, InputRelation, SourcePlant, InputTo, Growth);
-        AssertRelation(projection, GrowthOutputRelation, Growth, Produces, GrownPlant);
-        AssertRelation(projection, ExtractionInputRelation, GrownPlant, InputTo, Process);
-        AssertRelation(projection, FinalRelation, Process, Produces, Sample);
+        AssertRelation(projection, InputRelation, Growth, HasInput, "has_input", SourcePlant);
+        AssertRelation(projection, GrowthOutputRelation, Growth, HasOutput, "has_output", GrownPlant);
+        AssertRelation(projection, ExtractionInputRelation, Process, HasInput, "has_input", GrownPlant);
+        AssertRelation(projection, FinalRelation, Process, HasOutput, "has_output", Sample);
 
         var growth = await Details(service, state.Id, Growth);
         var parameter = Assert.Single(growth.Annotations, annotation => annotation.Id == TemperatureAssertion);
@@ -315,13 +315,13 @@ public sealed class SampleDecompositionDemoTests
             "created input relation fragment",
             null,
             (GenotypeState, selectors.RelationSelector(InputRelation), "ArcIR relation"),
-            "connect Source plant to Process");
+            "connect Process to Source plant with has_input");
         AssertFragmentLane(
             firstEvent,
             "created output relation fragment",
             null,
             (GenotypeState, selectors.RelationSelector(FinalRelation), "ArcIR relation"),
-            "connect Process to Sample");
+            "connect Process to Sample with has_output");
 
         var temperatureMapping = Assert.Single(secondEvent, process => process.ProcessType == "mapping application");
         AssertMappingInput(temperatureMapping, s2Root, LocalTemperature, Temperature, TemperatureRecord);
@@ -366,19 +366,19 @@ public sealed class SampleDecompositionDemoTests
             "rewired fragment",
             (GenotypeState, selectors.RelationSelector(InputRelation), "ArcIR relation"),
             (FinalState, selectors.RelationSelector(InputRelation), "ArcIR relation"),
-            "rewire Source plant input from Process to Growth");
+            "rewire has_input relation from Process to Growth");
         AssertFragmentLane(
             secondEvent,
             "created growth relation fragment",
             null,
             (FinalState, selectors.RelationSelector(GrowthOutputRelation), "ArcIR relation"),
-            "connect Growth to Grown plant");
+            "connect Growth to Grown plant with has_output");
         AssertFragmentLane(
             secondEvent,
             "created extraction relation fragment",
             null,
             (FinalState, selectors.RelationSelector(ExtractionInputRelation), "ArcIR relation"),
-            "connect Grown plant to Extraction");
+            "connect Extraction to Grown plant with has_input");
 
         Assert.DoesNotContain(s2.Processes, process =>
             process.ProcessType == "artifact succession"
@@ -426,11 +426,13 @@ public sealed class SampleDecompositionDemoTests
         string id,
         string subject,
         string predicateId,
+        string label,
         string objectId)
     {
         var relation = Assert.Single(projection.Relations, value => value.Id == id);
         Assert.Equal(subject, relation.Subject);
         Assert.Equal(predicateId, relation.PredicateId);
+        Assert.Equal(label, relation.Label);
         Assert.Equal(objectId, relation.Object);
         Assert.False(relation.IsDerived);
     }
