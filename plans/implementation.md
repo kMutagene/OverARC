@@ -5,6 +5,11 @@
 > It remains authoritative for the delivered read-only viewer only;
 > [`curation-workbench.md`](curation-workbench.md) supersedes its future
 > integration gates for current ArcIR, SSSOM, and native ARC curation work.
+>
+> The approved [native-only workspace and codebase refactor](native-only-refactor.md)
+> is the active maintenance roadmap. When implemented, it removes the viewer
+> manifest, timestamp selection, and compatibility transport described here.
+> Until then, this file remains the historical record of the viewer milestone.
 
 ## Decision and dependency boundary
 

@@ -4,6 +4,10 @@
 > pending.** `Dev --workspace` and the three independently launchable workspaces
 > are complete. Structural authoring follows later. Git-backed history traversal
 > remains explicitly deferred.
+>
+> The approved [native-only workspace and codebase refactor](native-only-refactor.md)
+> preserves these native demo workspaces while refactoring their shared loading,
+> API, and UI foundations. It does not expand the structural-authoring scope.
 
 ## Goal and current boundary
 

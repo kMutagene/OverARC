@@ -9,6 +9,11 @@
 > [Sample decomposition conference demo](sample-decomposition-conference-demo.md),
 > which delivers three launchable screenshot workspaces before general
 > structural authoring. Git-backed history traversal remains deferred.
+>
+> The approved [native-only workspace and codebase refactor](native-only-refactor.md)
+> will remove the legacy manifest compatibility retained by Steps 1 and 3 and
+> simplify the workspace/API boundary. Those changes are planned, not yet part
+> of this completed milestone record.
 
 ## Goal
 
